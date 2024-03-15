@@ -57,8 +57,8 @@ jobs:
     env:
       Solution_Name: Datingapp.sln # Replace with your solution name, i.e. MyWpfApp.sln.
       Test_Project_Path: DatingApp.Tests\DatingApp.Tests.csproj # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      Wap_Project_Directory: DatingApp.App.Package\AppPackages # Replace with the path to your Wap project directory, i.e. MyWpf.App.Package\AppPackages.
-      Wap_Project_Path: DatingApp.App.Package\DatingApp.Package.wapproj # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+      Wap_Project_Directory: DatingApp.Wap # Replace with the path to your Windows Application Packaging project, i.e. MyWpfApp.Wap.
+      Wap_Project_Path: DatingApp.Wap\DatingApp.Wap.wapproj # Replace with the path to your Windows Application Packaging project file, i.e. MyWpfApp.Wap\MyWpfApp.Wap.wapproj.
 
     steps:
       - name: Checkout
