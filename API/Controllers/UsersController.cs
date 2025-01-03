@@ -1,35 +1,43 @@
 using API.Data;
 using API.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace API.Controllers
+namespace API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController(DataContext context) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UsersController(DataContext context) : ControllerBase
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<AppUser>>> Index()
     {
-        [HttpGet]
-        public ActionResult<IEnumerable<AppUser>> GetUsers()
-        {
-            var users = context.Users.ToList();
-            return Ok(users);
-        }
-
-        [HttpGet("{id:int}")]
-        public ActionResult<AppUser> GetUser(int id)
-        {
-            var user = context.Users.Find(id);
-            if(user == null) return NotFound();
-
-            return Ok(user);
-        }
-
-        [HttpPost]
-        public void PostUser(AppUser user)
-        {
-            context.Users.Add(user);
-            context.SaveChanges();
-        }
+        var users = await context.Users.ToListAsync();
+        return Ok(users);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<AppUser>> Show(int id)
+    {
+        var user = await context.Users.FindAsync(id);
+        if(user == null) return NotFound();
+
+        return Ok(user);
+    }
+
+    [HttpPost("create")]
+    public async Task<ActionResult> Create(AppUser user)
+    {
+        var newUser = await context.Users.AddAsync(user);
+        await context.SaveChangesAsync();
+
+        return Ok(newUser.Entity);
+    }
+
+    // [HttpDelete]
+    // public async Task<ActionResult> Delete(int id)
+    // {
+    //     var user = await context.Users.
+    // }
 }
