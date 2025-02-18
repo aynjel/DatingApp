@@ -1,6 +1,6 @@
 import { Guid } from 'guid-typescript';
 import { NgrxError } from 'src/app/types/error.types';
-import { TUser } from 'src/app/types/user.models';
+import { TUser } from '../../types/common.types';
 import { setAndDeletePropertyFromMap } from '../../utils/utils';
 import { ActionTypes, ActionTypesUnion } from '../actions/actions';
 
@@ -26,7 +26,6 @@ export function reducer(
     case ActionTypes.LOGIN_USER: {
       return {
         ...state,
-        user: action.payload[1],
         isLoading: setAndDeletePropertyFromMap<IState, boolean>(
           state,
           'isLoading',
@@ -38,7 +37,7 @@ export function reducer(
     case ActionTypes.LOGIN_USER_SUCCESS: {
       return {
         ...state,
-        user: action.payload[1],
+        user: action.payload[1].data,
         isLoading: setAndDeletePropertyFromMap<IState, boolean>(
           state,
           'isLoading',
@@ -61,7 +60,7 @@ export function reducer(
     case ActionTypes.REGISTER_USER_SUCCESS: {
       return {
         ...state,
-        user: action.payload[1],
+        user: action.payload[1].data,
         isLoading: setAndDeletePropertyFromMap<IState, boolean>(
           state,
           'isLoading',
@@ -110,4 +109,4 @@ export const getIsLoading = (state: IState, transId: Guid) =>
   state.isLoading.has(transId);
 
 export const getFailure = (state: IState, transId: Guid) =>
-  state.hasFailure.get(transId)!;
+  state.hasFailure.get(transId);

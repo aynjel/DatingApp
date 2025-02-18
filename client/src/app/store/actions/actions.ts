@@ -1,6 +1,10 @@
 import { Action } from '@ngrx/store';
 import { Guid } from 'guid-typescript';
-import { TUser } from 'src/app/types/user.models';
+import { LoginRequest, RegisterRequest } from '../../types/api/request.models';
+import {
+  LoginResponse,
+  RegisterResponse,
+} from '../../types/api/response.models';
 import { FailurePayload } from '../../types/error.types';
 
 export enum ActionTypes {
@@ -21,22 +25,22 @@ export interface IAction extends Action {
 
 export class LoginUser implements IAction {
   readonly type = ActionTypes.LOGIN_USER;
-  constructor(public payload: [Guid, TUser]) {}
+  constructor(public payload: [Guid, LoginRequest]) {}
 }
 
 export class LoginUserSuccess implements IAction {
   readonly type = ActionTypes.LOGIN_USER_SUCCESS;
-  constructor(public payload: [Guid, TUser]) {}
+  constructor(public payload: [Guid, LoginResponse]) {}
 }
 
 export class RegisterUser implements IAction {
   readonly type = ActionTypes.REGISTER_USER;
-  constructor(public payload: [Guid, TUser]) {}
+  constructor(public payload: [Guid, RegisterRequest]) {}
 }
 
 export class RegisterUserSuccess implements IAction {
   readonly type = ActionTypes.REGISTER_USER_SUCCESS;
-  constructor(public payload: [Guid, TUser]) {}
+  constructor(public payload: [Guid, RegisterResponse]) {}
 }
 
 export class LogoutUser implements IAction {

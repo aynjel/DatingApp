@@ -3,7 +3,8 @@ import { select, Store } from '@ngrx/store';
 import { Guid } from 'guid-typescript';
 import { Observable } from 'rxjs';
 import { NgrxError } from 'src/app/types/error.types';
-import { TUser } from '../../types/user.models';
+import { LoginRequest, RegisterRequest } from '../../types/api/request.models';
+import { TUser } from '../../types/common.types';
 import {
   ErrorMessage,
   LoginUser,
@@ -24,15 +25,15 @@ export class Sandbox {
 
   constructor(private store: Store<fromStore.State>) {}
 
-  login(user: TUser): Guid {
+  login(payload: LoginRequest): Guid {
     const transId = Guid.create();
-    this.store.dispatch(new LoginUser([transId, user]));
+    this.store.dispatch(new LoginUser([transId, payload]));
     return transId;
   }
 
-  register(user: TUser): Guid {
+  register(payload: RegisterRequest): Guid {
     const transId = Guid.create();
-    this.store.dispatch(new RegisterUser([transId, user]));
+    this.store.dispatch(new RegisterUser([transId, payload]));
     return transId;
   }
 
