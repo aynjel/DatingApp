@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Sandbox } from './store/sandbox/sandbox';
 
 @Component({
   selector: 'app-root',
@@ -6,4 +7,6 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'DatingApp';
+
+  constructor(public readonly sandbox: Sandbox) {}
 }

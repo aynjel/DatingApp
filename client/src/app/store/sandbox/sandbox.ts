@@ -19,7 +19,7 @@ import * as fromStore from '../index';
 })
 export class Sandbox {
   user$: Observable<TUser | null> = this.store.pipe(select(fromStore.getUser));
-  errorMessage$: Observable<string | null> = this.store.pipe(
+  errorMessage$: Observable<string[]> = this.store.pipe(
     select(fromStore.getErrorMessage)
   );
 
@@ -41,8 +41,8 @@ export class Sandbox {
     this.store.dispatch(new LogoutUser());
   }
 
-  setErrorMessage(message: string): void {
-    this.store.dispatch(new ErrorMessage(message));
+  setErrorMessage(messages: string[]): void {
+    this.store.dispatch(new ErrorMessage(messages));
   }
 
   resetStore(): void {

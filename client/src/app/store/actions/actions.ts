@@ -50,7 +50,7 @@ export class LogoutUser implements IAction {
 
 export class ErrorMessage implements IAction {
   readonly type = ActionTypes.ERROR_MESSAGE;
-  constructor(public payload: string) {}
+  constructor(public payload: string[]) {}
 }
 
 export class ResetStore implements IAction {

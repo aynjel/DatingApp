@@ -8,14 +8,14 @@ export interface IState {
   isLoading: Map<Guid, boolean>;
   hasFailure: Map<Guid, NgrxError>;
   user: TUser | null;
-  errorMessage: string | null;
+  errorMessage: Array<string>;
 }
 
 export const INITIAL_STATE: IState = {
   isLoading: new Map<Guid, boolean>(),
   hasFailure: new Map<Guid, NgrxError>(),
   user: null,
-  errorMessage: null,
+  errorMessage: [],
 };
 
 export function reducer(

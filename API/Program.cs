@@ -1,4 +1,6 @@
 using API.Data;
+using API.Data.Repository;
+using API.Model.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -12,6 +14,7 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlite(builder.
 builder.Services.AddCors();
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "DatingApp API", Version = "v1" });

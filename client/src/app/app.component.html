@@ -1,1 +1,13 @@
-<router-outlet></router-outlet>
+<ng-container *ngIf="sandbox.errorMessage$ | async as errorMessage; else routerContent">
+  <ng-container *ngIf="errorMessage.length > 1; else singleError">
+    <ul>
+      <li *ngFor="let error of errorMessage">{{ error }}</li>
+    </ul>
+  </ng-container>
+  <ng-template #singleError>
+    <p>{{ errorMessage[0] }}</p>
+  </ng-template>
+</ng-container>
+<ng-template #routerContent>
+  <router-outlet></router-outlet>
+</ng-template>

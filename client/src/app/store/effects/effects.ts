@@ -22,17 +22,9 @@ export class Effects {
       switchMap(([transId, payload]) => {
         return this.commonHttpService.login(payload).pipe(
           map((user) => new LoginUserSuccess([transId, user])),
-          catchError((error: HttpErrorResponse) => {
-            return of(
-              new Failure([
-                transId,
-                {
-                  concern: 'LOGIN_USER',
-                  error,
-                },
-              ])
-            );
-          })
+          catchError((error: HttpErrorResponse) =>
+            of(new Failure([transId, { concern: 'LOGIN_USER', error }]))
+          )
         );
       })
     );
@@ -45,17 +37,9 @@ export class Effects {
       switchMap(([transId, payload]) => {
         return this.commonHttpService.register(payload).pipe(
           map((user) => new RegisterUserSuccess([transId, user])),
-          catchError((error: HttpErrorResponse) => {
-            return of(
-              new Failure([
-                transId,
-                {
-                  concern: 'REGISTER_USER',
-                  error,
-                },
-              ])
-            );
-          })
+          catchError((error: HttpErrorResponse) =>
+            of(new Failure([transId, { concern: 'REGISTER_USER', error }]))
+          )
         );
       })
     );

@@ -21,7 +21,7 @@ public class AccountController(DataContext context) : BaseApiController
 
         var user = new AppUser
         {
-            UserName = registerDto.Username.ToLower(),
+            Username = registerDto.Username.ToLower(),
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key
         };
@@ -34,7 +34,7 @@ public class AccountController(DataContext context) : BaseApiController
 
     private async Task<bool> UserExists(string username)
     {
-        return await context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
+        return await context.Users.AnyAsync(x => x.Username.ToLower() == username.ToLower());
     }
 
     [HttpPost("login")]
@@ -42,7 +42,7 @@ public class AccountController(DataContext context) : BaseApiController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<AppUser>> Login(LoginDto loginDto)
     {
-        var user = await context.Users.SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
+        var user = await context.Users.SingleOrDefaultAsync(x => x.Username == loginDto.Username);
 
         if (user == null) return Unauthorized("Invalid username");
 

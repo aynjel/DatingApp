@@ -1,15 +1,17 @@
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { HttpClientModule } from '@angular/common/http';
-import { ServiceWorkerModule } from '@angular/service-worker';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { MaterialModule } from './material/material.module';
 
 @NgModule({
@@ -30,8 +32,11 @@ import { MaterialModule } from './material/material.module';
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     MaterialModule,
+    NgxSpinnerModule.forRoot(),
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
