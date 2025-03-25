@@ -6,8 +6,8 @@ namespace API.Model.Repository;
 
 public interface IUserRepository
 {
-  Task CreateUser(AppUser user);
-  Task DeleteUser(int id);
+  Task<AppUser> CreateUserAsync(AppUser user);
+  Task<AppUser> DeleteUserAsync(int id);
   Task<IEnumerable<AppUser>> GetAllUser();
   Task<AppUser> GetByIdUser(int id);
   Task UpdateUser(AppUser user);

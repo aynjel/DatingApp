@@ -8,27 +8,22 @@ public class UserService(IUserRepository userRepository) : IUserService
 {
   private readonly IUserRepository _userRepository = userRepository;
 
-    public async Task CreateUserAsync(AppUser user)
+  public async Task CreateUserAsync(AppUser user)
   {
-    await _userRepository.CreateUser(user);
+    await _userRepository.CreateUserAsync(user);
   }
 
   public async Task DeleteUserAsync(int id)
   {
-    await _userRepository.DeleteUser(id);
+    await _userRepository.DeleteUserAsync(id);
   }
 
-    public IEnumerable<AppUser> GetUsers()
-    {
-        var users = new List<AppUser>() {
-      new AppUser() { Id = 1, Username = "User1" },
-      new AppUser() { Id = 2, Username = "User2" },
-      new AppUser() { Id = 3, Username = "User3" }
-    };
-        return users;
-    }
+  public async Task<IEnumerable<AppUser>> GetUsersAsync()
+  {
+    return await _userRepository.GetAllUser();
+  }
 
-    public async Task<AppUser> GetUserAsync(int id)
+  public async Task<AppUser> GetUserAsync(int id)
   {
     return await _userRepository.GetByIdUser(id);
   }

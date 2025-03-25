@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Guid } from 'guid-typescript';
-import { Observable } from 'rxjs';
+import { filter, Observable } from 'rxjs';
 import { NgrxError } from 'src/app/types/error.types';
 import { LoginRequest, RegisterRequest } from '../../types/api/request.models';
 import { TUser } from '../../types/common.types';
@@ -18,12 +18,14 @@ import * as fromStore from '../index';
   providedIn: 'root',
 })
 export class Sandbox {
-  user$: Observable<TUser | null> = this.store.pipe(select(fromStore.getUser));
-  errorMessage$: Observable<string[]> = this.store.pipe(
-    select(fromStore.getErrorMessage)
+  readonly user$: Observable<TUser | null> = this.store.pipe(
+    select(fromStore.getUser)
   );
+  readonly errorMessage$: Observable<string[]>;
 
-  constructor(private store: Store<fromStore.State>) {}
+  constructor(private store: Store<fromStore.State>) {
+    this.errorMessage$ = this.store.pipe(select(fromStore.getErrorMessage));
+  }
 
   login(payload: LoginRequest): Guid {
     const transId = Guid.create();
@@ -50,10 +52,13 @@ export class Sandbox {
   }
 
   isLoading$(transId: Guid): Observable<boolean | undefined> {
-    return this.store.pipe(select(fromStore.getIsLoading(transId)));
+    return this.store.pipe(
+      select(fromStore.getIsLoading, transId),
+      filter((val) => val !== undefined)
+    );
   }
 
   hasFailure$(transId: Guid): Observable<NgrxError | undefined> {
-    return this.store.pipe(select(fromStore.getHasFailure(transId)));
+    return this.store.pipe(select(fromStore.getHasFailure, transId));
   }
 }

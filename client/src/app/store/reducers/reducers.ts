@@ -8,7 +8,7 @@ export interface IState {
   isLoading: Map<Guid, boolean>;
   hasFailure: Map<Guid, NgrxError>;
   user: TUser | null;
-  errorMessage: Array<string>;
+  errorMessage: string[];
 }
 
 export const INITIAL_STATE: IState = {

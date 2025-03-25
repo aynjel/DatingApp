@@ -13,6 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { MaterialModule } from './material/material.module';
+import * as fromReducer from './store/index';
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,8 +29,9 @@ import { MaterialModule } from './material/material.module';
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    StoreModule.forRoot({}, {}),
-    EffectsModule.forRoot([]),
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot(),
+    StoreModule.forFeature(fromReducer.FEATURE_KEY, fromReducer.reducers),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     MaterialModule,
     NgxSpinnerModule.forRoot(),

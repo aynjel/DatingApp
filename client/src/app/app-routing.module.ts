@@ -1,7 +1,7 @@
+import { APP_BASE_HREF } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { APP_BASE_HREF } from '@angular/common';
 import { ProfileComponent } from './pages/profile/profile.component';
 
 const routes: Routes = [

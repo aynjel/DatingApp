@@ -8,17 +8,19 @@ public class UserRepository(DataContext context) : IUserRepository
 {
   private readonly DataContext _context = context;
 
-    public async Task CreateUser(AppUser user)
+    public async Task<AppUser> CreateUserAsync(AppUser user)
   {
     await _context.Users.AddAsync(user);
     await _context.SaveChangesAsync();
+    return user;
   }
 
-  public async Task DeleteUser(int id)
+  public async Task<AppUser> DeleteUserAsync(int id)
   {
     var user = await _context.Users.FindAsync(id);
     _context.Users.Remove(user);
     await _context.SaveChangesAsync();
+    return user;
   }
 
   public async Task<IEnumerable<AppUser>> GetAllUser()
