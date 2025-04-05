@@ -1,8 +1,8 @@
 import { TUser } from '../common.types';
 
-export type LoginRequest = Pick<TUser, 'email' | 'password'>;
+export type LoginRequest = Pick<TUser, 'username' | 'password'>;
 
 export type RegisterRequest = Pick<
   TUser,
-  'email' | 'password' | 'firstName' | 'middleName' | 'lastName'
+  'username' | 'password' | 'firstName' | 'middleName' | 'lastName'
 >;

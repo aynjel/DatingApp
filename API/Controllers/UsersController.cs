@@ -1,42 +1,63 @@
 using API.Entities;
-using API.Model.Repository;
+using API.Model.DTO;
+using API.Model.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class UsersController(IUserRepository userRepository) : BaseApiController
+public class UsersController(IUserService userService) : BaseApiController
 {
-    // private readonly IUserService _userService = userService;
-    private readonly IUserRepository _userRepository = userRepository;
-
     [HttpGet]
-    public async Task<IEnumerable<AppUser>> GetUsers()
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
     {
-        // return await _userService.GetUsersAsync();
-        return await _userRepository.GetAllUser();
+        var users = await userService.GetUsersAsync();
+        if (users == null) return NotFound("No users found");
+        return Ok(users);
     }
 
-    // [HttpGet("{id}")]
-    // public async Task<AppUser> GetUser(int id)
-    // {
-    //     return await _userService.GetUserAsync(id);
-    // }
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<AppUser>> GetUser([FromRoute] int id)
+    {
+        var user = await userService.GetUserAsync(id);
+        if (user == null) return NotFound("User not found");
+        return Ok(user);
+    }
 
-    // [HttpPost]
-    // public async Task CreateUser(AppUser user)
-    // {
-    //     await _userService.CreateUserAsync(user);
-    // }
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<AppUser>> CreateUser([FromBody] CreateUserDto userDto)
+    {
+        if (userDto == null) return BadRequest("Invalid user data");
 
-    // [HttpPut]
-    // public async Task UpdateUser(AppUser user)
-    // {
-    //     await _userService.UpdateUserAsync(user);
-    // }
+        var newUser = await userService.CreateUserAsync(userDto);
+        return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, newUser);
+    }
 
-    // [HttpDelete("{id}")]
-    // public async Task DeleteUser(int id)
-    // {
-    //     await _userService.DeleteUserAsync(id);
-    // }
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<AppUser>> UpdateUser(int id, [FromBody] AppUser user)
+    {
+        if (id != user.Id) return BadRequest("User ID mismatch");
+
+        var updatedUser = await userService.UpdateUserAsync(user);
+        if (updatedUser == null) return NotFound("User not found");
+        return Ok(updatedUser);
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<AppUser>> DeleteUser(int id)
+    {
+        var deletedUser = await userService.DeleteUserAsync(id);
+        if (deletedUser == null) return NotFound("User not found");
+        return Ok(deletedUser);
+    }
 }

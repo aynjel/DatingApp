@@ -2,9 +2,15 @@ import { APP_BASE_HREF } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
+import { LoginComponent } from './pages/login/login.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 
 const routes: Routes = [
+  {
+    path: 'login',
+    component: LoginComponent,
+    title: 'Login',
+  },
   {
     path: 'home',
     component: HomeComponent,

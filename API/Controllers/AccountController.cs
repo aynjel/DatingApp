@@ -3,44 +3,18 @@ using System.Text;
 using API.Data;
 using API.Entities;
 using API.Model.DTO;
+using API.Model.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class AccountController(DataContext context) : BaseApiController
+public class AccountController(DataContext context, IGenerateJWTService generateJWTService) : BaseApiController
 {
-    [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<AppUser>> Register(RegisterDto registerDto)
-    {
-        if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
-
-        using var hmac = new HMACSHA512();
-
-        var user = new AppUser
-        {
-            Username = registerDto.Username.ToLower(),
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-            PasswordSalt = hmac.Key
-        };
-
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
-
-        return Ok(user);
-    }
-
-    private async Task<bool> UserExists(string username)
-    {
-        return await context.Users.AnyAsync(x => x.Username.ToLower() == username.ToLower());
-    }
-
-    [HttpPost("login")]
+    [HttpPost("Login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<AppUser>> Login(LoginDto loginDto)
+    public async Task<ActionResult<AppUser>> Login([FromBody] LoginDto loginDto)
     {
         var user = await context.Users.SingleOrDefaultAsync(x => x.Username == loginDto.Username);
 
@@ -55,6 +29,9 @@ public class AccountController(DataContext context) : BaseApiController
             if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
         }
 
-        return Ok(user);
+        return Ok(new
+        {
+            token = generateJWTService.GenerateJWTToken(user.Username)
+        });
     }
 }

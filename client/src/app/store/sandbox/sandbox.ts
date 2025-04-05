@@ -18,12 +18,11 @@ import * as fromStore from '../index';
   providedIn: 'root',
 })
 export class Sandbox {
-  readonly user$: Observable<TUser | null> = this.store.pipe(
-    select(fromStore.getUser)
-  );
+  readonly user$: Observable<TUser | null>;
   readonly errorMessage$: Observable<string[]>;
 
   constructor(private store: Store<fromStore.State>) {
+    this.user$ = this.store.pipe(select(fromStore.getUser));
     this.errorMessage$ = this.store.pipe(select(fromStore.getErrorMessage));
   }
 

@@ -13,10 +13,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { MaterialModule } from './material/material.module';
+import { LoginComponent } from './pages/login/login.component';
+import { Effects } from './store/effects/effects';
 import * as fromReducer from './store/index';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, LoginComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -30,8 +32,8 @@ import * as fromReducer from './store/index';
       registrationStrategy: 'registerWhenStable:30000',
     }),
     StoreModule.forRoot({}),
-    EffectsModule.forRoot(),
     StoreModule.forFeature(fromReducer.FEATURE_KEY, fromReducer.reducers),
+    EffectsModule.forRoot([Effects]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     MaterialModule,
     NgxSpinnerModule.forRoot(),
