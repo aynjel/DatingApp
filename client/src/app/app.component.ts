@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Sandbox } from './store/sandbox/sandbox';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { filter, map, Observable } from 'rxjs';
+import {
+  ErrorService,
+  ErrorState,
+  ErrorStatus,
+} from './services/error.service';
 
 @Component({
   selector: 'app-root',
@@ -9,13 +13,25 @@ import { Sandbox } from './store/sandbox/sandbox';
 export class AppComponent implements OnInit {
   title = 'DatingApp';
 
-  errorMessage$: Observable<string[]> = this.sandbox.errorMessage$;
+  @ViewChild('error', { static: false }) error: ElementRef | undefined;
 
-  constructor(private sandbox: Sandbox) {}
+  errorMessages$: Observable<ErrorState[]> = this.errorService.errors$.pipe(
+    filter((error) => !!error),
+    map((error) => {
+      if (this.error) {
+        this.error.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      }
+      return error;
+    })
+  );
+
+  constructor(private errorService: ErrorService) {}
 
   ngOnInit(): void {
-    this.sandbox.errorMessage$.subscribe((e) => {
-      console.log(e);
+    this.errorService.setError({
+      key: 'testError',
+      message: 'This is a test error message',
+      status: ErrorStatus.ERROR,
     });
   }
 }

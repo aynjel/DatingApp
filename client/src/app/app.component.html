@@ -1,9 +1,11 @@
-<ng-container *ngIf="errorMessage$ | async as errorMessage">
-  <ng-container *ngIf="errorMessage.length > 0">
-    <ul>
-      <li *ngFor="let error of errorMessage">{{ error }}</li>
-    </ul>
+<div #error>
+  <ng-container *ngIf="errorMessages$ | async as errorMessages">
+    <ng-container *ngIf="errorMessages.length > 0">
+      <ul>
+        <li *ngFor="let error of errorMessages">{{ error }}</li>
+      </ul>
+    </ng-container>
   </ng-container>
-</ng-container>
+</div>
 
 <router-outlet></router-outlet>

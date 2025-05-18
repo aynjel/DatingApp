@@ -1,23 +1,22 @@
 using System.Security.Cryptography;
 using System.Text;
 using API.Entities;
-using API.Model.DTO;
-using API.Model.Repository;
-using API.Model.Services;
-using Microsoft.AspNetCore.Mvc;
+using API.Model.DTO.Request;
+using API.Interfaces.Repository;
+using API.Interfaces.Services;
 
 namespace API.Services;
 
 public class UserService(IUserRepository userRepository) : IUserService
 {
-  public async Task<AppUser> CreateUserAsync(CreateUserDto user)
+  public async Task<UserEntity> CreateUserAsync(CreateUserDto user)
   {
     if (await userRepository.GetByUsernameAsync(user.Username) != null)
       throw new Exception("Username already exists");
 
     using var hmac = new HMACSHA512();
 
-    var newUser = new AppUser
+    var newUser = new UserEntity
     {
       Username = user.Username.ToLower(),
       PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
@@ -26,22 +25,22 @@ public class UserService(IUserRepository userRepository) : IUserService
     return await userRepository.CreateUserAsync(newUser);
   }
 
-  public async Task<AppUser> DeleteUserAsync(int id)
+  public async Task<UserEntity> DeleteUserAsync(int id)
   {
     return await userRepository.DeleteUserAsync(id);
   }
 
-  public async Task<IEnumerable<AppUser>> GetUsersAsync()
+  public async Task<IEnumerable<UserEntity>> GetUsersAsync()
   {
     return await userRepository.GetAllUserAsync();
   }
 
-  public async Task<AppUser> GetUserAsync(int id)
+  public async Task<UserEntity> GetUserAsync(int id)
   {
     return await userRepository.GetByIdUserAsync(id);
   }
 
-  public async Task<AppUser> UpdateUserAsync(AppUser user)
+  public async Task<UserEntity> UpdateUserAsync(UserEntity user)
   {
     return await userRepository.UpdateUserAsync(user);
   }

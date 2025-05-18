@@ -1,6 +1,4 @@
-using System;
-
-namespace API.Model.Services;
+namespace API.Interfaces.Services;
 
 public interface IGenerateJWTService
 {

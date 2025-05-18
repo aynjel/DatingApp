@@ -1,8 +1,7 @@
-import { NgModule, isDevMode } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { NgModule, isDevMode } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { EffectsModule } from '@ngrx/effects';
@@ -27,11 +26,9 @@ import * as fromReducer from './store/index';
     ReactiveFormsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
-      // Register the ServiceWorker as soon as the application is stable
-      // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    StoreModule.forRoot({}),
+    StoreModule.forRoot(fromReducer.reducers),
     StoreModule.forFeature(fromReducer.FEATURE_KEY, fromReducer.reducers),
     EffectsModule.forRoot([Effects]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),

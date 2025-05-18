@@ -2,19 +2,21 @@ using System.Security.Cryptography;
 using System.Text;
 using API.Data;
 using API.Entities;
-using API.Model.DTO;
-using API.Model.Services;
+using API.Model.DTO.Request;
+using API.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class AccountController(DataContext context, IGenerateJWTService generateJWTService) : BaseApiController
+[ApiController]
+[Route("api/[controller]")]
+public class AccountController(DataContext context, IGenerateJWTService generateJWTService) : ControllerBase
 {
     [HttpPost("Login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<AppUser>> Login([FromBody] LoginDto loginDto)
+    public async Task<ActionResult<UserEntity>> Login([FromBody] LoginDto loginDto)
     {
         var user = await context.Users.SingleOrDefaultAsync(x => x.Username == loginDto.Username);
 
