@@ -16,7 +16,7 @@ public class AccountController(DataContext context, IGenerateJWTService generate
     [HttpPost("Login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<UserEntity>> Login([FromBody] LoginDto loginDto)
+    public async Task<ActionResult<UserEntity>> Login([FromBody] LoginRequestDto loginDto)
     {
         var user = await context.Users.SingleOrDefaultAsync(x => x.Username == loginDto.Username);
 

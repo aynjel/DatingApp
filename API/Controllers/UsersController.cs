@@ -32,7 +32,7 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserEntity>> CreateUser([FromBody] CreateUserDto userDto)
+    public async Task<ActionResult<UserEntity>> CreateUser([FromBody] CreateUserRequestDto userDto)
     {
         if (userDto == null) return BadRequest("Invalid user data");
 

@@ -1,8 +1,8 @@
 using System.Text;
 using API.Data;
 using API.Data.Repository;
-using API.Model.Repository;
-using API.Model.Services;
+using API.Interfaces.Repository;
+using API.Interfaces.Services;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

@@ -9,39 +9,28 @@ namespace API.Services;
 
 public class UserService(IUserRepository userRepository) : IUserService
 {
-  public async Task<UserEntity> CreateUserAsync(CreateUserDto user)
-  {
-    if (await userRepository.GetByUsernameAsync(user.Username) != null)
-      throw new Exception("Username already exists");
-
-    using var hmac = new HMACSHA512();
-
-    var newUser = new UserEntity
+    Task<UserEntity> IUserService.CreateUserAsync(CreateUserRequestDto user)
     {
-      Username = user.Username.ToLower(),
-      PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password)),
-      PasswordSalt = hmac.Key
-    };
-    return await userRepository.CreateUserAsync(newUser);
-  }
+        throw new NotImplementedException();
+    }
 
-  public async Task<UserEntity> DeleteUserAsync(int id)
-  {
-    return await userRepository.DeleteUserAsync(id);
-  }
+    Task<UserEntity> IUserService.DeleteUserAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
 
-  public async Task<IEnumerable<UserEntity>> GetUsersAsync()
-  {
-    return await userRepository.GetAllUserAsync();
-  }
+    Task<UserEntity> IUserService.GetUserAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
 
-  public async Task<UserEntity> GetUserAsync(int id)
-  {
-    return await userRepository.GetByIdUserAsync(id);
-  }
+    Task<IEnumerable<UserEntity>> IUserService.GetUsersAsync()
+    {
+        throw new NotImplementedException();
+    }
 
-  public async Task<UserEntity> UpdateUserAsync(UserEntity user)
-  {
-    return await userRepository.UpdateUserAsync(user);
-  }
+    Task<UserEntity> IUserService.UpdateUserAsync(UserEntity user)
+    {
+        throw new NotImplementedException();
+    }
 }

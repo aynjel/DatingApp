@@ -7,7 +7,7 @@ public interface IUserService
 {
   Task<IEnumerable<UserEntity>> GetUsersAsync();
   Task<UserEntity> GetUserAsync(int id);
-  Task<UserEntity> CreateUserAsync(CreateUserDto user);
+  Task<UserEntity> CreateUserAsync(CreateUserRequestDto user);
   Task<UserEntity> UpdateUserAsync(UserEntity user);
   Task<UserEntity> DeleteUserAsync(int id);
 }
