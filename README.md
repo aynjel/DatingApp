@@ -1,3 +1,3 @@
 ## DatingApp
 
-- Following the tutorial from Udemy
+- Personal Project 
