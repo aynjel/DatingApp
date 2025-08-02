@@ -1,7 +1,4 @@
-using System.Security.Cryptography;
-using System.Text;
 using API.Entities;
-using API.Model.DTO.Request;
 using API.Interfaces.Repository;
 using API.Interfaces.Services;
 
@@ -9,28 +6,18 @@ namespace API.Services;
 
 public class UserService(IUserRepository userRepository) : IUserService
 {
-    Task<UserEntity> IUserService.CreateUserAsync(CreateUserRequestDto user)
+    public async Task<IEnumerable<UserEntity>> GetUsersAsync()
     {
-        throw new NotImplementedException();
+        return await userRepository.GetUsersAsync();
     }
 
-    Task<UserEntity> IUserService.DeleteUserAsync(int id)
+    public async Task<UserEntity> GetUserByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await userRepository.GetByIdAsync(id);
     }
 
-    Task<UserEntity> IUserService.GetUserAsync(int id)
+    public async Task<UserEntity> GetUserByUsernameAsync(string username)
     {
-        throw new NotImplementedException();
-    }
-
-    Task<IEnumerable<UserEntity>> IUserService.GetUsersAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<UserEntity> IUserService.UpdateUserAsync(UserEntity user)
-    {
-        throw new NotImplementedException();
+        return await userRepository.GetByUsernameAsync(username);
     }
 }

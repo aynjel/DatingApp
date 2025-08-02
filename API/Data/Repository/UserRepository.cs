@@ -1,32 +1,23 @@
 using API.Entities;
 using API.Interfaces.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Data.Repository;
 
 public class UserRepository(DataContext context) : IUserRepository
 {
-    Task<UserEntity> IUserRepository.GetByIdUserAsync(int id)
+    public async Task<IEnumerable<UserEntity>> GetUsersAsync()
     {
-        throw new NotImplementedException();
+        return await context.Users.ToListAsync();
     }
 
-    Task<UserEntity> IUserRepository.GetByUsernameAsync(string username)
+    public async Task<UserEntity> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await context.Users.FindAsync(id);
     }
 
-    Task<IEnumerable<UserEntity>> IUserRepository.GetUsersAsync()
+    public async Task<UserEntity> GetByUsernameAsync(string username)
     {
-        throw new NotImplementedException();
-    }
-
-    Task<bool> IUserRepository.SaveAllAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    void IUserRepository.Update(UserEntity user)
-    {
-        throw new NotImplementedException();
+        return await context.Users.FirstOrDefaultAsync(u => u.Username == username);
     }
 }
