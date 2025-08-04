@@ -1,10 +1,10 @@
-using API.Entities;
+using API.Model.DTO.Response;
 
 namespace API.Interfaces.Services;
 
 public interface IUserService
 {
-  Task<IEnumerable<UserEntity>> GetUsersAsync();
-  Task<UserEntity> GetUserByIdAsync(int id);
-  Task<UserEntity> GetUserByUsernameAsync(string username);
+  Task<IEnumerable<UserDetailsResponseDto>> GetUsersAsync();
+  Task<UserDetailsResponseDto> GetUserByIdAsync(string id);
+  Task<UserDetailsResponseDto> GetUserByUsernameAsync(string username);
 }

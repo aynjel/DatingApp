@@ -1,12 +1,11 @@
 using System.Text;
+using System.Text.Json;
 using API.Data;
 using API.Data.Repository;
 using API.Interfaces.Repository;
 using API.Interfaces.Services;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -91,6 +90,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapGet("/", () =>
+{
+    if (app.Environment.IsDevelopment())
+    {
+        var dataAsJson = JsonSerializer.Serialize(new
+        {
+            Message = "Welcome to the DatingApp API",
+            Version = "v1",
+            Documentation = "Visit /swagger for API documentation and testing: https://localhost:5001/swagger",
+            AdditionalInfo = "This is a sample API for a dating application."
+        });
+        return Results.Content(dataAsJson, "application/json");
+    }
+    return Results.Content("Welcome to the DatingApp API", "text/plain");
+});
 
 // Middleware pipeline
 app.UseHttpsRedirection();
