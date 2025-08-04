@@ -14,14 +14,7 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS policy
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy => policy
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-    );
-});
+builder.Services.AddCors();
 
 // Add Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -110,7 +103,11 @@ app.MapGet("/", () =>
 // Middleware pipeline
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+app.UseCors(x => x
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .WithOrigins("http://localhost:4200", "https://localhost:4200")
+);
 
 app.UseAuthentication();
 app.UseAuthorization();
