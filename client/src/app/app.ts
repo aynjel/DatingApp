@@ -5,7 +5,10 @@ import { Users } from './services/users';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
-  template: ` <router-outlet /> `,
+  template: `
+    <router-outlet />
+    <button class="btn btn-secondary">Secondary</button>
+  `,
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
@@ -15,6 +18,7 @@ export class App implements OnInit {
     this.userService.getUsers().subscribe({
       next: (users) => console.log('Users fetched:', users),
       error: (err) => console.error('Error fetching users:', err),
+      complete: () => console.log('Completed'),
     });
   }
 }
