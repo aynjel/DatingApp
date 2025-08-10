@@ -1,24 +1,18 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Users } from './services/users';
+import { Nav } from './layouts/nav/nav';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, Nav],
   template: `
+    <app-nav />
     <router-outlet />
-    <button class="btn btn-secondary">Secondary</button>
   `,
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
-  private userService = inject(Users);
-
   ngOnInit(): void {
-    this.userService.getUsers().subscribe({
-      next: (users) => console.log('Users fetched:', users),
-      error: (err) => console.error('Error fetching users:', err),
-      complete: () => console.log('Completed'),
-    });
+    console.log('App initialized');
   }
 }
