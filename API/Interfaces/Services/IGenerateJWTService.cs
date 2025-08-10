@@ -1,6 +1,8 @@
+using API.Entities;
+
 namespace API.Interfaces.Services;
 
 public interface IGenerateJWTService
 {
-    string GenerateJWTToken(string key);
+    string GenerateToken(UserEntity key);
 }

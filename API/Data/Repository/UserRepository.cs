@@ -50,4 +50,27 @@ public class UserRepository(DataContext context) : IUserRepository
             LastName = user.LastName
         };
     }
+
+    public async Task<bool> UserExistsAsync(string username, string email)
+    {
+        return await context.Users.AnyAsync(u => u.Username == username || u.Email == email);
+    }
+
+    public async Task<UserEntity> CreateUserAsync(UserEntity user)
+    {
+        await context.Users.AddAsync(user);
+        await context.SaveChangesAsync();
+        return user;
+    }
+
+    public async Task<UserEntity> GetUserEntityAsync(string id)
+    {
+        return await context.Users.FindAsync(id);
+    }
+
+    public async Task<string> GetUserIdByUsernameAsync(string username)
+    {
+        var user = await context.Users.SingleOrDefaultAsync(u => u.Username == username);
+        return user?.Id.ToString();
+    }
 }

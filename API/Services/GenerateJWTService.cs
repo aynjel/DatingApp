@@ -3,29 +3,37 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using API.Interfaces.Services;
+using API.Entities;
 
 namespace API.Services;
 
-public class GenerateJWTService : IGenerateJWTService
+public class GenerateJWTService(IConfiguration config) : IGenerateJWTService
 {
-  public string GenerateJWTToken(string value)
+  public string GenerateToken(UserEntity user)
   {
-    var claims = new[]
+    var tokenKey = config["TokenKey"] ?? throw new Exception("TokenKey is not configured in appsettings.json");
+    if (tokenKey.Length < 64)
     {
-      new Claim(JwtRegisteredClaimNames.Sub, value),
-      new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+      throw new Exception("TokenKey must be at least 64 characters long");
+    }
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
+    var claims = new List<Claim>
+    {
+      new(ClaimTypes.Email, user.Email),
+      new(ClaimTypes.NameIdentifier, user.Id),
     };
 
-    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("eqf34f3e-3f4e-4f3e-3f4e-4f3e-3f4e-4f3e"));
-    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-    var token = new JwtSecurityToken(
-        issuer: "yourdomain.com",
-        audience: "yourdomain.com",
-        claims: claims,
-        expires: DateTime.Now.AddMinutes(30),
-        signingCredentials: creds);
+    var tokenDescriptor = new SecurityTokenDescriptor
+    {
+      Subject = new ClaimsIdentity(claims),
+      Expires = DateTime.UtcNow.AddHours(1),
+      SigningCredentials = creds
+    };
 
-    return new JwtSecurityTokenHandler().WriteToken(token);
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var token = tokenHandler.CreateToken(tokenDescriptor);
+    return tokenHandler.WriteToken(token);
   }
 }

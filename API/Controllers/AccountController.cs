@@ -1,39 +1,41 @@
-using System.Security.Cryptography;
-using System.Text;
-using API.Data;
 using API.Entities;
-using API.Model.DTO.Request;
 using API.Interfaces.Services;
+using API.Model.DTO.Request;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AccountController(DataContext context, IGenerateJWTService generateJWTService) : ControllerBase
+public class AccountController(IUserService userService) : BaseController
 {
-    [HttpPost("Login")]
+    [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<UserEntity>> Login([FromBody] LoginRequestDto loginDto)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<UserEntity>> Register([FromBody] CreateUserRequestDto registerDto)
     {
-        var user = await context.Users.SingleOrDefaultAsync(x => x.Username == loginDto.Username);
-
-        if (user == null) return Unauthorized("Invalid username");
-
-        using var hmac = new HMACSHA512(user.PasswordSalt);
-
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-
-        for (int i = 0; i < computedHash.Length; i++)
+        try
         {
-            if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
+            var user = await userService.CreateUserAsync(registerDto);
+            return Ok(user);
         }
-
-        return Ok(new
+        catch (InvalidOperationException er)
         {
-            token = generateJWTService.GenerateJWTToken(user.Username)
-        });
+            return BadRequest(er.Message);
+        }
+    }
+
+    [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<string>> Login([FromBody] LoginRequestDto loginDto)
+    {
+        try
+        {
+            var token = await userService.AuthenticateUserAsync(loginDto);
+            return Ok(token);
+        }
+        catch (InvalidOperationException er)
+        {
+            return BadRequest(er.Message);
+        }
     }
 }
