@@ -26,7 +26,8 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"]
+            "styles": ["src/styles.scss"],
+            "outputPath": "dist/DatingApp"
           },
           "configurations": {
             "production": {
@@ -91,6 +92,9 @@
             ],
             "styles": ["src/styles.scss"]
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
