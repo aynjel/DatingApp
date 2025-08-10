@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using API.Entities;
+using API.Extensions;
 using API.Interfaces.Repository;
 using API.Interfaces.Services;
 using API.Model.DTO.Request;
@@ -25,7 +26,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         return await userRepository.GetByUsernameAsync(username);
     }
 
-    public async Task<UserDetailsResponseDto> CreateUserAsync(CreateUserRequestDto registerDto)
+    public async Task<UserAccountResponseDto> CreateUserAsync(CreateUserRequestDto registerDto)
     {
         // Check if user already exists
         if (await userRepository.UserExistsAsync(registerDto.Username, registerDto.Email))
@@ -51,17 +52,10 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         var createdUser = await userRepository.CreateUserAsync(user);
 
         // Return user details response
-        return new UserDetailsResponseDto
-        {
-            UserId = createdUser.Id,
-            FirstName = createdUser.FirstName,
-            LastName = createdUser.LastName,
-            Username = createdUser.Username,
-            Email = createdUser.Email
-        };
+        return createdUser.ToDto(jwtService);
     }
 
-    public async Task<LoginDetailsResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
+    public async Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
     {
         // Validate user credentials
         var userId = await userRepository.GetUserIdByUsernameAsync(loginDto.Username);
@@ -71,16 +65,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
             throw new InvalidOperationException("Invalid username or password");
         }
 
-        return new LoginDetailsResponseDto
-        {
-            UserId = userEntity.Id,
-            FirstName = userEntity.FirstName,
-            LastName = userEntity.LastName,
-            Username = userEntity.Username,
-            Email = userEntity.Email,
-            Token = jwtService.GenerateToken(userEntity),
-            Expiration = DateTime.UtcNow.AddHours(1) // Set token expiration to 1 hour
-        };
+        return userEntity.ToDto(jwtService);
     }
 
     #region Private Methods

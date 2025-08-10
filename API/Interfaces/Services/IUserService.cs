@@ -8,6 +8,6 @@ public interface IUserService
   Task<IEnumerable<UserDetailsResponseDto>> GetUsersAsync();
   Task<UserDetailsResponseDto> GetUserByIdAsync(string id);
   Task<UserDetailsResponseDto> GetUserByUsernameAsync(string username);
-  Task<UserDetailsResponseDto> CreateUserAsync(CreateUserRequestDto registerDto);
-  Task<LoginDetailsResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto);
+  Task<UserAccountResponseDto> CreateUserAsync(CreateUserRequestDto registerDto);
+  Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto);
 }

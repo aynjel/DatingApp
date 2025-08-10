@@ -1,9 +1,11 @@
 using API.Interfaces.Services;
 using API.Model.DTO.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
+[Authorize]
 public class UsersController(IUserService userService, ILogger<UsersController> logger) : BaseController
 {
     [HttpGet]

@@ -15,6 +15,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS policy
 builder.Services.AddCors();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var tokenKey = builder.Configuration["TokenKey"] ?? throw new InvalidOperationException("TokenKey is not configured - Program.cs");
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
 
 // Add Logging
 builder.Host.UseSerilog((context, configuration) =>
