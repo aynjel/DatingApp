@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { LoginUserRequest } from '../models/dto/request/login-user.request';
+import { LoginUserResponse } from '../models/dto/response/login-user.response';
 
 @Injectable({
   providedIn: 'root',
@@ -12,15 +14,15 @@ export class Auth {
 
   public isLoggedIn = signal(false);
 
-  login(username: string, password: string) {
+  login(payload: LoginUserRequest): Observable<LoginUserResponse> {
     return this.http
-      .post(this.baseUrl, { username, password })
+      .post<LoginUserResponse>(this.baseUrl, payload)
       .pipe(tap(() => this.isLoggedIn.set(true)));
   }
 
-  logout() {
+  logout(): Observable<void> {
     return this.http
-      .post(environment.apiUrl + '/account/logout', {})
+      .post<void>(environment.apiUrl + '/account/logout', {})
       .pipe(tap(() => this.isLoggedIn.set(false)));
   }
 }

@@ -1,6 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { Users } from '../../shared/services/users';
+import { Users } from '@service/users';
 
 @Component({
   selector: 'app-users-list',
