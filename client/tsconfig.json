@@ -19,7 +19,8 @@
       "@model/*": ["src/app/shared/models/*"],
       "@service/*": ["src/app/shared/services/*"],
       "@layout/*": ["src/app/layouts/*"],
-      "@component/*": ["src/app/components/*"]
+      "@component/*": ["src/app/components/*"],
+      "@env/*": ["src/environments/*"]
     }
   },
   "angularCompilerOptions": {

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Nav } from './layouts/nav/nav';
+import { Auth } from './shared/services/auth';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,9 @@ import { Nav } from './layouts/nav/nav';
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
+  private readonly authService = inject(Auth);
+
   ngOnInit(): void {
-    console.log('App initialized');
+    this.authService.retrieveUserAccount();
   }
 }
