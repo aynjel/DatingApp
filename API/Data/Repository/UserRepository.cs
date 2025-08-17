@@ -73,4 +73,20 @@ public class UserRepository(DataContext context) : IUserRepository
         var user = await context.Users.SingleOrDefaultAsync(u => u.Username == username);
         return user?.Id.ToString();
     }
+
+    public async Task<UserAccountResponseDto> GetUserByIdAsync(string id)
+    {
+        var user = await context.Users.FindAsync(id);
+        if (user == null) return null;
+
+        return new UserAccountResponseDto
+        {
+            UserId = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName
+        };
+    }
+
 }

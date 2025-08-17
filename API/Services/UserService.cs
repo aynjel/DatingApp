@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using API.Entities;
@@ -66,6 +67,25 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         }
 
         return userEntity.ToDto(jwtService);
+    }
+
+    public async Task<UserAccountResponseDto> GetLoggedInUserAsync()
+    {
+        // Get user ID from claims
+        var userId = ClaimsPrincipal.Current?.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new InvalidOperationException("User is not logged in");
+        }
+
+        // Retrieve user by ID
+        var user = await userRepository.GetUserByIdAsync(userId);
+        if (user is null)
+        {
+            throw new InvalidOperationException("User not found");
+        }
+
+        return user;
     }
 
     #region Private Methods

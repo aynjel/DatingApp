@@ -12,4 +12,5 @@ public interface IUserRepository
   Task<UserEntity> CreateUserAsync(UserEntity user);
   Task<UserEntity> GetUserEntityAsync(string id);
   Task<string> GetUserIdByUsernameAsync(string username);
+  Task<UserAccountResponseDto> GetUserByIdAsync(string id);
 }

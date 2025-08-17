@@ -16,10 +16,11 @@
     "module": "preserve",
     "baseUrl": "./",
     "paths": {
+      "@component/*": ["src/app/shared/components/*"],
       "@model/*": ["src/app/shared/models/*"],
       "@service/*": ["src/app/shared/services/*"],
       "@layout/*": ["src/app/layouts/*"],
-      "@component/*": ["src/app/components/*"],
+      "@page/*": ["src/app/pages/*"],
       "@env/*": ["src/environments/*"]
     }
   },

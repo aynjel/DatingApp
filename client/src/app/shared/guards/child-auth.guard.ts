@@ -5,5 +5,5 @@ import { Auth } from '@service/auth';
 export const childAuthGuard: CanActivateChildFn = (childRoute, state) => {
   const authService = inject(Auth);
 
-  return authService.isAuthenticated();
+  return authService.isLoggedIn();
 };

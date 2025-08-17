@@ -1,8 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
-@plugin "daisyui";
-
-html {
-  // bg-base-300
-  background-color: #f0f4f8;
+@plugin "daisyui" {
+  themes: light --prefersdark, dark --default;
+  // themes: light --default, dark --prefersdark, cupcake;
 }

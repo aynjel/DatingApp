@@ -4,19 +4,23 @@ import { environment } from '@env/environment';
 import { LoginUserRequest } from '@model/dto/request/login-user.request';
 import { LoginUserResponse } from '@model/dto/response/login-user.response';
 import { User, UserRole, UserRoleEnum } from '@model/user';
+import { CookieService } from 'ngx-cookie-service';
 import { Observable, tap } from 'rxjs';
+import { RegisterUserRequest } from '../models/dto/request/register-user.request';
+import { RegisterUserResponse } from '../models/dto/response/register-user.response';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Auth {
   private http = inject(HttpClient);
+  private cookieService = inject(CookieService);
 
   private readonly baseUrl = environment.apiUrl + '/account';
 
-  private role = signal<UserRole>(UserRoleEnum.USER);
-  private userAccountData = signal<User | undefined>(undefined);
-  private isLoggedIn = signal(false);
+  public role = signal<UserRole>(UserRoleEnum.GUEST);
+  public userAccountData = signal<User | undefined>(undefined);
+  public isLoggedIn = signal(false);
 
   retrieveUserAccount(): void {
     if (this.userAccountData() === undefined) {
@@ -33,11 +37,14 @@ export class Auth {
   }
 
   login(payload: LoginUserRequest): Observable<LoginUserResponse> {
-    return this.http.post<LoginUserResponse>(this.baseUrl, payload).pipe(
-      tap((response) => {
-        this.setUserAccountData(response);
-      })
-    );
+    return this.http
+      .post<LoginUserResponse>(this.baseUrl + '/login', payload)
+      .pipe(
+        tap((response) => {
+          this.cookieService.set('token', response.token);
+          this.setUserAccountData(response);
+        })
+      );
   }
 
   logout(): Observable<void> {
@@ -45,9 +52,21 @@ export class Auth {
       tap(() => {
         this.isLoggedIn.set(false);
         this.userAccountData.set(undefined);
-        this.role.set(UserRoleEnum.USER);
+        this.role.set(UserRoleEnum.GUEST);
       })
     );
+  }
+
+  registerUser(
+    registerPayload: RegisterUserRequest
+  ): Observable<RegisterUserResponse> {
+    return this.http
+      .post<RegisterUserResponse>(this.baseUrl + '/register', registerPayload)
+      .pipe(
+        tap((response) => {
+          this.cookieService.set('token', response.token);
+        })
+      );
   }
 
   private setUserAccountData(userResponse: LoginUserResponse): void {
@@ -55,18 +74,4 @@ export class Auth {
     this.isLoggedIn.set(true);
     this.role.set(userResponse.role);
   }
-
-  //#region Getters
-  getUserAccountData(): User | undefined {
-    return this.userAccountData();
-  }
-
-  isAuthenticated(): boolean {
-    return this.isLoggedIn();
-  }
-
-  getRole(): UserRole {
-    return this.role();
-  }
-  //#endregion
 }

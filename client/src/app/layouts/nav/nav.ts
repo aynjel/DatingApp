@@ -5,19 +5,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { LoginUserRequest } from '../../shared/models/dto/request/login-user.request';
 import { Auth } from '../../shared/services/auth';
 
 @Component({
   selector: 'app-nav',
   imports: [ReactiveFormsModule],
   templateUrl: './nav.html',
-  styleUrl: './nav.scss',
 })
 export class Nav {
-  private authService = inject(Auth);
   private formBuilder = inject(FormBuilder);
-
-  protected isLoggedIn = this.authService.isLoggedIn;
+  public authService = inject(Auth);
 
   protected loginForm = this.formBuilder.group({
     username: new FormControl('', [
@@ -33,21 +31,22 @@ export class Nav {
   });
 
   protected onSubmit(): void {
-    if (this.loginForm.valid) {
-      const { username, password } = this.loginForm.getRawValue();
-
-      // Handle login logic here
-      this.authService.login(username!, password!).subscribe({
-        next: (response) => {
-          console.log('Login successful', response);
-        },
-        error: (error) => {
-          alert('Login failed: ' + error.error);
-        },
-      });
-    } else {
-      alert('Form is invalid. Please check your input.');
+    if (!this.loginForm.valid) {
+      return;
     }
+
+    const loginCredentials: LoginUserRequest =
+      this.loginForm.getRawValue() as LoginUserRequest;
+
+    // Handle login logic here
+    this.authService.login(loginCredentials).subscribe({
+      next: (response) => {
+        console.log('Login successful', response);
+      },
+      error: (error) => {
+        alert('Login failed: ' + error.error);
+      },
+    });
   }
 
   protected onLogout(): void {

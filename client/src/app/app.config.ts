@@ -15,7 +15,7 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 import { routes } from './app.routes';
-import { jwtInterceptor } from './shared/jwt-interceptor';
+import { jwtInterceptor } from './shared/interceptors/jwt-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [

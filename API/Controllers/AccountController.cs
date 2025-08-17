@@ -38,4 +38,20 @@ public class AccountController(IUserService userService) : BaseController
             return BadRequest(er.Message);
         }
     }
+
+    [HttpGet("user")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<string>> GetUser()
+    {
+        try
+        {
+            var user = await userService.GetLoggedInUserAsync();
+            return Ok(user);
+        }
+        catch (InvalidOperationException er)
+        {
+            return BadRequest(er.Message);
+        }
+    }
 }

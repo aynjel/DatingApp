@@ -8,14 +8,16 @@ import { Auth } from './shared/services/auth';
   imports: [RouterOutlet, Nav],
   template: `
     <app-nav />
-    <router-outlet />
+    <div class="card w-1/2 mx-auto p-10 mt-10">
+      <router-outlet />
+    </div>
   `,
-  styleUrl: './app.scss',
 })
 export class App implements OnInit {
   private readonly authService = inject(Auth);
 
   ngOnInit(): void {
     this.authService.retrieveUserAccount();
+    console.log(this.authService.isLoggedIn());
   }
 }

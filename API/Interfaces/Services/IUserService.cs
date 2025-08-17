@@ -10,4 +10,5 @@ public interface IUserService
   Task<UserDetailsResponseDto> GetUserByUsernameAsync(string username);
   Task<UserAccountResponseDto> CreateUserAsync(CreateUserRequestDto registerDto);
   Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto);
+  Task<UserAccountResponseDto> GetLoggedInUserAsync();
 }
