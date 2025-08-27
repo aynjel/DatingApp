@@ -10,7 +10,7 @@ public class AccountController(IUserService userService) : BaseController
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserEntity>> Register([FromBody] CreateUserRequestDto registerDto)
+    public async Task<ActionResult<User>> Register([FromBody] CreateUserRequestDto registerDto)
     {
         try
         {
@@ -39,15 +39,15 @@ public class AccountController(IUserService userService) : BaseController
         }
     }
 
-    [HttpGet("user")]
+    [HttpPost("refresh-token")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<string>> GetUser()
+    public async Task<ActionResult<string>> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenDto)
     {
         try
         {
-            var user = await userService.GetLoggedInUserAsync();
-            return Ok(user);
+            var token = await userService.RefreshTokenAsync(refreshTokenDto);
+            return Ok(token);
         }
         catch (InvalidOperationException er)
         {

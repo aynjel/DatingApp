@@ -1,7 +1,5 @@
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using API.Entities;
 using API.Extensions;
 using API.Interfaces.Repository;
 using API.Interfaces.Services;
@@ -39,7 +37,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         CreatePasswordHash(registerDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
         // Create user entity
-        var user = new UserEntity
+        var user = new Entities.User
         {
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
@@ -56,36 +54,24 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         return createdUser.ToDto(jwtService);
     }
 
-    public async Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
+    public async Task<TokenResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
     {
         // Validate user credentials
-        var userId = await userRepository.GetUserIdByUsernameAsync(loginDto.Username);
-        var userEntity = await userRepository.GetUserEntityAsync(userId);
-        if (userEntity == null || !VerifyPasswordHash(loginDto.Password, userEntity.PasswordHash, userEntity.PasswordSalt))
+        var (userEntity, user) = await userRepository.GetUserAsync(loginDto.Username);
+        if (userEntity is null || !VerifyPasswordHash(loginDto.Password, userEntity.PasswordHash, userEntity.PasswordSalt))
         {
             throw new InvalidOperationException("Invalid username or password");
         }
 
-        return userEntity.ToDto(jwtService);
+        var accessToken = jwtService.GenerateToken(user);
+        var refreshToken = await jwtService.GenerateAndSaveTokenAsync(user, accessToken);
+
+        return new TokenResponseDto(accessToken, refreshToken);
     }
 
-    public async Task<UserAccountResponseDto> GetLoggedInUserAsync()
+    public async Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto refreshTokenDto)
     {
-        // Get user ID from claims
-        var userId = ClaimsPrincipal.Current?.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new InvalidOperationException("User is not logged in");
-        }
-
-        // Retrieve user by ID
-        var user = await userRepository.GetUserByIdAsync(userId);
-        if (user is null)
-        {
-            throw new InvalidOperationException("User not found");
-        }
-
-        return user;
+        return await jwtService.RefreshTokenAsync(refreshTokenDto);
     }
 
     #region Private Methods
@@ -103,6 +89,6 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
         return computedHash.SequenceEqual(storedHash);
     }
-
+    
     #endregion
 }

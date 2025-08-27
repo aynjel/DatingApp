@@ -5,5 +5,5 @@ namespace API.Data;
 
 public class DataContext(DbContextOptions options) : DbContext(options)
 {
-    public DbSet<UserEntity> Users { get; set; }
+    public DbSet<User> Users { get; set; }
 }

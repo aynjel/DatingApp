@@ -1,39 +1,76 @@
-using System.Text;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
+using API.Data;
+using API.Data.Repository;
 using API.Interfaces.Services;
-using API.Entities;
+using API.Model.DTO.Request;
+using API.Model.DTO.Response;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace API.Services;
 
-public class GenerateJWTService(IConfiguration config) : IGenerateJWTService
+public class GenerateJWTService(DataContext context, IConfiguration config) : IGenerateJWTService
 {
-  public string GenerateToken(UserEntity user)
-  {
-    var tokenKey = config["TokenKey"] ?? throw new Exception("TokenKey is not configured in appsettings.json");
-    if (tokenKey.Length < 64)
+    public string GenerateToken(UserDetailsResponseDto user)
     {
-      throw new Exception("TokenKey must be at least 64 characters long");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtConfig:Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.NameIdentifier, user.UserId),
+            new(ClaimTypes.Name, user.Username)
+        };
+        var tokenDescriptor = new JwtSecurityToken(
+            issuer: config["JwtConfig:Issuer"], 
+            audience: config["JwtConfig:Audience"], 
+            claims: claims, 
+            expires: DateTime.UtcNow.AddDays(1),
+            signingCredentials: creds
+        );
+        return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
-    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
-    var claims = new List<Claim>
+
+    public async Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto request)
     {
-      new(ClaimTypes.Email, user.Email),
-      new(ClaimTypes.NameIdentifier, user.Id),
-    };
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
+        if (user is null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            throw new InvalidOperationException("Invalid or expired refresh token");
+        }
+        // Generate new JWT
+        var userDetails = new UserDetailsResponseDto
+        {
+            UserId = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName
+        };
+        var newJwtToken = GenerateToken(userDetails);
+        var newRefreshToken = await GenerateAndSaveTokenAsync(userDetails, newJwtToken);
+        return new TokenResponseDto(newJwtToken, user.RefreshToken);
+    }
 
-    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-    var tokenDescriptor = new SecurityTokenDescriptor
+    public async Task<string> GenerateAndSaveTokenAsync(UserDetailsResponseDto user, string accessToken)
     {
-      Subject = new ClaimsIdentity(claims),
-      Expires = DateTime.UtcNow.AddHours(1),
-      SigningCredentials = creds
-    };
+        var refreshToken = GenerateRefreshToken();
+        var userEntity = await context.Users.FirstOrDefaultAsync(u => u.Id == user.UserId);
+        userEntity.AccessToken = accessToken;
+        userEntity.RefreshToken = refreshToken;
+        userEntity.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+        await context.SaveChangesAsync();
+        return refreshToken;
+    }
 
-    var tokenHandler = new JwtSecurityTokenHandler();
-    var token = tokenHandler.CreateToken(tokenDescriptor);
-    return tokenHandler.WriteToken(token);
-  }
+    private static string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
+    }
 }
