@@ -15,11 +15,6 @@ export const routes: Routes = [
             (m) => m.RegisterForm
           ),
       },
-      {
-        path: '',
-        redirectTo: 'home',
-        pathMatch: 'full',
-      },
     ],
   },
   {
@@ -28,8 +23,26 @@ export const routes: Routes = [
       import('./pages/users-list/users-list').then((m) => m.UsersList),
   },
   {
+    path: 'users/:id',
+    loadComponent: () =>
+      import('./pages/user-details/user-details').then((m) => m.UserDetails),
+  },
+  {
+    path: 'lists',
+    loadComponent: () => import('./pages/lists/lists').then((m) => m.Lists),
+  },
+  {
+    path: 'messages',
+    loadComponent: () =>
+      import('./pages/messages/messages').then((m) => m.Messages),
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
+  },
+  {
+    path: '**',
+    redirectTo: 'home',
   },
 ];

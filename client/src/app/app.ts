@@ -1,16 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Nav } from './layouts/nav/nav';
+import { ToastComponent } from './shared/components/toast/toast';
 import { Auth } from './shared/services/auth';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Nav],
+  imports: [RouterOutlet, Nav, ToastComponent],
   template: `
     <app-nav />
-    <div class="card w-1/2 mx-auto p-10 mt-10">
+    <div class="mt-24 container mx-auto">
       <router-outlet />
     </div>
+    <app-toast />
   `,
 })
 export class App implements OnInit {

@@ -5,12 +5,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LoginUserRequest } from '../../shared/models/dto/request/login-user.request';
 import { Auth } from '../../shared/services/auth';
 
 @Component({
   selector: 'app-nav',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive],
   templateUrl: './nav.html',
 })
 export class Nav {
