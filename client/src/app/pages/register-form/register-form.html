@@ -1,6 +1,6 @@
-<div class="mt-10">
+<div class="card max-w-lg mx-auto shadow-lg">
   <div class="card-title justify-center text-3xl text-secondary">Sign Up</div>
-  <div class="card-body w-full">
+  <div class="card-body">
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
       <div class="flex gap-3 mb-4">
         <div class="flex-1">
@@ -11,6 +11,7 @@
             id="firstName"
             formControlName="firstName"
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            [readonly]="isLoading()"
           />
         </div>
         <div class="flex-1">
@@ -21,6 +22,7 @@
             id="lastName"
             formControlName="lastName"
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            [readonly]="isLoading()"
           />
         </div>
       </div>
@@ -32,6 +34,7 @@
           id="username"
           formControlName="username"
           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          [readonly]="isLoading()"
         />
       </div>
       <div class="mb-4">
@@ -42,6 +45,7 @@
           id="email"
           formControlName="email"
           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          [readonly]="isLoading()"
         />
       </div>
       <div class="flex gap-3 mb-4">
@@ -54,6 +58,7 @@
             formControlName="password"
             type="password"
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            [readonly]="isLoading()"
           />
         </div>
         <div class="flex-1">
@@ -67,11 +72,16 @@
             formControlName="confirmPassword"
             type="password"
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            [readonly]="isLoading()"
           />
         </div>
       </div>
-      <button type="submit" class="btn mt-4 w-full btn-secondary">
-        Register
+      <button
+        type="submit"
+        class="btn mt-4 w-full btn-secondary"
+        [disabled]="isLoading()"
+      >
+        {{ isLoading() ? "Registering..." : "Register" }}
       </button>
     </form>
   </div>

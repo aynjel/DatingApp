@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Toast } from '../../models/user';
 import { ToastService } from '../../services/toast';
 
@@ -8,13 +8,9 @@ import { ToastService } from '../../services/toast';
   imports: [NgClass],
   templateUrl: './toast.html',
 })
-export class ToastComponent implements OnInit {
+export class ToastComponent {
   private toastService = inject(ToastService);
-  toasts: Toast[] = [];
-
-  ngOnInit() {
-    this.toasts = this.toastService.toasts();
-  }
+  protected toasts = this.toastService.toasts;
 
   getClass(type: Toast['type']) {
     return {

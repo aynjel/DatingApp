@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
@@ -11,12 +12,12 @@ import { Auth } from '../../shared/services/auth';
 
 @Component({
   selector: 'app-nav',
-  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive],
+  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive, NgClass],
   templateUrl: './nav.html',
 })
 export class Nav {
   private formBuilder = inject(FormBuilder);
-  public authService = inject(Auth);
+  protected authService = inject(Auth);
 
   protected loginForm = this.formBuilder.group({
     username: new FormControl('', [

@@ -1,6 +1,7 @@
-using API.Entities;
 using API.Interfaces.Services;
 using API.Model.DTO.Request;
+using API.Model.DTO.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -10,7 +11,7 @@ public class AccountController(IUserService userService) : BaseController
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<User>> Register([FromBody] CreateUserRequestDto registerDto)
+    public async Task<ActionResult<UserAccountResponseDto>> Register([FromBody] CreateUserRequestDto registerDto)
     {
         try
         {
@@ -26,7 +27,7 @@ public class AccountController(IUserService userService) : BaseController
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<string>> Login([FromBody] LoginRequestDto loginDto)
+    public async Task<ActionResult<TokenResponseDto>> Login([FromBody] LoginRequestDto loginDto)
     {
         try
         {
@@ -39,10 +40,11 @@ public class AccountController(IUserService userService) : BaseController
         }
     }
 
+    [Authorize]
     [HttpPost("refresh-token")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<string>> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenDto)
+    public async Task<ActionResult<TokenResponseDto>> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenDto)
     {
         try
         {
@@ -53,5 +55,20 @@ public class AccountController(IUserService userService) : BaseController
         {
             return BadRequest(er.Message);
         }
+    }
+
+    [Authorize]
+    [HttpGet("current-user")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserAccountResponseDto>> GetCurrentUser()
+    {
+        var jwt = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+        var user = await userService.GetCurrentUserAsync(jwt);
+        if (user is null)
+        {
+            return NotFound("User not found");
+        }
+        return Ok(user);
     }
 }

@@ -22,7 +22,8 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
 
     public async Task<UserDetailsResponseDto> GetUserByUsernameAsync(string username)
     {
-        return await userRepository.GetByUsernameAsync(username);
+        var (user, _) = await userRepository.GetByUsernameAsync(username);
+        return user;
     }
 
     public async Task<UserAccountResponseDto> CreateUserAsync(CreateUserRequestDto registerDto)
@@ -44,17 +45,17 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
             Username = registerDto.Username.ToLower(),
             Email = registerDto.Email.ToLower(),
             PasswordHash = passwordHash,
-            PasswordSalt = passwordSalt
+            PasswordSalt = passwordSalt,
         };
 
         // Save user to database
         var createdUser = await userRepository.CreateUserAsync(user);
 
         // Return user details response
-        return createdUser.ToDto(jwtService);
+        return createdUser.ToDto();
     }
 
-    public async Task<TokenResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
+    public async Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
     {
         // Validate user credentials
         var (userEntity, user) = await userRepository.GetUserAsync(loginDto.Username);
@@ -66,12 +67,29 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         var accessToken = jwtService.GenerateToken(user);
         var refreshToken = await jwtService.GenerateAndSaveTokenAsync(user, accessToken);
 
-        return new TokenResponseDto(accessToken, refreshToken);
+        return user.ToDto(new TokenResponseDto(accessToken, refreshToken));
     }
 
     public async Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto refreshTokenDto)
     {
         return await jwtService.RefreshTokenAsync(refreshTokenDto);
+    }
+
+    public async Task<UserAccountResponseDto> GetCurrentUserAsync(string jwt)
+    {
+        var username = jwtService.GetUsernameFromJwt(jwt);
+        if (username is null)
+        {
+            return null;
+        }
+
+        var (user, token) = await userRepository.GetByUsernameAsync(username);
+        if (user is null)
+        {
+            return null;
+        }
+
+        return user.ToDto(token);
     }
 
     #region Private Methods
@@ -89,6 +107,6 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
         return computedHash.SequenceEqual(storedHash);
     }
-    
+
     #endregion
 }

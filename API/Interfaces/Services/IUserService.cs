@@ -9,6 +9,7 @@ public interface IUserService
     Task<UserDetailsResponseDto> GetUserByIdAsync(string id);
     Task<UserDetailsResponseDto> GetUserByUsernameAsync(string username);
     Task<UserAccountResponseDto> CreateUserAsync(CreateUserRequestDto registerDto);
-    Task<TokenResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto);
+    Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto);
     Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto refreshTokenDto);
+    Task<UserAccountResponseDto> GetCurrentUserAsync(string jwt);
 }

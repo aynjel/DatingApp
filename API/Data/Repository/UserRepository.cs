@@ -1,11 +1,12 @@
 using API.Entities;
 using API.Interfaces.Repository;
+using API.Interfaces.Services;
 using API.Model.DTO.Response;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data.Repository;
 
-public class UserRepository(DataContext context) : IUserRepository
+public class UserRepository(DataContext context, IGenerateJWTService jwtService) : IUserRepository
 {
     public async Task<IEnumerable<UserDetailsResponseDto>> GetUsersAsync()
     {
@@ -36,19 +37,22 @@ public class UserRepository(DataContext context) : IUserRepository
         };
     }
 
-    public async Task<UserDetailsResponseDto> GetByUsernameAsync(string username)
+    public async Task<(UserDetailsResponseDto, TokenResponseDto)> GetByUsernameAsync(string username)
     {
         var user = await context.Users.FirstOrDefaultAsync(u => u.Username == username);
-        if (user == null) return null;
+        if (user == null) return (null, null);
 
-        return new UserDetailsResponseDto
+        var token = new TokenResponseDto(user.AccessToken, user.RefreshToken);
+        var userDetails = new UserDetailsResponseDto
         {
             UserId = user.Id,
             Username = user.Username,
             Email = user.Email,
             FirstName = user.FirstName,
-            LastName = user.LastName
+            LastName = user.LastName,
         };
+
+        return (userDetails, token);
     }
 
     public async Task<bool> UserExistsAsync(string username, string email)
@@ -59,15 +63,16 @@ public class UserRepository(DataContext context) : IUserRepository
     public async Task<UserDetailsResponseDto> CreateUserAsync(User user)
     {
         await context.Users.AddAsync(user);
-        await context.SaveChangesAsync();
         var userDto = new UserDetailsResponseDto
         {
             UserId = user.Id,
             Username = user.Username,
             Email = user.Email,
             FirstName = user.FirstName,
-            LastName = user.LastName
+            LastName = user.LastName,
         };
+        user.AccessToken = jwtService.GenerateToken(userDto);
+        user.RefreshToken = await jwtService.GenerateAndSaveTokenAsync(userDto, user.AccessToken);
         return userDto;
     }
 

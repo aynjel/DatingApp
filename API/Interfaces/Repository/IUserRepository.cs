@@ -7,7 +7,7 @@ public interface IUserRepository
 {
     Task<IEnumerable<UserDetailsResponseDto>> GetUsersAsync();
     Task<UserDetailsResponseDto> GetByIdAsync(string id);
-    Task<UserDetailsResponseDto> GetByUsernameAsync(string username);
+    Task<(UserDetailsResponseDto, TokenResponseDto)> GetByUsernameAsync(string username);
     Task<bool> UserExistsAsync(string username, string email);
     Task<UserDetailsResponseDto> CreateUserAsync(User user);
     Task<UserDetailsResponseDto> UpdateUserAsync(User user);

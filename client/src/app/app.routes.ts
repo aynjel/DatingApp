@@ -15,6 +15,11 @@ export const routes: Routes = [
             (m) => m.RegisterForm
           ),
       },
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'home',
+      },
     ],
   },
   {
@@ -35,11 +40,6 @@ export const routes: Routes = [
     path: 'messages',
     loadComponent: () =>
       import('./pages/messages/messages').then((m) => m.Messages),
-  },
-  {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full',
   },
   {
     path: '**',

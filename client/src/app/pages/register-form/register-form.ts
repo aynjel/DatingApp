@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,8 +8,10 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { RegisterUserRequest } from '../../shared/models/dto/request/register-user.request';
 import { Auth } from '../../shared/services/auth';
+import { ToastService } from '../../shared/services/toast';
 
 @Component({
   selector: 'app-register-form',
@@ -19,6 +21,10 @@ import { Auth } from '../../shared/services/auth';
 export class RegisterForm {
   private authService = inject(Auth);
   private formBuilder = inject(FormBuilder);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+
+  public isLoading = signal(false);
 
   public registerForm = this.formBuilder.group({
     firstName: new FormControl('', [
@@ -57,14 +63,20 @@ export class RegisterForm {
     const payload: RegisterUserRequest =
       this.registerForm.getRawValue() as RegisterUserRequest;
 
+    this.isLoading.set(true);
     this.authService.registerUser(payload).subscribe({
       next: (response) => {
-        // Handle successful registration
-        console.log(response);
+        this.toastService.show('Registration successful!', 'success');
+        this.router.navigate(['/']);
+        this.isLoading.set(false);
       },
       error: (error) => {
-        // Handle registration error
+        this.toastService.show(
+          'Registration failed. Please try again.',
+          'error'
+        );
         console.error(error);
+        this.isLoading.set(false);
       },
     });
   }

@@ -8,4 +8,5 @@ public interface IGenerateJWTService
     string GenerateToken(UserDetailsResponseDto key);
     Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto token);
     Task<string> GenerateAndSaveTokenAsync(UserDetailsResponseDto user, string accessToken);
+    string GetUsernameFromJwt(string jwt);
 }

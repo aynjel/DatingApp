@@ -25,9 +25,9 @@ public class GenerateJWTService(DataContext context, IConfiguration config) : IG
             new(ClaimTypes.Name, user.Username)
         };
         var tokenDescriptor = new JwtSecurityToken(
-            issuer: config["JwtConfig:Issuer"], 
-            audience: config["JwtConfig:Audience"], 
-            claims: claims, 
+            issuer: config["JwtConfig:Issuer"],
+            audience: config["JwtConfig:Audience"],
+            claims: claims,
             expires: DateTime.UtcNow.AddDays(1),
             signingCredentials: creds
         );
@@ -64,6 +64,13 @@ public class GenerateJWTService(DataContext context, IConfiguration config) : IG
         userEntity.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         await context.SaveChangesAsync();
         return refreshToken;
+    }
+
+    public string GetUsernameFromJwt(string jwt)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.ReadToken(jwt) as JwtSecurityToken;
+        return token?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
     }
 
     private static string GenerateRefreshToken()

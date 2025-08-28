@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ToastComponent } from '@component/toast/toast';
 import { Nav } from './layouts/nav/nav';
-import { ToastComponent } from './shared/components/toast/toast';
 import { Auth } from './shared/services/auth';
 
 @Component({

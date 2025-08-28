@@ -4,7 +4,10 @@
   <div class="flex align-middle items-center px-10 mx-auto gap-6">
     <div class="text-white">
       <a
-        class="flex items-center gap-3 max-h-16 border-r-white border-r-2 pr-6"
+        class="flex items-center gap-3 max-h-16"
+        [ngClass]="{
+          'border-r-white border-r-2 pr-6': authService.isLoggedIn()
+        }"
         routerLink="/home"
         routerLinkActive="text-primary"
       >
@@ -26,6 +29,7 @@
       </a>
     </div>
     <nav class="flex gap-4 my-2 uppercase text-lg text-white">
+      @if (authService.isLoggedIn()) {
       <a
         class="hover:text-primary"
         routerLink="/users"
@@ -44,6 +48,7 @@
         routerLinkActive="text-primary"
         >Messages</a
       >
+      }
     </nav>
     <div class="flex align-middle ml-auto gap-3">
       @if(authService.userAccountData(); as userAccountData){
@@ -88,6 +93,7 @@
         [formGroup]="loginForm"
         (ngSubmit)="onSubmit()"
         class="flex items-center gap-3"
+        autocomplete="off"
       >
         <input
           type="text"

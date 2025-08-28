@@ -8,16 +8,20 @@ export class ToastService {
   toasts = signal<Toast[]>([]);
   private counter = 0;
 
-  show(message: string, type: Toast['type'] = 'info', duration = 500) {
-    const toast: Toast = {
-      id: new Date().getTime() + this.counter++,
+  show(message: string, type: Toast['type'] = 'info', duration = 3000) {
+    const id = this.counter++;
+    const newToast: Toast = {
+      id,
       message,
       type,
       duration,
     };
-    this.toasts.set([...this.toasts(), toast]);
+    this.toasts.set([...this.toasts(), newToast]);
+    console.log(`Showing toast: ${JSON.stringify(newToast)}`);
 
-    setTimeout(() => this.remove(toast.id), duration);
+    if (duration > 0) {
+      setTimeout(() => this.remove(id), duration);
+    }
   }
 
   remove(id: number) {

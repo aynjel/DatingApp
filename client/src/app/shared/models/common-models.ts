@@ -4,3 +4,8 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
 }
+
+export interface TokenResponse {
+  accessToken: string;
+  refreshToken: string;
+}

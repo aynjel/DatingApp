@@ -2,6 +2,6 @@ namespace API.Model.DTO.Response;
 
 public class UserAccountResponseDto : UserDetailsResponseDto
 {
-  public string Token { get; set; }
-  public DateTime Expiration { get; set; }
+  public string Name { get; internal set; }
+  public TokenResponseDto Token { get; set; }
 }
