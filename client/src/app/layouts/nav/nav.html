@@ -107,7 +107,9 @@
           class="input"
           placeholder="Password"
         />
-        <button class="btn btn-secondary">Login</button>
+        <button class="btn btn-secondary" [disabled]="isLoading()">
+          Login
+        </button>
       </form>
       }
     </div>

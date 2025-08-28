@@ -14,15 +14,13 @@ namespace API.Services;
 
 public class GenerateJWTService(DataContext context, IConfiguration config) : IGenerateJWTService
 {
-    public string GenerateToken(UserDetailsResponseDto user)
+    public string GenerateToken(string userId)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtConfig:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.NameIdentifier, user.UserId),
-            new(ClaimTypes.Name, user.Username)
+            new(ClaimTypes.NameIdentifier, userId),
         };
         var tokenDescriptor = new JwtSecurityToken(
             issuer: config["JwtConfig:Issuer"],
@@ -41,24 +39,15 @@ public class GenerateJWTService(DataContext context, IConfiguration config) : IG
         {
             throw new InvalidOperationException("Invalid or expired refresh token");
         }
-        // Generate new JWT
-        var userDetails = new UserDetailsResponseDto
-        {
-            UserId = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName
-        };
-        var newJwtToken = GenerateToken(userDetails);
-        var newRefreshToken = await GenerateAndSaveTokenAsync(userDetails, newJwtToken);
+        var newJwtToken = GenerateToken(user.Id);
+        var newRefreshToken = await GenerateAndSaveTokenAsync(user.Id, newJwtToken);
         return new TokenResponseDto(newJwtToken, user.RefreshToken);
     }
 
-    public async Task<string> GenerateAndSaveTokenAsync(UserDetailsResponseDto user, string accessToken)
+    public async Task<string> GenerateAndSaveTokenAsync(string userId, string accessToken)
     {
         var refreshToken = GenerateRefreshToken();
-        var userEntity = await context.Users.FirstOrDefaultAsync(u => u.Id == user.UserId);
+        var userEntity = await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         userEntity.AccessToken = accessToken;
         userEntity.RefreshToken = refreshToken;
         userEntity.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
@@ -66,14 +55,14 @@ public class GenerateJWTService(DataContext context, IConfiguration config) : IG
         return refreshToken;
     }
 
-    public string GetUsernameFromJwt(string jwt)
+    public string GetUserIdFromJwt(string jwt)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.ReadToken(jwt) as JwtSecurityToken;
-        return token?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+        return token?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
     }
 
-    private static string GenerateRefreshToken()
+    public string GenerateRefreshToken()
     {
         var randomNumber = new byte[64];
         using var rng = RandomNumberGenerator.Create();

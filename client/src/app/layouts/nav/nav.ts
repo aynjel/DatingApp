@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,8 +7,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { finalize, first } from 'rxjs';
 import { LoginUserRequest } from '../../shared/models/dto/request/login-user.request';
 import { Auth } from '../../shared/services/auth';
+import { ToastService } from '../../shared/services/toast';
 
 @Component({
   selector: 'app-nav',
@@ -17,7 +19,10 @@ import { Auth } from '../../shared/services/auth';
 })
 export class Nav {
   private formBuilder = inject(FormBuilder);
+  private toastService = inject(ToastService);
   protected authService = inject(Auth);
+
+  protected isLoading = signal(false);
 
   protected loginForm = this.formBuilder.group({
     username: new FormControl('', [
@@ -40,15 +45,21 @@ export class Nav {
     const loginCredentials: LoginUserRequest =
       this.loginForm.getRawValue() as LoginUserRequest;
 
-    // Handle login logic here
-    this.authService.login(loginCredentials).subscribe({
-      next: (response) => {
-        console.log('Login successful', response);
-      },
-      error: (error) => {
-        alert('Login failed: ' + error.error);
-      },
-    });
+    this.isLoading.set(true);
+    this.authService
+      .login(loginCredentials)
+      .pipe(
+        first(),
+        finalize(() => this.isLoading.set(false))
+      )
+      .subscribe({
+        next: (response) => {
+          this.toastService.show('Login successful', 'success');
+        },
+        error: (err) => {
+          this.toastService.show('Login failed: ' + err.error, 'error');
+        },
+      });
   }
 
   protected onLogout(): void {

@@ -5,8 +5,9 @@ namespace API.Interfaces.Services;
 
 public interface IGenerateJWTService
 {
-    string GenerateToken(UserDetailsResponseDto key);
+    string GenerateToken(string userId);
     Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto token);
-    Task<string> GenerateAndSaveTokenAsync(UserDetailsResponseDto user, string accessToken);
-    string GetUsernameFromJwt(string jwt);
+    Task<string> GenerateAndSaveTokenAsync(string userId, string accessToken);
+    string GetUserIdFromJwt(string jwt);
+    string GenerateRefreshToken();
 }

@@ -9,6 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize, first } from 'rxjs';
 import { RegisterUserRequest } from '../../shared/models/dto/request/register-user.request';
 import { Auth } from '../../shared/services/auth';
 import { ToastService } from '../../shared/services/toast';
@@ -64,21 +65,24 @@ export class RegisterForm {
       this.registerForm.getRawValue() as RegisterUserRequest;
 
     this.isLoading.set(true);
-    this.authService.registerUser(payload).subscribe({
-      next: (response) => {
-        this.toastService.show('Registration successful!', 'success');
-        this.router.navigate(['/']);
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        this.toastService.show(
-          'Registration failed. Please try again.',
-          'error'
-        );
-        console.error(error);
-        this.isLoading.set(false);
-      },
-    });
+    this.authService
+      .registerUser(payload)
+      .pipe(
+        first(),
+        finalize(() => this.isLoading.set(false))
+      )
+      .subscribe({
+        next: (response) => {
+          this.toastService.show('Registration successful!', 'success');
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          this.toastService.show(
+            'Registration failed. Please try again.',
+            'error'
+          );
+        },
+      });
   }
 
   private passwordsMatch(): ValidatorFn {
