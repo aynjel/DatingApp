@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { provideRouter, withViewTransitions } from '@angular/router';
 
-import { APP_BASE_HREF } from '@angular/common';
 import {
   provideHttpClient,
   withFetch,
@@ -47,6 +46,5 @@ export const appConfig: ApplicationConfig = {
         }, 500);
       });
     }),
-    { provide: APP_BASE_HREF, useValue: '/dating-app/' },
   ],
 };
