@@ -63,13 +63,6 @@ export class Nav {
   }
 
   protected onLogout(): void {
-    this.authService.logout().subscribe({
-      next: (response) => {
-        console.log('Logout successful', response);
-      },
-      error: (error) => {
-        alert('Logout failed: ' + error.error);
-      },
-    });
+    this.authService.logout();
   }
 }

@@ -5,7 +5,7 @@ import { LoginUserRequest } from '@model/dto/request/login-user.request';
 import { LoginUserResponse } from '@model/dto/response/login-user.response';
 import { User, UserRole, UserRoleEnum } from '@model/user';
 import { CookieService } from 'ngx-cookie-service';
-import { Observable, tap } from 'rxjs';
+import { first, Observable, of, tap } from 'rxjs';
 import { APIEndpoints } from '../constants/api-endpoints';
 import { RegisterUserRequest } from '../models/dto/request/register-user.request';
 import { RegisterUserResponse } from '../models/dto/response/register-user.response';
@@ -21,10 +21,11 @@ export class Auth {
   public userAccountData = signal<User | undefined>(undefined);
   public isLoggedIn = signal(false);
 
-  retrieveUserAccount(): void {
+  retrieveUserAccount() {
     if (this.userAccountData() === undefined) {
       this.http
         .get<LoginUserResponse>(environment.apiUrl + APIEndpoints.CURRENT_USER)
+        .pipe(first())
         .subscribe({
           next: (response) => {
             this.setUserAccountData(response);
@@ -35,6 +36,8 @@ export class Auth {
           },
         });
     }
+
+    return of(null);
   }
 
   login(payload: LoginUserRequest): Observable<LoginUserResponse> {
@@ -49,16 +52,12 @@ export class Auth {
       );
   }
 
-  logout(): Observable<void> {
+  logout(): void {
     this.cookieService.delete('accessToken');
     this.cookieService.delete('refreshToken');
     this.userAccountData.set(undefined);
     this.isLoggedIn.set(false);
     this.role.set(UserRoleEnum.GUEST);
-    return new Observable<void>((observer) => {
-      observer.next();
-      observer.complete();
-    });
   }
 
   registerUser(

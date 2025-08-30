@@ -32,19 +32,19 @@
       @if (authService.isLoggedIn()) {
       <a
         class="hover:text-primary"
-        routerLink="/users"
+        routerLink="/portal/users"
         routerLinkActive="text-primary"
         >Matches</a
       >
       <a
         class="hover:text-primary"
-        routerLink="/lists"
+        routerLink="/portal/lists"
         routerLinkActive="text-primary"
         >People</a
       >
       <a
         class="hover:text-primary"
-        routerLink="/messages"
+        routerLink="/portal/messages"
         routerLinkActive="text-primary"
         >Messages</a
       >
@@ -100,12 +100,14 @@
           formControlName="username"
           class="input"
           placeholder="Username"
+          [readOnly]="isLoading()"
         />
         <input
           type="password"
           formControlName="password"
           class="input"
           placeholder="Password"
+          [readOnly]="isLoading()"
         />
         <button class="btn btn-secondary" [disabled]="isLoading()">
           Login
