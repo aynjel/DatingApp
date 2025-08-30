@@ -34,7 +34,7 @@ public class GenerateJWTService(DataContext context, IConfiguration config) : IG
 
     public async Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto request)
     {
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId);
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId && u.RefreshToken == request.RefreshToken);
         if (user is null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
             throw new InvalidOperationException("Invalid or expired refresh token");
