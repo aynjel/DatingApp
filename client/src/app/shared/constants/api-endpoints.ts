@@ -6,9 +6,10 @@ export enum APIEndpoints {
 }
 
 export enum ErrorEndpoints {
+  TEST = 'test',
   NOT_FOUND = 'not-found',
   SERVER_ERROR = 'server-error',
   UNAUTHORIZED = 'unauthorized',
   BAD_REQUEST = 'bad-request',
-  ACCOUNT_REGISTER = 'account-register',
+  REGISTER = 'register',
 }

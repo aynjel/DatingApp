@@ -1,15 +1,12 @@
 import { Routes } from '@angular/router';
+import { NotFound } from './pages/not-found/not-found';
+import { ServerError } from './pages/server-error/server-error';
 import { TestErrors } from './pages/test-errors/test-errors';
 import { childAuthGuard } from './shared/guards/child-auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
-    pathMatch: 'full',
-  },
-  {
-    path: 'dating-app',
     redirectTo: 'home',
     pathMatch: 'full',
   },
@@ -27,7 +24,6 @@ export const routes: Routes = [
   {
     path: 'portal',
     canActivate: [childAuthGuard],
-    title: 'Portal',
     children: [
       {
         path: 'users',
@@ -58,8 +54,13 @@ export const routes: Routes = [
     title: 'Test Errors',
   },
   {
+    path: 'server-error',
+    component: ServerError,
+    title: 'Server Error',
+  },
+  {
     path: '**',
-    loadComponent: () =>
-      import('./pages/not-found/not-found').then((m) => m.NotFound),
+    component: NotFound,
+    title: 'Page Not Found',
   },
 ];

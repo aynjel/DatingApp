@@ -9,3 +9,9 @@ export interface TokenResponse {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface ApiError {
+  message: string;
+  statusCode: number;
+  details?: string;
+}

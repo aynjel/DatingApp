@@ -19,6 +19,7 @@ import {
 import { provideSweetAlert2 } from '@sweetalert2/ngx-sweetalert2';
 import { lastValueFrom } from 'rxjs';
 import { routes } from './app.routes';
+import { errorInterceptor } from './shared/interceptors/error-interceptor';
 import { jwtInterceptor } from './shared/interceptors/jwt-interceptor';
 import { Auth } from './shared/services/auth';
 
@@ -28,7 +29,10 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes, withViewTransitions()),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch(), withInterceptors([jwtInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([jwtInterceptor, errorInterceptor])
+    ),
     provideSweetAlert2({
       fireOnInit: false,
       dismissOnDestroy: true,
