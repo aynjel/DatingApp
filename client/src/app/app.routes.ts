@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { TestErrors } from './pages/test-errors/test-errors';
 import { childAuthGuard } from './shared/guards/child-auth.guard';
 
 export const routes: Routes = [
@@ -50,6 +51,11 @@ export const routes: Routes = [
           import('./pages/messages/messages').then((m) => m.Messages),
       },
     ],
+  },
+  {
+    path: 'errors',
+    component: TestErrors,
+    title: 'Test Errors',
   },
   {
     path: '**',

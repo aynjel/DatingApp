@@ -16,6 +16,7 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { provideSweetAlert2 } from '@sweetalert2/ngx-sweetalert2';
 import { lastValueFrom } from 'rxjs';
 import { routes } from './app.routes';
 import { jwtInterceptor } from './shared/interceptors/jwt-interceptor';
@@ -28,6 +29,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withViewTransitions()),
     provideClientHydration(withEventReplay()),
     provideHttpClient(withFetch(), withInterceptors([jwtInterceptor])),
+    provideSweetAlert2({
+      fireOnInit: false,
+      dismissOnDestroy: true,
+    }),
     provideAppInitializer(async () => {
       const authService = inject(Auth);
 

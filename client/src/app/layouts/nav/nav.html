@@ -1,23 +1,62 @@
 <header
-  class="p-3 w-full fixed top-0 z-50 bg-gradient-to-r from-secondary to-black"
+  class="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-secondary to-black text-white shadow-md"
 >
-  <div class="flex align-middle items-center px-10 mx-auto gap-6">
-    <div class="text-white">
-      <a
-        class="flex items-center gap-3 max-h-16"
-        [ngClass]="{
-          'border-r-white border-r-2 pr-6': authService.isLoggedIn()
-        }"
-        routerLink="/home"
-        routerLinkActive="text-primary"
-      >
-        <svg
+  <div class="navbar container mx-auto">
+    <!-- Start: Brand & Mobile Menu -->
+    <div class="navbar-start">
+      <div class="dropdown">
+        <button tabindex="0" class="btn btn-ghost lg:hidden">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+        <ul
+          tabindex="0"
+          class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow text-secondary font-semibold rounded-box w-52"
+        >
+          @if(authService.isLoggedIn()) {
+          <li>
+            <a routerLink="/users" routerLinkActive="bg-secondary text-white"
+              >Matches</a
+            >
+          </li>
+          <li>
+            <a routerLink="/lists" routerLinkActive="bg-secondary text-white"
+              >Peoples</a
+            >
+          </li>
+          <li>
+            <a routerLink="/messages" routerLinkActive="bg-secondary text-white"
+              >Messages</a
+            >
+          </li>
+          }
+          <li>
+            <a routerLink="/errors" routerLinkActive="bg-secondary text-white"
+              >Errors</a
+            >
+          </li>
+        </ul>
+      </div>
+      <a routerLink="/home" class="flex items-center gap-3"
+        ><svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="size-8"
+          class="size-6"
         >
           <path
             stroke-linecap="round"
@@ -25,37 +64,45 @@
             d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
           />
         </svg>
-        <h3 class="text-2xl font-semibold uppercase">Dating App</h3>
+        <h2 class="text-xl font-bold">DatingApp</h2>
       </a>
     </div>
-    <nav class="flex gap-4 my-2 uppercase text-lg text-white">
-      @if (authService.isLoggedIn()) {
-      <a
-        class="hover:text-primary"
-        routerLink="/portal/users"
-        routerLinkActive="text-primary"
-        >Matches</a
-      >
-      <a
-        class="hover:text-primary"
-        routerLink="/portal/lists"
-        routerLinkActive="text-primary"
-        >People</a
-      >
-      <a
-        class="hover:text-primary"
-        routerLink="/portal/messages"
-        routerLinkActive="text-primary"
-        >Messages</a
-      >
-      }
-    </nav>
-    <div class="flex align-middle ml-auto gap-3">
-      @if(authService.userAccountData(); as userAccountData){
+
+    <!-- Center: Desktop Nav -->
+    <div class="navbar-center hidden lg:flex">
+      <ul class="menu menu-horizontal px-1 space-x-2 text-white font-semibold">
+        @if(authService.isLoggedIn()) {
+        <li>
+          <a routerLink="/users" routerLinkActive="bg-white text-secondary"
+            >Matches</a
+          >
+        </li>
+        <li>
+          <a routerLink="/lists" routerLinkActive="bg-white text-secondary"
+            >People</a
+          >
+        </li>
+        <li>
+          <a routerLink="/messages" routerLinkActive="bg-white text-secondary"
+            >Messages</a
+          >
+        </li>
+        }
+        <li>
+          <a routerLink="/errors" routerLinkActive="bg-white text-secondary"
+            >Errors</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- User Icon with Dropdown -->
+    <div class="navbar-end space-x-4">
+      @if(authService.isLoggedIn()) {
       <div class="dropdown dropdown-end">
         <button
           tabindex="0"
-          class="flex items-center text-white text-xl gap-3 cursor-pointer"
+          class="btn btn-sm btn-circle bg-white text-secondary"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +110,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="size-6"
+            class="size-5"
           >
             <path
               stroke-linecap="round"
@@ -71,49 +118,41 @@
               d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
             />
           </svg>
-          {{ userAccountData.firstName }} {{ userAccountData.lastName }}
         </button>
         <ul
           tabindex="0"
-          class="dropdown-content dropdown-end menu bg bg-base-100 rounded-box z-1 w-52"
+          class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-white text-secondary font-semibold rounded-box w-40"
         >
           <li>
-            <a class="justify-between" href=""> Profile </a>
+            <a>Profile ({{ authService.userAccountData()?.username }})</a>
           </li>
           <li>
-            <a class="justify-between" href=""> Settings </a>
+            <a>Settings</a>
           </li>
           <li>
-            <a class="justify-between" href="" (click)="onLogout()"> Logout </a>
+            <a (click)="logoutAlert.fire()">Logout</a>
           </li>
         </ul>
       </div>
       } @else {
-      <form
-        [formGroup]="loginForm"
-        (ngSubmit)="onSubmit()"
-        class="flex items-center gap-3"
-        autocomplete="off"
-      >
-        <input
-          type="text"
-          formControlName="username"
-          class="input"
-          placeholder="Username"
-          [readOnly]="isLoading()"
-        />
-        <input
-          type="password"
-          formControlName="password"
-          class="input"
-          placeholder="Password"
-          [readOnly]="isLoading()"
-        />
-        <button class="btn btn-secondary" [disabled]="isLoading()">
-          Login
-        </button>
-      </form>
+      <button class="btn btn-white btn-sm" (click)="openLoginModal()">
+        Login
+      </button>
       }
     </div>
   </div>
 </header>
+
+<!-- Login Modal -->
+<app-login-modal />
+
+<swal
+  #logoutAlert
+  title="Confirm logout?"
+  text="When confirmed you will be logged out"
+  icon="question"
+  [showCancelButton]="true"
+  [focusCancel]="true"
+  (confirm)="onLogout()"
+>
+</swal>

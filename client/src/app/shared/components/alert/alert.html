@@ -1,0 +1,14 @@
+@if(isVisible()){
+<div class="alert shadow-lg" [ngClass]="alertClass">
+  <span>{{ message() }}</span>
+  @if(dismissible()){
+  <button
+    class="btn btn-sm btn-circle btn-ghost ml-auto"
+    (click)="close()"
+    aria-label="Close alert"
+  >
+    ✕
+  </button>
+  }
+</div>
+}

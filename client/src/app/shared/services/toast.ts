@@ -17,7 +17,6 @@ export class ToastService {
       duration,
     };
     this.toasts.set([...this.toasts(), newToast]);
-    console.log(`Showing toast: ${JSON.stringify(newToast)}`);
 
     if (duration > 0) {
       setTimeout(() => this.remove(id), duration);
@@ -26,7 +25,5 @@ export class ToastService {
 
   remove(id: number) {
     this.toasts.set(this.toasts().filter((t) => t.id !== id));
-    console.log(`Removing toast with id: ${id}`);
-    console.log(`Current toasts: ${JSON.stringify(this.toasts())}`);
   }
 }

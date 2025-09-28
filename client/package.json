@@ -26,6 +26,7 @@
     "@angular/forms": "^20.1.0",
     "@angular/platform-browser": "^20.1.0",
     "@angular/router": "^20.1.0",
+    "@sweetalert2/ngx-sweetalert2": "^14.0.0",
     "@tailwindcss/postcss": "^4.1.11",
     "daisyui": "^5.0.50",
     "express": "^5.1.0",
@@ -33,6 +34,7 @@
     "ngx-cookie-service": "^20.1.0",
     "postcss": "^8.5.6",
     "rxjs": "~7.8.0",
+    "sweetalert2": "^11.23.0",
     "tailwindcss": "^4.1.11",
     "tslib": "^2.3.0"
   },

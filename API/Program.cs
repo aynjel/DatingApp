@@ -4,6 +4,7 @@ using API.Data;
 using API.Data.Repository;
 using API.Interfaces.Repository;
 using API.Interfaces.Services;
+using API.Middleware;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -126,6 +127,7 @@ app.MapGet("/", () =>
 // Middleware pipeline
 app.UseHttpsRedirection();
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(x => x
     .AllowAnyHeader()
     .AllowAnyMethod()
