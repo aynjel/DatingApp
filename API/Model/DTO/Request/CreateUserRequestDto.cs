@@ -4,15 +4,8 @@ namespace API.Model.DTO.Request;
 
 public class CreateUserRequestDto
 {
-  [Required(ErrorMessage = "First name is required")]
-  public string FirstName { get; set; } = string.Empty;
-
-  [Required(ErrorMessage = "Last name is required")]
-  public string LastName { get; set; } = string.Empty;
-
-  [Required(ErrorMessage = "Username is required")]
-  [StringLength(20, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 20 characters")]
-  public string Username { get; set; } = string.Empty;
+  [Required(ErrorMessage = "Display name is required")]
+  public string DisplayName { get; set; } = string.Empty;
 
   [Required(ErrorMessage = "Email is required")]
   [EmailAddress(ErrorMessage = "Invalid email address format")]

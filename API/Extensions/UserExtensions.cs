@@ -6,7 +6,7 @@ public static class UserExtensions
 {
   public static string Name(this UserDetailsResponseDto user)
   {
-    return $"{user.FirstName} {user.LastName}";
+    return user.DisplayName.Split(' ').FirstOrDefault() ?? string.Empty;
   }
 
   public static UserAccountResponseDto ToDto(this UserDetailsResponseDto user, TokenResponseDto token = null)
@@ -15,9 +15,7 @@ public static class UserExtensions
     {
       UserId = user.UserId,
       Name = user.Name(),
-      FirstName = user.FirstName,
-      LastName = user.LastName,
-      Username = user.Username,
+      DisplayName = user.DisplayName,
       Email = user.Email,
       Token = token
     };

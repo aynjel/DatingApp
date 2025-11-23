@@ -47,17 +47,17 @@ public class UsersController(IUserService userService, ILogger<UsersController> 
     [HttpGet("username/{username}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UserDetailsResponseDto>> GetUserByUsername([FromRoute] string username)
+    public async Task<ActionResult<UserDetailsResponseDto>> GetUserByEmail([FromRoute] string email)
     {
         try
         {
-            var user = await userService.GetUserByUsernameAsync(username);
-            if (user is null) return NotFound($"User with username {username} not found");
+            var user = await userService.GetUserByEmailAsync(email);
+            if (user is null) return NotFound($"User with email {email} not found");
             return Ok(user);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error retrieving user by username");
+            logger.LogError(ex, "Error retrieving user by email");
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }

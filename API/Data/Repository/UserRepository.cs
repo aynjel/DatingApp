@@ -15,10 +15,8 @@ public class UserRepository(DataContext context, IGenerateJWTService jwtService)
             .Select(u => new UserDetailsResponseDto
             {
                 UserId = u.Id,
-                Username = u.Username,
-                Email = u.Email,
-                FirstName = u.FirstName,
-                LastName = u.LastName
+                DisplayName = u.DisplayName,
+                Email = u.Email
             })
             .ToListAsync();
     }
@@ -31,34 +29,30 @@ public class UserRepository(DataContext context, IGenerateJWTService jwtService)
         return new UserDetailsResponseDto
         {
             UserId = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName
+            DisplayName = user.DisplayName,
+            Email = user.Email
         };
     }
 
-    public async Task<UserAccountResponseDto> GetByUsernameAsync(string username)
+    public async Task<UserAccountResponseDto> GetByEmailAsync(string email)
     {
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
         if (user is null) return null;
 
         var token = new TokenResponseDto(user.AccessToken, user.RefreshToken);
         var userDetails = new UserDetailsResponseDto
         {
             UserId = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
+            DisplayName = user.DisplayName,
+            Email = user.Email
         };
 
         return userDetails.ToDto(token);
     }
 
-    public async Task<bool> UserExistsAsync(string username, string email)
+    public async Task<bool> UserExistsAsync(string email)
     {
-        return await context.Users.AnyAsync(u => u.Username == username || u.Email == email);
+        return await context.Users.AnyAsync(u => u.Email == email);
     }
 
     public async Task<UserAccountResponseDto> CreateUserAsync(User user)
@@ -74,10 +68,8 @@ public class UserRepository(DataContext context, IGenerateJWTService jwtService)
         var userDto = new UserAccountResponseDto
         {
             UserId = user.Id,
-            Username = user.Username,
+            DisplayName = user.DisplayName,
             Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
             Token = new TokenResponseDto(accessToken, refreshToken)
         };
         return userDto;
@@ -90,32 +82,28 @@ public class UserRepository(DataContext context, IGenerateJWTService jwtService)
         var userDto = new UserDetailsResponseDto
         {
             UserId = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName
+            DisplayName = user.DisplayName,
+            Email = user.Email
         };
         return userDto;
     }
 
-    public async Task<(User, UserDetailsResponseDto)> GetUserAsync(string username)
+    public async Task<(User, UserDetailsResponseDto)> GetUserAsync(string email)
     {
-        var user = await context.Users.SingleOrDefaultAsync(u => u.Username == username);
+        var user = await context.Users.SingleOrDefaultAsync(u => u.Email == email);
         if (user == null) return (null, null);
         var userDto = new UserDetailsResponseDto
         {
             UserId = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName
+            DisplayName = user.DisplayName,
+            Email = user.Email
         };
         return (user, userDto);
     }
 
-    public async Task<string> GetUserIdByUsernameAsync(string username)
+    public async Task<string> GetUserIdByEmailAsync(string email)
     {
-        var user = await context.Users.SingleOrDefaultAsync(u => u.Username == username);
+        var user = await context.Users.SingleOrDefaultAsync(u => u.Email == email);
         return user?.Id.ToString();
     }
 }

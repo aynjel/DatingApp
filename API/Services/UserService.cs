@@ -21,18 +21,18 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         return await userRepository.GetByIdAsync(id);
     }
 
-    public async Task<UserAccountResponseDto> GetUserByUsernameAsync(string username)
+    public async Task<UserAccountResponseDto> GetUserByEmailAsync(string email)
     {
-        var user = await userRepository.GetByUsernameAsync(username);
+        var user = await userRepository.GetByEmailAsync(email);
         return user;
     }
 
     public async Task<UserAccountResponseDto> CreateUserAsync(CreateUserRequestDto registerDto)
     {
         // Check if user already exists
-        if (await userRepository.UserExistsAsync(registerDto.Username, registerDto.Email))
+        if (await userRepository.UserExistsAsync(registerDto.Email))
         {
-            throw new InvalidOperationException("Username or email already exists");
+            throw new InvalidOperationException("Email already exists");
         }
 
         // Create password hash and salt
@@ -41,9 +41,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         // Create user entity
         var user = new User
         {
-            FirstName = registerDto.FirstName,
-            LastName = registerDto.LastName,
-            Username = registerDto.Username.ToLower(),
+            DisplayName = registerDto.DisplayName,
             Email = registerDto.Email.ToLower(),
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt,
@@ -59,7 +57,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
     public async Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
     {
         // Validate user credentials
-        var (userEntity, user) = await userRepository.GetUserAsync(loginDto.Username);
+        var (userEntity, user) = await userRepository.GetUserAsync(loginDto.Email);
         if (userEntity is null || !VerifyPasswordHash(loginDto.Password, userEntity.PasswordHash, userEntity.PasswordSalt))
         {
             throw new InvalidOperationException("Invalid username or password");
@@ -85,7 +83,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
             return null;
         }
 
-        var userDetails = await userRepository.GetByUsernameAsync(user.Username);
+        var userDetails = await userRepository.GetByEmailAsync(user.Email);
         if (userDetails is null)
         {
             return null;
