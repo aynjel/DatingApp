@@ -2,24 +2,24 @@ import { Component, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
-  FormControl,
   ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { finalize, first } from 'rxjs';
-import { RegisterUserRequest } from '../../shared/models/dto/request/register-user.request';
-import { Auth } from '../../shared/services/auth';
-import { ToastService } from '../../shared/services/toast';
+import { first } from 'rxjs';
+import { RegisterUserRequest } from '../../../shared/models/dto/request/register-user.request';
+import { Auth } from '../../../shared/services/auth';
+import { ToastService } from '../../../shared/services/toast';
 
 @Component({
   selector: 'app-register-form',
   imports: [ReactiveFormsModule],
-  templateUrl: './register-form.html',
+  templateUrl: './register-form.component.html',
+  styleUrl: './register-form.component.scss',
 })
-export class RegisterForm {
+export class RegisterFormComponent {
   private authService = inject(Auth);
   private formBuilder = inject(FormBuilder);
   private toastService = inject(ToastService);
@@ -28,49 +28,38 @@ export class RegisterForm {
   public isLoading = signal(false);
 
   public registerForm = this.formBuilder.group({
-    firstName: new FormControl('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(100),
-    ]),
-    lastName: new FormControl('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.maxLength(100),
-    ]),
-    username: new FormControl('', [
-      Validators.required,
-      Validators.minLength(3),
-      Validators.maxLength(20),
-    ]),
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [
-      Validators.required,
-      Validators.minLength(6),
-      this.passwordsMatch(),
-    ]),
-    confirmPassword: new FormControl('', [
-      Validators.required,
-      Validators.minLength(6),
-      this.passwordsMatch(),
-    ]),
+    displayName: [
+      '',
+      [Validators.required, Validators.minLength(2), Validators.maxLength(100)],
+    ],
+    email: ['', [Validators.required, Validators.email]],
+    password: [
+      '',
+      [Validators.required, Validators.minLength(6), this.passwordsMatch()],
+    ],
+    confirmPassword: [
+      '',
+      [Validators.required, Validators.minLength(6), this.passwordsMatch()],
+    ],
   });
 
   onSubmit(): void {
-    if (!this.registerForm.valid) {
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
       return;
     }
 
-    const payload: RegisterUserRequest =
-      this.registerForm.getRawValue() as RegisterUserRequest;
+    const value = this.registerForm.getRawValue();
+    const payload: RegisterUserRequest = {
+      displayName: value.displayName!,
+      email: value.email!,
+      password: value.password!,
+      confirmPassword: value.confirmPassword!,
+    };
 
-    this.isLoading.set(true);
     this.authService
       .registerUser(payload)
-      .pipe(
-        first(),
-        finalize(() => this.isLoading.set(false))
-      )
+      .pipe(first())
       .subscribe({
         next: (response) => {
           this.toastService.show('Registration successful!', 'success');

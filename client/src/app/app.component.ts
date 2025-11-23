@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastComponent } from '@component/toast/toast';
-import { Nav } from './layouts/nav/nav';
+import { NavComponent } from './layouts/nav/nav.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Nav, ToastComponent],
+  imports: [RouterOutlet, NavComponent, ToastComponent],
   template: `
     <app-nav />
     <div class="mt-24 container mx-auto">
@@ -14,4 +14,4 @@ import { Nav } from './layouts/nav/nav';
     <app-toast />
   `,
 })
-export class App {}
+export class AppComponent {}

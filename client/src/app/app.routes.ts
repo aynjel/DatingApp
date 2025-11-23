@@ -12,14 +12,9 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    loadComponent: () => import('./pages/home/home').then((m) => m.Home),
-    title: 'Home',
-  },
-  {
-    path: 'register',
     loadComponent: () =>
-      import('./pages/register-form/register-form').then((m) => m.RegisterForm),
-    title: 'Register',
+      import('./pages/home/home.component').then((m) => m.HomeComponent),
+    title: 'Home',
   },
   {
     path: 'portal',

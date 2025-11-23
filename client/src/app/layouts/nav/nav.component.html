@@ -124,7 +124,7 @@
           class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-white text-secondary font-semibold rounded-box w-40"
         >
           <li>
-            <a>Profile ({{ authService.userAccountData()?.username }})</a>
+            <a>Profile ({{ authService.userAccountData()?.displayName }})</a>
           </li>
           <li>
             <a>Settings</a>
@@ -135,16 +135,56 @@
         </ul>
       </div>
       } @else {
-      <button class="btn btn-white btn-sm" (click)="openLoginModal()">
-        Login
+      <button
+        class="btn btn-secondary btn-sm"
+        (click)="registerModalRef.open()"
+      >
+        Sign Up
       </button>
+      <app-modal
+        #registerModalRef
+        title="Register Account"
+        (onClose)="registerFormRef.registerForm.reset()"
+        ><app-register-form #registerFormRef></app-register-form>
+
+        <ng-container actions>
+          <form method="dialog">
+            <button
+              class="btn btn-ghost mr-2"
+              (click)="registerModalRef.close()"
+            >
+              Cancel
+            </button>
+          </form>
+          <button class="btn btn-primary" (click)="registerFormRef.onSubmit()">
+            Submit
+          </button>
+        </ng-container>
+      </app-modal>
+
+      <button class="btn btn-sm" (click)="loginModalRef.open()">Sign In</button>
+      <app-modal
+        #loginModalRef
+        title="Sign In Account"
+        (onClose)="loginFormRef.loginForm.reset()"
+      >
+        <app-login-form #loginFormRef></app-login-form>
+
+        <ng-container actions>
+          <form method="dialog">
+            <button class="btn btn-ghost mr-2" (click)="loginModalRef.close()">
+              Cancel
+            </button>
+          </form>
+          <button class="btn btn-primary" (click)="loginFormRef.onSubmit()">
+            Submit
+          </button>
+        </ng-container>
+      </app-modal>
       }
     </div>
   </div>
 </header>
-
-<!-- Login Modal -->
-<app-login-modal />
 
 <swal
   #logoutAlert
