@@ -17,6 +17,12 @@ export const routes: Routes = [
     title: 'Home',
   },
   {
+    path: 'profile',
+    loadChildren: () =>
+      import('./modules/profile/profile.routes').then((m) => m.routes),
+    canActivate: [childAuthGuard],
+  },
+  {
     path: 'portal',
     canActivate: [childAuthGuard],
     children: [

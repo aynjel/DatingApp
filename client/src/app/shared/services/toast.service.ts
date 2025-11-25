@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Toast } from '../models/user';
+import { Toast } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root',

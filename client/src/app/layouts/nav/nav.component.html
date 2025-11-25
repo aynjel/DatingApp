@@ -123,10 +123,10 @@
           tabindex="0"
           class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-white text-secondary font-semibold rounded-box w-40"
         >
-          <li>
+          <li routerLink="/profile/me">
             <a>Profile ({{ authStore.currentUser()?.displayName }})</a>
           </li>
-          <li>
+          <li routerLink="/profile/account-settings">
             <a>Settings</a>
           </li>
           <li>

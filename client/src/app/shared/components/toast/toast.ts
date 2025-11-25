@@ -1,6 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Toast } from '../../models/user';
+import { Toast } from '../../models/user.model';
 import { ToastService } from '../../services/toast.service';
 
 @Component({

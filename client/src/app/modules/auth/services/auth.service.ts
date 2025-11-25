@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { APIEndpoints } from '../../../shared/constants/api-endpoints';
 import { RegisterUserRequest } from '../../../shared/models/dto/request/register-user.request';
 import { AuthUserResponse } from '../../../shared/models/dto/response/auth-user.response';
-import { User } from '../../../shared/models/user';
+import { User } from '../../../shared/models/user.model';
 
 @Injectable({
   providedIn: 'root',

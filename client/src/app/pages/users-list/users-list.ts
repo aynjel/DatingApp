@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { Users } from '@service/users';
 import { Subject, takeUntil } from 'rxjs';
-import { User } from '../../shared/models/user';
+import { User } from '../../shared/models/user.model';
 
 @Component({
   selector: 'app-users-list',

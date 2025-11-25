@@ -12,18 +12,18 @@ import {
 } from '@ngrx/signals';
 import { RegisterUserRequest } from '../../../shared/models/dto/request/register-user.request';
 import { AuthUserResponse } from '../../../shared/models/dto/response/auth-user.response';
-import { User } from '../../../shared/models/user';
+import { User } from '../../../shared/models/user.model';
 import { ToastService } from '../../../shared/services/toast.service';
 import { GlobalStore } from '../../../store/global.store';
 import { AuthService } from '../services/auth.service';
 
-type AuthStore = {
+type AuthStoreType = {
   currentUser: User | undefined;
   isLoggedIn: boolean;
   accessToken: string | undefined;
 };
 
-const initialState: AuthStore = {
+const initialState: AuthStoreType = {
   currentUser: undefined,
   isLoggedIn: false,
   accessToken: undefined,
