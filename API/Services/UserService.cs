@@ -51,7 +51,12 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         var createdUser = await userRepository.CreateUserAsync(user);
 
         // Return user details response
-        return createdUser.ToDto(createdUser.Token);
+        // return createdUser.ToDto(createdUser.Token);
+        return new()
+        {
+            DisplayName = createdUser.DisplayName,
+            Token = new TokenResponseDto(createdUser.Token.AccessToken, createdUser.Token.RefreshToken)
+        };
     }
 
     public async Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)

@@ -1,7 +1,7 @@
 namespace API.Model.DTO.Response;
 
-public class UserAccountResponseDto : UserDetailsResponseDto
+public class UserAccountResponseDto
 {
-  public string Name { get; internal set; }
+  public string DisplayName { get; set; }
   public TokenResponseDto Token { get; set; }
 }

@@ -65,14 +65,12 @@ public class UserRepository(DataContext context, IGenerateJWTService jwtService)
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         context.Users.Add(user);
         await context.SaveChangesAsync();
-        var userDto = new UserAccountResponseDto
+        var createdUser = new UserAccountResponseDto
         {
-            UserId = user.Id,
             DisplayName = user.DisplayName,
-            Email = user.Email,
             Token = new TokenResponseDto(accessToken, refreshToken)
         };
-        return userDto;
+        return createdUser;
     }
 
     public async Task<UserDetailsResponseDto> UpdateUserAsync(User user)

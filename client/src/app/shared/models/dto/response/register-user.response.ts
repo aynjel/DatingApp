@@ -1,5 +1,6 @@
-import { User } from '../../user';
+import { TokenResponse } from '../../common-models';
 
-export interface RegisterUserResponse extends User {
-  token: string;
+export interface RegisterUserResponse {
+  displayName: string;
+  token: TokenResponse;
 }

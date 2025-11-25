@@ -25,7 +25,7 @@
           tabindex="0"
           class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow text-secondary font-semibold rounded-box w-52"
         >
-          @if(authService.isLoggedIn()) {
+          @if(authStore.isLoggedIn()) {
           <li>
             <a routerLink="/users" routerLinkActive="bg-secondary text-white"
               >Matches</a
@@ -71,7 +71,7 @@
     <!-- Center: Desktop Nav -->
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal px-1 space-x-2 text-white font-semibold">
-        @if(authService.isLoggedIn()) {
+        @if(authStore.isLoggedIn()) {
         <li>
           <a routerLink="/users" routerLinkActive="bg-white text-secondary"
             >Matches</a
@@ -98,7 +98,7 @@
 
     <!-- User Icon with Dropdown -->
     <div class="navbar-end space-x-2">
-      @if(authService.isLoggedIn()) {
+      @if(authStore.isLoggedIn()) {
       <div class="dropdown dropdown-end">
         <button
           tabindex="0"
@@ -124,7 +124,7 @@
           class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-white text-secondary font-semibold rounded-box w-40"
         >
           <li>
-            <a>Profile ({{ authService.userAccountData()?.displayName }})</a>
+            <a>Profile ({{ authStore.currentUser()?.displayName }})</a>
           </li>
           <li>
             <a>Settings</a>

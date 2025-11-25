@@ -66,9 +66,8 @@ export const AuthStore = signalStore(
       store.authService.login(payload).pipe(
         tapResponse({
           next: (response) => {
-            setCurrentUser(response);
             setIsLoggedIn(true);
-            setAccessToken(response.token.accessToken);
+            setAccessToken(response.accessToken);
             store.router.navigate(['/dashboard']);
           },
           error: (error: HttpErrorResponse) => {
@@ -85,9 +84,8 @@ export const AuthStore = signalStore(
       store.authService.registerUser(payload).pipe(
         tapResponse({
           next: (response) => {
-            setCurrentUser(response);
             setIsLoggedIn(true);
-            setAccessToken(response.token);
+            setAccessToken(response.token.accessToken);
             store.router.navigate(['/dashboard']);
           },
           error: (error: HttpErrorResponse) => {

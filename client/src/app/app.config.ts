@@ -16,8 +16,8 @@ import {
 } from '@angular/platform-browser';
 import { provideSweetAlert2 } from '@sweetalert2/ngx-sweetalert2';
 import { routes } from './app.routes';
-import { errorInterceptor } from './shared/interceptors/error-interceptor';
-import { jwtInterceptor } from './shared/interceptors/jwt-interceptor';
+import { errorInterceptor } from './shared/interceptors/error.interceptor';
+import { jwtInterceptor } from './shared/interceptors/jwt.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
