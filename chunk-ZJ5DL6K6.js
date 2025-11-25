@@ -1,0 +1,1 @@
+import{Ea as t,ab as a,bb as n,sb as o}from"./chunk-BG3454PS.js";import"./chunk-IMPBB4AK.js";var m=class s{static \u0275fac=function(e){return new(e||s)};static \u0275cmp=t({type:s,selectors:[["app-messages"]],decls:2,vars:0,template:function(e,p){e&1&&(a(0,"p"),o(1,"messages works!"),n())},encapsulation:2})};export{m as Messages};

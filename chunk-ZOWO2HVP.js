@@ -1,0 +1,1 @@
+import{Ea as s,ab as i,bb as n,sb as o}from"./chunk-BG3454PS.js";import"./chunk-IMPBB4AK.js";var a=class e{static \u0275fac=function(t){return new(t||e)};static \u0275cmp=s({type:e,selectors:[["app-lists"]],decls:2,vars:0,template:function(t,l){t&1&&(i(0,"p"),o(1,"lists works!"),n())},encapsulation:2})};export{a as Lists};
