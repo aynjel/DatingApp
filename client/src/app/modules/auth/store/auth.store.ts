@@ -1,22 +1,19 @@
 import { withReset, withStorageSync } from '@angular-architects/ngrx-toolkit';
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { LoginUserRequest } from '@model/dto/request/login-user.request';
 import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
   signalStore,
-  type,
   withMethods,
   withProps,
   withState,
 } from '@ngrx/signals';
-import { withEntities } from '@ngrx/signals/entities';
 import { RegisterUserRequest } from '../../../shared/models/dto/request/register-user.request';
-import { LoginUserResponse } from '../../../shared/models/dto/response/login-user.response';
-import { RegisterUserResponse } from '../../../shared/models/dto/response/register-user.response';
+import { AuthUserResponse } from '../../../shared/models/dto/response/auth-user.response';
 import { User } from '../../../shared/models/user';
+import { ToastService } from '../../../shared/services/toast.service';
 import { GlobalStore } from '../../../store/global.store';
 import { AuthService } from '../services/auth.service';
 
@@ -40,12 +37,8 @@ export const AuthStore = signalStore(
   withProps(() => ({
     globalStore: inject(GlobalStore),
     authService: inject(AuthService),
-    router: inject(Router),
+    toastService: inject(ToastService),
   })),
-  withEntities({
-    collection: 'user',
-    entity: type<User>(),
-  }),
   withMethods((store) => {
     const setCurrentUser = (user: User | undefined) => {
       patchState(store, { currentUser: user });
@@ -61,14 +54,13 @@ export const AuthStore = signalStore(
 
     const signIn = store.globalStore.withFormSubmission<
       LoginUserRequest,
-      LoginUserResponse
+      AuthUserResponse
     >((payload) =>
       store.authService.login(payload).pipe(
         tapResponse({
           next: (response) => {
             setIsLoggedIn(true);
-            setAccessToken(response.accessToken);
-            store.router.navigate(['/dashboard']);
+            setAccessToken(response.token.accessToken);
           },
           error: (error: HttpErrorResponse) => {
             console.error('Login error:', error);
@@ -79,17 +71,46 @@ export const AuthStore = signalStore(
 
     const signUp = store.globalStore.withFormSubmission<
       RegisterUserRequest,
-      RegisterUserResponse
+      AuthUserResponse
     >((payload) =>
       store.authService.registerUser(payload).pipe(
         tapResponse({
           next: (response) => {
             setIsLoggedIn(true);
             setAccessToken(response.token.accessToken);
-            store.router.navigate(['/dashboard']);
           },
           error: (error: HttpErrorResponse) => {
             console.error('Registration error:', error);
+          },
+        })
+      )
+    );
+
+    const logout = store.globalStore.withApiState<void, true>(() =>
+      store.authService.logout().pipe(
+        tapResponse({
+          next: (response) => {
+            store.resetState();
+            setIsLoggedIn(false);
+            setAccessToken(undefined);
+            setCurrentUser(undefined);
+            store.toastService.show('Logged out successfully.', 'success');
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error('Logout error:', error);
+          },
+        })
+      )
+    );
+
+    const getCurrentUser = store.globalStore.withApiState<void, User>(() =>
+      store.authService.getCurrentUser().pipe(
+        tapResponse({
+          next: (response) => {
+            setCurrentUser(response);
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error('Get Current User error:', error);
           },
         })
       )
@@ -102,6 +123,8 @@ export const AuthStore = signalStore(
 
       signIn,
       signUp,
+      logout,
+      getCurrentUser,
     };
   })
 );

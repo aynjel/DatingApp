@@ -1,6 +1,6 @@
 import { TokenResponse } from '../../common-models';
 
-export interface RegisterUserResponse {
+export interface AuthUserResponse {
   displayName: string;
   token: TokenResponse;
 }

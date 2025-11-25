@@ -2,48 +2,39 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '@env/environment';
 import { LoginUserRequest } from '@model/dto/request/login-user.request';
-import { LoginUserResponse } from '@model/dto/response/login-user.response';
-import { CookieService } from 'ngx-cookie-service';
-import { Observable, tap } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { APIEndpoints } from '../../../shared/constants/api-endpoints';
 import { RegisterUserRequest } from '../../../shared/models/dto/request/register-user.request';
-import { RegisterUserResponse } from '../../../shared/models/dto/response/register-user.response';
+import { AuthUserResponse } from '../../../shared/models/dto/response/auth-user.response';
+import { User } from '../../../shared/models/user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private cookieService = inject(CookieService);
 
-  getCurrentUser(): Observable<LoginUserResponse> {
-    return this.http.get<LoginUserResponse>(
-      environment.apiUrl + APIEndpoints.CURRENT_USER
+  getCurrentUser(): Observable<User> {
+    return this.http.get<User>(environment.apiUrl + APIEndpoints.CURRENT_USER);
+  }
+
+  login(payload: LoginUserRequest): Observable<AuthUserResponse> {
+    return this.http.post<AuthUserResponse>(
+      environment.apiUrl + APIEndpoints.LOGIN,
+      payload
     );
-  }
-
-  login(payload: LoginUserRequest): Observable<LoginUserResponse> {
-    return this.http
-      .post<LoginUserResponse>(environment.apiUrl + APIEndpoints.LOGIN, payload)
-      .pipe(
-        tap((response) => {
-          this.cookieService.set('accessToken', response.accessToken);
-          this.cookieService.set('refreshToken', response.refreshToken);
-        })
-      );
-  }
-
-  logout(): void {
-    this.cookieService.delete('accessToken');
-    this.cookieService.delete('refreshToken');
   }
 
   registerUser(
     registerPayload: RegisterUserRequest
-  ): Observable<RegisterUserResponse> {
-    return this.http.post<RegisterUserResponse>(
+  ): Observable<AuthUserResponse> {
+    return this.http.post<AuthUserResponse>(
       environment.apiUrl + APIEndpoints.REGISTER,
       registerPayload
     );
+  }
+
+  logout(): Observable<true> {
+    return of(true);
   }
 }

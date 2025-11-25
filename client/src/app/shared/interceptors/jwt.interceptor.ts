@@ -1,13 +1,12 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
+import { AuthStore } from '../../modules/auth/store/auth.store';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
-  const cookieService = inject(CookieService);
-  const token = cookieService.get('accessToken');
+  const authStore = inject(AuthStore);
   const modifiedRequest = req.clone({
     setHeaders: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${authStore.accessToken() ?? ''}`,
     },
   });
   return next(modifiedRequest);

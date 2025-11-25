@@ -61,7 +61,7 @@ public class AccountController(IUserService userService) : BaseController
     [HttpGet("current-user")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UserAccountResponseDto>> GetCurrentUser()
+    public async Task<ActionResult<UserDetailsResponseDto>> GetCurrentUser()
     {
         var jwt = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
         var user = await userService.GetCurrentUserAsync(jwt);

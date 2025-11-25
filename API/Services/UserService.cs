@@ -79,7 +79,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         return await jwtService.RefreshTokenAsync(refreshTokenDto);
     }
 
-    public async Task<UserAccountResponseDto> GetCurrentUserAsync(string jwt)
+    public async Task<UserDetailsResponseDto> GetCurrentUserAsync(string jwt)
     {
         var userId = jwtService.GetUserIdFromJwt(jwt);
         var user = await userRepository.GetByIdAsync(userId);
@@ -88,7 +88,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
             return null;
         }
 
-        var userDetails = await userRepository.GetByEmailAsync(user.Email);
+        var (_, userDetails) = await userRepository.GetUserAsync(user.Email);
         if (userDetails is null)
         {
             return null;
