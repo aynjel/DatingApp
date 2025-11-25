@@ -4,6 +4,7 @@
       type="email"
       formControlName="email"
       class="input input-bordered w-full"
+      [readOnly]="isLoading()"
       [class.input-error]="
         loginForm.get('email')?.invalid && loginForm.get('email')?.touched
       "
@@ -12,7 +13,6 @@
       "
       placeholder="Email"
     />
-
     @if(loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
     <p class="text-error text-[14px]">
       @for(error of loginForm.get('email')?.errors | keyvalue; track error) {
@@ -24,6 +24,7 @@
     <input
       type="password"
       formControlName="password"
+      [readOnly]="isLoading()"
       class="input input-bordered w-full"
       [class.input-error]="
         loginForm.get('password')?.invalid && loginForm.get('password')?.touched
@@ -33,7 +34,6 @@
       "
       placeholder="Password"
     />
-
     @if(loginForm.get('password')?.invalid &&
     loginForm.get('password')?.touched) {
     <p class="text-error text-[14px]">

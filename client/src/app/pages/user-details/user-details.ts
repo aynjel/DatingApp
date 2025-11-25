@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ToastService } from '../../shared/services/toast';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-user-details',

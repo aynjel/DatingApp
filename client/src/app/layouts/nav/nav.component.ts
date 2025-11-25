@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
+import { LoginFormComponent } from '../../modules/auth/components/login-form/login-form.component';
+import { RegisterFormComponent } from '../../modules/auth/components/register-form/register-form.component';
+import { AuthService } from '../../modules/auth/services/auth.service';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
-import { Auth } from '../../shared/services/auth';
-import { LoginFormComponent } from '../components/login-form/login-form.component';
-import { RegisterFormComponent } from '../components/register-form/register-form.component';
+import { GlobalStore } from '../../store/global.store';
 
 @Component({
   selector: 'app-nav',
@@ -19,7 +20,8 @@ import { RegisterFormComponent } from '../components/register-form/register-form
   templateUrl: './nav.component.html',
 })
 export class NavComponent {
-  protected authService = inject(Auth);
+  protected globalStore = inject(GlobalStore);
+  protected authService = inject(AuthService);
 
   protected onLogout(): void {
     this.authService.logout();

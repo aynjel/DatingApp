@@ -6,14 +6,14 @@ import { LoginUserResponse } from '@model/dto/response/login-user.response';
 import { User, UserRole, UserRoleEnum } from '@model/user';
 import { CookieService } from 'ngx-cookie-service';
 import { first, Observable, of, tap } from 'rxjs';
-import { APIEndpoints } from '../constants/api-endpoints';
-import { RegisterUserRequest } from '../models/dto/request/register-user.request';
-import { RegisterUserResponse } from '../models/dto/response/register-user.response';
+import { APIEndpoints } from '../../../shared/constants/api-endpoints';
+import { RegisterUserRequest } from '../../../shared/models/dto/request/register-user.request';
+import { RegisterUserResponse } from '../../../shared/models/dto/response/register-user.response';
 
 @Injectable({
   providedIn: 'root',
 })
-export class Auth {
+export class AuthService {
   private http = inject(HttpClient);
   private cookieService = inject(CookieService);
 

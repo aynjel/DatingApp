@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Toast } from '../../models/user';
-import { ToastService } from '../../services/toast';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-toast',

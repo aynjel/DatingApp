@@ -1,7 +1,5 @@
 import {
   ApplicationConfig,
-  inject,
-  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
@@ -17,11 +15,9 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 import { provideSweetAlert2 } from '@sweetalert2/ngx-sweetalert2';
-import { lastValueFrom } from 'rxjs';
 import { routes } from './app.routes';
 import { errorInterceptor } from './shared/interceptors/error-interceptor';
 import { jwtInterceptor } from './shared/interceptors/jwt-interceptor';
-import { Auth } from './shared/services/auth';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,23 +33,23 @@ export const appConfig: ApplicationConfig = {
       fireOnInit: false,
       dismissOnDestroy: true,
     }),
-    provideAppInitializer(async () => {
-      const authService = inject(Auth);
+    // provideAppInitializer(async () => {
+    //   const authStore = inject(AuthStore);
 
-      return new Promise<void>((resolve) => {
-        setTimeout(async () => {
-          try {
-            await lastValueFrom(authService.retrieveUserAccount());
-          } finally {
-            console.log('Initialization Complete');
-            const splash = document.getElementById('initial-splash');
-            if (splash) {
-              splash.remove();
-            }
-            resolve();
-          }
-        }, 500);
-      });
-    }),
+    //   return new Promise<void>((resolve) => {
+    //     setTimeout(async () => {
+    //       try {
+    //         await lastValueFrom(authStore.initializeStore());
+    //       } finally {
+    //         console.log('Initialization Complete');
+    //         const splash = document.getElementById('initial-splash');
+    //         if (splash) {
+    //           splash.remove();
+    //         }
+    //         resolve();
+    //       }
+    //     }, 500);
+    //   });
+    // }),
   ],
 };
