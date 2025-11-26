@@ -34,20 +34,20 @@ public class UserRepository(DataContext context, IGenerateJWTService jwtService)
         };
     }
 
-    public async Task<UserAccountResponseDto> GetByEmailAsync(string email)
+    public async Task<UserDetailsResponseDto> GetByEmailAsync(string email)
     {
         var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
         if (user is null) return null;
 
-        var token = new TokenResponseDto(user.AccessToken, user.RefreshToken);
-        var userDetails = new UserDetailsResponseDto
+        // var token = new TokenResponseDto(user.AccessToken, user.RefreshToken);
+        return new UserDetailsResponseDto
         {
             UserId = user.Id,
             DisplayName = user.DisplayName,
             Email = user.Email
         };
 
-        return userDetails.ToDto(token);
+        // return userDetails.ToDto(token);
     }
 
     public async Task<bool> UserExistsAsync(string email)

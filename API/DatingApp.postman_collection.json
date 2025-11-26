@@ -1,0 +1,479 @@
+{
+	"info": {
+		"_postman_id": "0fc77035-a468-45e2-be26-0b728f9681cf",
+		"name": "DatingApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45713704",
+		"_collection_link": "https://anggi-7400494.postman.co/workspace/Anggi's-Workspace~6a2abc08-37d2-4122-80fa-7f32bbb300f3/collection/45713704-0fc77035-a468-45e2-be26-0b728f9681cf?action=share&source=collection_link&creator=45713704"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\": \"Tony\",\r\n    \"lastname\": \"Parker\",\r\n    \"username\": \"tp76\",\r\n    \"email\": \"tp.1@gmail.com\",\r\n    \"password\": \"test123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/account/register",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"account",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const user = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Has properties\", function() {\r",
+									"    pm.expect(user).to.have.property(\"accessToken\");\r",
+									"    pm.expect(user).to.have.property(\"refreshToken\");\r",
+									"});\r",
+									"\r",
+									"if (pm.test(\"Has properties\")) {\r",
+									"    pm.globals.set(\"accessToken\", user.accessToken);\r",
+									"    pm.globals.set(\"refreshToken\", user.refreshToken);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"bruce.banner@gmail.com\",\r\n    \"password\": \"bruce123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/account/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh-Token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"9788811c-3d29-483d-ae41-e33f416c2a7c\",\r\n    \"refreshToken\": \"yXDiaWbF3T5lN6e/DZimH7/qcfVmg+FIV3xP5TQAdgCEWWOJEZApmlE4WTpfrN6CK0UzrOxO1LvJqnRoOW67Dg==\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/account/refresh-token",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"account",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Account through Bearer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9ydGVnYWNhbmlsbG83Ni4xQGdtYWlsLmNvbSIsIm5hbWVpZCI6IjljOWFmMTdlLWQ0NGMtNDUzNS1iZjYyLTAwYWYwYzFkZjc2YyIsInVuaXF1ZV9uYW1lIjoib3J0ZWdhY2FuaWxsbzc2IiwibmJmIjoxNzU2Mjg1Njg0LCJleHAiOjE3NTYyODkyODQsImlhdCI6MTc1NjI4NTY4NCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NDIwMC8iLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo0MjAwLyJ9.AP3HJQltxrU2kuBu2iKcXWjJZqaJj7EFuB6U7kMiUA4XuYto2Fig2TUObOb1qccX7aYSyo05h8-naTZQ9dcnCQ",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/account/current-user",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"account",
+								"current-user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "GetUsers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUser By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/123e4567-e89b-12d3-a456-426614174000",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"123e4567-e89b-12d3-a456-426614174000"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUser By  Username",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/username/cams23",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"username",
+								"cams23"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Buggy",
+			"item": [
+				{
+					"name": "server-error",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/buggy/server-error",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"buggy",
+								"server-error"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "test-error",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/buggy/test",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"buggy",
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "not-found",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/buggy/not-found",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"buggy",
+								"not-found"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unauthorize",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/buggy/auth",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"buggy",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bad-request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/buggy/bad-request",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"buggy",
+								"bad-request"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Member",
+			"item": [
+				{
+					"name": "Get Members",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/members",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"members"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearerToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://localhost:5001/"
+		},
+		{
+			"key": "bearerToken",
+			"value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9ydGVnYWNhbmlsbG83Ni4xQGdtYWlsLmNvbSIsIm5hbWVpZCI6IjljOWFmMTdlLWQ0NGMtNDUzNS1iZjYyLTAwYWYwYzFkZjc2YyIsIm5iZiI6MTc1NjI4MTEyOSwiZXhwIjoxNzU2Mjg0NzI5LCJpYXQiOjE3NTYyODExMjl9.abBAgY3SBaXKeVWtM0JPMAfOnF7nwMclaOxH_4EX8OmQbfmYkuoRNYGwT3LvHplSLO244E4-EhswmOwRNHdgfA"
+		}
+	]
+}

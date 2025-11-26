@@ -21,7 +21,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         return await userRepository.GetByIdAsync(id);
     }
 
-    public async Task<UserAccountResponseDto> GetUserByEmailAsync(string email)
+    public async Task<UserDetailsResponseDto> GetUserByEmailAsync(string email)
     {
         var user = await userRepository.GetByEmailAsync(email);
         return user;
@@ -59,7 +59,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         };
     }
 
-    public async Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
+    public async Task<TokenResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
     {
         // Validate user credentials
         var (userEntity, user) = await userRepository.GetUserAsync(loginDto.Email);
@@ -71,7 +71,8 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         var accessToken = jwtService.GenerateToken(user.UserId);
         var refreshToken = await jwtService.GenerateAndSaveTokenAsync(user.UserId, accessToken);
 
-        return user.ToDto(new TokenResponseDto(accessToken, refreshToken));
+        return new TokenResponseDto(accessToken, refreshToken);
+        // return user.ToDto(new TokenResponseDto(accessToken, refreshToken));
     }
 
     public async Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto refreshTokenDto)

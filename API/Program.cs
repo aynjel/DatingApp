@@ -95,7 +95,10 @@ builder.Services.AddSwaggerGen(c =>
 
 // Add Scoped Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IGenerateJWTService, GenerateJWTService>();
 
 var app = builder.Build();
