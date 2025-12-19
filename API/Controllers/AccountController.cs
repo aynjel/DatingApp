@@ -27,12 +27,12 @@ public class AccountController(IUserService userService) : BaseController
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<TokenResponseDto>> Login([FromBody] LoginRequestDto loginDto)
+    public async Task<ActionResult<UserAccountResponseDto>> Login([FromBody] LoginRequestDto loginDto)
     {
         try
         {
-            var token = await userService.AuthenticateUserAsync(loginDto);
-            return Ok(token);
+            var user = await userService.AuthenticateUserAsync(loginDto);
+            return Ok(user);
         }
         catch (InvalidOperationException er)
         {

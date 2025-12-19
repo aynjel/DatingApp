@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CanDeactivateFn } from '@angular/router';
-import { BaseFormComponent } from '../components/base-form-component/base-form.component';
+import { BaseFormComponent } from '../components/base-form/base-form.component';
 import { unsavedChangesGuard } from './unsaved-changes.guard';
 
 describe('unsavedChangesGuard', () => {

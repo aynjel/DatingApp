@@ -38,7 +38,6 @@ export class LoginFormComponent {
     this.authStore.signIn({
       data: payload,
       onSuccess: () => {
-        this.authStore.getCurrentUser();
         this.loginForm.reset();
       },
     });

@@ -25,23 +25,14 @@
           tabindex="0"
           class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow text-secondary font-semibold rounded-box w-52"
         >
-          @if(authStore.isLoggedIn()) {
+          @if(authStore.isLoggedIn()) { @for (link of navigationLinks; track
+          link.routerLink) {
           <li>
-            <a routerLink="/users" routerLinkActive="bg-secondary text-white"
-              >Matches</a
-            >
+            <a routerLink="/users" routerLinkActive="bg-secondary text-white">{{
+              link.label
+            }}</a>
           </li>
-          <li>
-            <a routerLink="/lists" routerLinkActive="bg-secondary text-white"
-              >Peoples</a
-            >
-          </li>
-          <li>
-            <a routerLink="/messages" routerLinkActive="bg-secondary text-white"
-              >Messages</a
-            >
-          </li>
-          }
+          } }
           <li>
             <a routerLink="/errors" routerLinkActive="bg-secondary text-white"
               >Errors</a
@@ -71,23 +62,16 @@
     <!-- Center: Desktop Nav -->
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal px-1 space-x-2 text-white font-semibold">
-        @if(authStore.isLoggedIn()) {
+        @if(authStore.isLoggedIn()) { @for (link of navigationLinks; track
+        link.routerLink) {
         <li>
-          <a routerLink="/users" routerLinkActive="bg-white text-secondary"
-            >Matches</a
+          <a
+            routerLink="{{ link.routerLink }}"
+            routerLinkActive="bg-white text-secondary"
+            >{{ link.label }}</a
           >
         </li>
-        <li>
-          <a routerLink="/lists" routerLinkActive="bg-white text-secondary"
-            >People</a
-          >
-        </li>
-        <li>
-          <a routerLink="/messages" routerLinkActive="bg-white text-secondary"
-            >Messages</a
-          >
-        </li>
-        }
+        } }
         <li>
           <a routerLink="/errors" routerLinkActive="bg-white text-secondary"
             >Errors</a

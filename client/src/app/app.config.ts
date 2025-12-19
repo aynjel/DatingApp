@@ -20,11 +20,34 @@ import {
 import { provideRouter, withViewTransitions } from '@angular/router';
 import { provideSweetAlert2 } from '@sweetalert2/ngx-sweetalert2';
 import { AvatarModule } from 'ngx-avatar-2';
-import { lastValueFrom, of } from 'rxjs';
 import { routes } from './app.routes';
 import { AuthStore } from './modules/auth/store/auth.store';
 import { errorInterceptor } from './shared/interceptors/error.interceptor';
 import { jwtInterceptor } from './shared/interceptors/jwt.interceptor';
+
+const initializeApp = () => {
+  const authStore = inject(AuthStore);
+  const document = inject(DOCUMENT);
+  const renderer = inject(RendererFactory2).createRenderer(null, null);
+
+  if (authStore.isLoggedIn()) {
+    authStore.getCurrentUser();
+  }
+
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      const splash = document.getElementById('initial-splash');
+
+      if (splash) {
+        const parent = renderer.parentNode(splash) ?? document.body;
+        renderer.removeChild(parent, splash);
+      }
+
+      console.log('🚀 Initialization Complete');
+      resolve();
+    }, 500);
+  });
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -40,32 +63,7 @@ export const appConfig: ApplicationConfig = {
       fireOnInit: false,
       dismissOnDestroy: true,
     }),
-    provideAppInitializer(async () => {
-      const authStore = inject(AuthStore);
-      const rendererFactory = inject(RendererFactory2);
-      const renderer = rendererFactory.createRenderer(null, null);
-      const document = inject(DOCUMENT);
-
-      return new Promise<void>((resolve) => {
-        setTimeout(async () => {
-          try {
-            if (authStore.isLoggedIn()) {
-              await lastValueFrom(of(authStore.getCurrentUser()));
-            }
-          } finally {
-            console.log('Initialization Complete');
-            const splash = document.querySelector('#initial-splash');
-            if (splash) {
-              const parent = renderer.parentNode(splash);
-              if (parent) {
-                renderer.removeChild(parent, splash);
-              }
-            }
-            resolve();
-          }
-        }, 500);
-      });
-    }),
+    provideAppInitializer(async () => await initializeApp()),
     importProvidersFrom(AvatarModule),
   ],
 };

@@ -24,4 +24,24 @@ import { ModalComponent } from '../modal/modal.component';
 export class NavComponent {
   protected globalStore = inject(GlobalStore);
   protected authStore = inject(AuthStore);
+
+  protected readonly navigationLinks: { label: string; routerLink: string }[] =
+    [
+      {
+        label: 'Matches',
+        routerLink: '/portal/users',
+      },
+      {
+        label: 'People',
+        routerLink: '/portal/lists',
+      },
+      {
+        label: 'Messages',
+        routerLink: '/portal/messages',
+      },
+      // {
+      //   label: 'Errors',
+      //   routerLink: '/portal/errors',
+      // },
+    ];
 }

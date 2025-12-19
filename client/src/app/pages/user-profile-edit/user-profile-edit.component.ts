@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BaseFormComponent } from '../../shared/components/base-form-component/base-form.component';
+import { BaseFormComponent } from '../../shared/components/base-form/base-form.component';
 
 @Component({
   selector: 'app-user-profile-edit',

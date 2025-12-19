@@ -10,6 +10,7 @@ import {
   withProps,
   withState,
 } from '@ngrx/signals';
+import { TokenResponse } from '../../../shared/models/common-models';
 import { RegisterUserRequest } from '../../../shared/models/dto/request/register-user.request';
 import { AuthUserResponse } from '../../../shared/models/dto/response/auth-user.response';
 import { User } from '../../../shared/models/user.model';
@@ -20,13 +21,13 @@ import { AuthService } from '../services/auth.service';
 type AuthStoreType = {
   currentUser: User | undefined;
   isLoggedIn: boolean;
-  accessToken: string | undefined;
+  token: TokenResponse | undefined;
 };
 
 const initialState: AuthStoreType = {
   currentUser: undefined,
   isLoggedIn: false,
-  accessToken: undefined,
+  token: undefined,
 };
 
 export const AuthStore = signalStore(
@@ -48,8 +49,8 @@ export const AuthStore = signalStore(
       patchState(store, { isLoggedIn });
     };
 
-    const setAccessToken = (accessToken: string | undefined) => {
-      patchState(store, { accessToken });
+    const setToken = (token: TokenResponse | undefined) => {
+      patchState(store, { token });
     };
 
     const signIn = store.globalStore.withFormSubmission<
@@ -59,8 +60,13 @@ export const AuthStore = signalStore(
       store.authService.login(payload).pipe(
         tapResponse({
           next: (response) => {
+            store.toastService.show(
+              `Welcome ${response.displayName}!`,
+              'success'
+            );
             setIsLoggedIn(true);
-            setAccessToken(response.token.accessToken);
+            setToken(response.token);
+            getCurrentUser();
           },
           error: (error: HttpErrorResponse) => {
             console.error('Login error:', error);
@@ -76,8 +82,13 @@ export const AuthStore = signalStore(
       store.authService.registerUser(payload).pipe(
         tapResponse({
           next: (response) => {
+            store.toastService.show(
+              `Welcome ${response.displayName}!`,
+              'success'
+            );
             setIsLoggedIn(true);
-            setAccessToken(response.token.accessToken);
+            setToken(response.token);
+            getCurrentUser();
           },
           error: (error: HttpErrorResponse) => {
             console.error('Registration error:', error);
@@ -86,22 +97,18 @@ export const AuthStore = signalStore(
       )
     );
 
-    const logout = store.globalStore.withApiState<void, true>(() =>
-      store.authService.logout().pipe(
-        tapResponse({
-          next: (response) => {
-            store.resetState();
-            setIsLoggedIn(false);
-            setAccessToken(undefined);
-            setCurrentUser(undefined);
-            store.toastService.show('Logged out successfully.', 'success');
-          },
-          error: (error: HttpErrorResponse) => {
-            console.error('Logout error:', error);
-          },
-        })
-      )
-    );
+    const logout = () => {
+      store.resetState();
+      setIsLoggedIn(false);
+      setToken(undefined);
+      setCurrentUser(undefined);
+      store.toastService.show('Logged out successfully.', 'success');
+
+      // Reload page after a short delay to ensure state is cleared
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    };
 
     const getCurrentUser = store.globalStore.withApiState<void, User>(() =>
       store.authService.getCurrentUser().pipe(
@@ -119,7 +126,7 @@ export const AuthStore = signalStore(
     return {
       setCurrentUser,
       setIsLoggedIn,
-      setAccessToken,
+      setToken,
 
       signIn,
       signUp,
