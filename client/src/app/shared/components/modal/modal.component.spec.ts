@@ -1,5 +1,6 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ModalComponent } from './modal.component';
 
 describe('ModalComponent', () => {
@@ -8,9 +9,9 @@ describe('ModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ModalComponent]
-    })
-    .compileComponents();
+      imports: [ModalComponent],
+      providers: [provideZonelessChangeDetection(), provideHttpClient()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ModalComponent);
     component = fixture.componentInstance;

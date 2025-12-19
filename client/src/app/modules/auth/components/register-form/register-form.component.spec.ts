@@ -1,5 +1,6 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { RegisterFormComponent } from './register-form.component';
 
 describe('RegisterFormComponent', () => {
@@ -8,9 +9,9 @@ describe('RegisterFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RegisterFormComponent]
-    })
-    .compileComponents();
+      imports: [RegisterFormComponent],
+      providers: [provideZonelessChangeDetection(), provideHttpClient()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(RegisterFormComponent);
     component = fixture.componentInstance;

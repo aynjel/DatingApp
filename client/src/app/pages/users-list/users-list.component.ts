@@ -5,9 +5,9 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { Users } from '@service/users';
 import { Subject, takeUntil } from 'rxjs';
 import { User } from '../../shared/models/user.model';
+import { UsersService } from '../../shared/services/users.service';
 
 @Component({
   selector: 'app-users-list',
@@ -15,7 +15,7 @@ import { User } from '../../shared/models/user.model';
   templateUrl: './users-list.component.html',
 })
 export class UsersListComponent implements OnInit {
-  private userService = inject(Users);
+  private userService = inject(UsersService);
 
   protected users: WritableSignal<User[]> = signal([]);
 

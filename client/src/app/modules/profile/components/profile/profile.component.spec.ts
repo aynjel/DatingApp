@@ -1,5 +1,6 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ProfileComponent } from './profile.component';
 
 describe('ProfileComponent', () => {
@@ -8,9 +9,9 @@ describe('ProfileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProfileComponent]
-    })
-    .compileComponents();
+      imports: [ProfileComponent],
+      providers: [provideZonelessChangeDetection(), provideHttpClient()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;

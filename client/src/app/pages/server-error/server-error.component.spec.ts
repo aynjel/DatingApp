@@ -1,5 +1,6 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ServerErrorComponent } from './server-error.component';
 
 describe('ServerErrorComponent', () => {
@@ -9,6 +10,7 @@ describe('ServerErrorComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ServerErrorComponent],
+      providers: [provideZonelessChangeDetection(), provideHttpClient()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ServerErrorComponent);

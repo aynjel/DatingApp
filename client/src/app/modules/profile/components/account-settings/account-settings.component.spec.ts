@@ -1,5 +1,6 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AccountSettingsComponent } from './account-settings.component';
 
 describe('AccountSettingsComponent', () => {
@@ -8,9 +9,9 @@ describe('AccountSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AccountSettingsComponent]
-    })
-    .compileComponents();
+      imports: [AccountSettingsComponent],
+      providers: [provideZonelessChangeDetection(), provideHttpClient()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AccountSettingsComponent);
     component = fixture.componentInstance;

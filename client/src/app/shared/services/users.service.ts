@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class Users {
+export class UsersService {
   private http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl + '/Users';
 
