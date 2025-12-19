@@ -1,1 +1,0 @@
-import{Ea as n,ab as o,bb as s,sb as c}from"./chunk-BG3454PS.js";import"./chunk-IMPBB4AK.js";var i=class e{static \u0275fac=function(t){return new(t||e)};static \u0275cmp=n({type:e,selectors:[["app-account-settings"]],decls:2,vars:0,template:function(t,p){t&1&&(o(0,"p"),c(1,"account-settings works!"),s())},encapsulation:2})};export{i as AccountSettingsComponent};

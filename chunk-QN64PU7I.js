@@ -1,1 +1,0 @@
-import{Ea as o,ab as i,bb as n,sb as p}from"./chunk-BG3454PS.js";import"./chunk-IMPBB4AK.js";var r=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=o({type:t,selectors:[["app-edit-profile"]],decls:2,vars:0,template:function(e,m){e&1&&(i(0,"p"),p(1,"edit-profile works!"),n())},encapsulation:2})};export{r as EditProfileComponent};

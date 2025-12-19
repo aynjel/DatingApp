@@ -1,0 +1,1 @@
+import{Ga as o,cb as i,db as n,vb as p}from"./chunk-4G5T5ETV.js";import"./chunk-JZHZPN4O.js";var r=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=o({type:t,selectors:[["app-edit-profile"]],decls:2,vars:0,template:function(e,m){e&1&&(i(0,"p"),p(1,"edit-profile works!"),n())},encapsulation:2})};export{r as EditProfileComponent};
