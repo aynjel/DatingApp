@@ -3,8 +3,6 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-messages',
   imports: [],
-  templateUrl: './messages.html'
+  templateUrl: './messages.component.html',
 })
-export class Messages {
-
-}
+export class MessagesComponent {}

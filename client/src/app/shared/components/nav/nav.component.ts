@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
-import { LoginFormComponent } from '../../modules/auth/components/login-form/login-form.component';
-import { RegisterFormComponent } from '../../modules/auth/components/register-form/register-form.component';
-import { AuthStore } from '../../modules/auth/store/auth.store';
-import { ModalComponent } from '../../shared/components/modal/modal.component';
-import { GlobalStore } from '../../store/global.store';
+import { AvatarComponent } from 'ngx-avatar-2';
+import { LoginFormComponent } from '../../../modules/auth/components/login-form/login-form.component';
+import { RegisterFormComponent } from '../../../modules/auth/components/register-form/register-form.component';
+import { AuthStore } from '../../../modules/auth/store/auth.store';
+import { GlobalStore } from '../../../store/global.store';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
   selector: 'app-nav',
@@ -16,6 +17,7 @@ import { GlobalStore } from '../../store/global.store';
     ModalComponent,
     LoginFormComponent,
     RegisterFormComponent,
+    AvatarComponent,
   ],
   templateUrl: './nav.component.html',
 })

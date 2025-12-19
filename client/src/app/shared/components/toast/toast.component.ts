@@ -6,7 +6,7 @@ import { ToastService } from '../../services/toast.service';
 @Component({
   selector: 'app-toast',
   imports: [NgClass],
-  templateUrl: './toast.html',
+  templateUrl: './toast.component.html',
 })
 export class ToastComponent {
   private toastService = inject(ToastService);

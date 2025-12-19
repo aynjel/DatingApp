@@ -6,9 +6,9 @@ type AlertType = 'success' | 'error' | 'warning' | 'info';
 @Component({
   selector: 'app-alert',
   imports: [NgClass],
-  templateUrl: './alert.html',
+  templateUrl: './alert.component.html',
 })
-export class Alert {
+export class AlertComponent {
   type = input<AlertType>('info');
   message = input.required<string>();
   dismissible = input<boolean>(false);

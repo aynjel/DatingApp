@@ -4,9 +4,9 @@ import { ToastService } from '../../shared/services/toast.service';
 @Component({
   selector: 'app-user-details',
   imports: [],
-  templateUrl: './user-details.html',
+  templateUrl: './user-details.component.html',
 })
-export class UserDetails implements OnInit {
+export class UserDetailsComponent implements OnInit {
   private toast = inject(ToastService);
 
   ngOnInit(): void {

@@ -1,7 +1,7 @@
 import { CanDeactivateFn } from '@angular/router';
-import { BaseFormComponents } from '../components/base-form-components/base-form-components';
+import { BaseFormComponent } from '../components/base-form-component/base-form.component';
 
-export const unsavedChangesGuard: CanDeactivateFn<BaseFormComponents> = (
+export const unsavedChangesGuard: CanDeactivateFn<BaseFormComponent> = (
   component,
   currentRoute,
   currentState,

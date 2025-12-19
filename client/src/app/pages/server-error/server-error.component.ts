@@ -6,9 +6,9 @@ import { ApiError } from '../../shared/models/common-models';
 @Component({
   selector: 'app-server-error',
   imports: [],
-  templateUrl: './server-error.html',
+  templateUrl: './server-error.component.html',
 })
-export class ServerError {
+export class ServerErrorComponent {
   private router = inject(Router);
   private location = inject(Location);
 

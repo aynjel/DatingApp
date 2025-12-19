@@ -12,10 +12,9 @@ import { User } from '../../shared/models/user.model';
 @Component({
   selector: 'app-users-list',
   imports: [],
-  templateUrl: './users-list.html',
-  styleUrl: './users-list.scss',
+  templateUrl: './users-list.component.html',
 })
-export class UsersList implements OnInit {
+export class UsersListComponent implements OnInit {
   private userService = inject(Users);
 
   protected users: WritableSignal<User[]> = signal([]);

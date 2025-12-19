@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '@env/environment';
 import { LoginUserRequest } from '@model/dto/request/login-user.request';
 import { Observable, of } from 'rxjs';
-import { APIEndpoints } from '../../../shared/constants/api-endpoints';
+import { APIEndpoints } from '../../../shared/constants/api-endpoints.const';
 import { RegisterUserRequest } from '../../../shared/models/dto/request/register-user.request';
 import { AuthUserResponse } from '../../../shared/models/dto/response/auth-user.response';
 import { User } from '../../../shared/models/user.model';

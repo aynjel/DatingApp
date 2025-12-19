@@ -1,24 +1,25 @@
 import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from '@angular/common/http';
+import {
   ApplicationConfig,
   DOCUMENT,
+  importProvidersFrom,
   inject,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
   RendererFactory2,
 } from '@angular/core';
-import { provideRouter, withViewTransitions } from '@angular/router';
-
-import {
-  provideHttpClient,
-  withFetch,
-  withInterceptors,
-} from '@angular/common/http';
 import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { provideRouter, withViewTransitions } from '@angular/router';
 import { provideSweetAlert2 } from '@sweetalert2/ngx-sweetalert2';
+import { AvatarModule } from 'ngx-avatar-2';
 import { lastValueFrom, of } from 'rxjs';
 import { routes } from './app.routes';
 import { AuthStore } from './modules/auth/store/auth.store';
@@ -65,5 +66,6 @@ export const appConfig: ApplicationConfig = {
         }, 500);
       });
     }),
+    importProvidersFrom(AvatarModule),
   ],
 };

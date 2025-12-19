@@ -1,7 +1,4 @@
 import { Routes } from '@angular/router';
-import { NotFound } from './pages/not-found/not-found';
-import { ServerError } from './pages/server-error/server-error';
-import { TestErrors } from './pages/test-errors/test-errors';
 import { childAuthGuard } from './shared/guards/child-auth.guard';
 
 export const routes: Routes = [
@@ -29,39 +26,53 @@ export const routes: Routes = [
       {
         path: 'users',
         loadComponent: () =>
-          import('./pages/users-list/users-list').then((m) => m.UsersList),
+          import('./pages/users-list/users-list.component').then(
+            (m) => m.UsersListComponent
+          ),
       },
       {
         path: 'users/:id',
         loadComponent: () =>
-          import('./pages/user-details/user-details').then(
-            (m) => m.UserDetails
+          import('./pages/user-details/user-details.component').then(
+            (m) => m.UserDetailsComponent
           ),
       },
       {
         path: 'lists',
-        loadComponent: () => import('./pages/lists/lists').then((m) => m.Lists),
+        loadComponent: () =>
+          import('./pages/lists/lists.component').then((m) => m.ListsComponent),
       },
       {
         path: 'messages',
         loadComponent: () =>
-          import('./pages/messages/messages').then((m) => m.Messages),
+          import('./pages/messages/messages.component').then(
+            (m) => m.MessagesComponent
+          ),
       },
     ],
   },
   {
     path: 'errors',
-    component: TestErrors,
+    loadComponent: () =>
+      import('./pages/test-errors/test-errors.component').then(
+        (m) => m.TestErrorsComponent
+      ),
     title: 'Test Errors',
   },
   {
     path: 'server-error',
-    component: ServerError,
+    loadComponent: () =>
+      import('./pages/server-error/server-error.component').then(
+        (m) => m.ServerErrorComponent
+      ),
     title: 'Server Error',
   },
   {
     path: '**',
-    component: NotFound,
+    loadComponent: () =>
+      import('./pages/not-found/not-found.component').then(
+        (m) => m.NotFoundComponent
+      ),
     title: 'Page Not Found',
   },
 ];

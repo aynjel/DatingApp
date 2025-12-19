@@ -3,8 +3,6 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-lists',
   imports: [],
-  templateUrl: './lists.html'
+  templateUrl: './lists.component.html',
 })
-export class Lists {
-
-}
+export class ListsComponent {}

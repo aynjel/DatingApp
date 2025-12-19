@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { ErrorEndpoints } from '../../shared/constants/api-endpoints';
+import { ErrorEndpoints } from '../../shared/constants/api-endpoints.const';
 
 @Component({
   selector: 'app-test-errors',
   imports: [],
-  templateUrl: './test-errors.html',
+  templateUrl: './test-errors.component.html',
 })
-export class TestErrors {
+export class TestErrorsComponent {
   private httpClient = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl;
   protected validationErrors = signal<string[]>([]);
