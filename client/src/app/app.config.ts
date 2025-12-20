@@ -21,9 +21,9 @@ import { provideRouter, withViewTransitions } from '@angular/router';
 import { provideSweetAlert2 } from '@sweetalert2/ngx-sweetalert2';
 import { AvatarModule } from 'ngx-avatar-2';
 import { routes } from './app.routes';
-import { AuthStore } from './modules/auth/store/auth.store';
 import { errorInterceptor } from './shared/interceptors/error.interceptor';
 import { jwtInterceptor } from './shared/interceptors/jwt.interceptor';
+import { AuthStore } from './shared/store/auth.store';
 
 const initializeApp = () => {
   const authStore = inject(AuthStore);

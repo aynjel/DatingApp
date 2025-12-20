@@ -9,8 +9,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { RegisterUserRequest } from '../../../../shared/models/dto/request/register-user.request';
-import { GlobalStore } from '../../../../store/global.store';
-import { AuthStore } from '../../store/auth.store';
+import { AuthStore } from '../../../../shared/store/auth.store';
+import { GlobalStore } from '../../../../shared/store/global.store';
 
 @Component({
   selector: 'app-register-form',

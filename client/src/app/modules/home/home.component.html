@@ -1,0 +1,289 @@
+<div
+  class="min-h-screen bg-gradient-to-br from-base-200 via-base-100 to-base-200"
+>
+  <!-- Hero Section -->
+  <section
+    class="hero min-h-[800px] bg-gradient-to-r from-secondary/20 via-primary/20 to-secondary/20"
+  >
+    <div class="hero-content text-center py-20 px-4">
+      <div class="max-w-4xl">
+        @if (authStore.isLoggedIn()) {
+        <!-- Logged In User View -->
+        <div class="space-y-6">
+          <h1
+            class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+          >
+            Welcome back, {{ authStore.currentUser()?.displayName || "there" }}!
+            <app-icon
+              [icon]="Heart"
+              [size]="48"
+              className="inline-block text-primary animate-pulse"
+            />
+          </h1>
+          <p class="text-xl md:text-2xl text-base-content/80 py-4">
+            Ready to find your perfect match? Start exploring now!
+          </p>
+          <div class="flex flex-wrap gap-4 justify-center mt-8">
+            <a routerLink="/portal/users" class="btn btn-primary btn-lg gap-2">
+              <app-icon [icon]="Users" [size]="20" />
+              Browse Matches
+            </a>
+            <a
+              routerLink="/portal/messages"
+              class="btn btn-secondary btn-lg gap-2"
+            >
+              <app-icon [icon]="MessageCircle" [size]="20" />
+              View Messages
+            </a>
+            <a routerLink="/profile/me" class="btn btn-outline btn-lg gap-2">
+              <app-icon [icon]="Sparkles" [size]="20" />
+              Edit Profile
+            </a>
+          </div>
+        </div>
+        } @else {
+        <!-- Guest User View -->
+        <div class="space-y-6">
+          <div class="flex justify-center mb-6">
+            <app-icon
+              [icon]="Heart"
+              [size]="80"
+              className="text-primary animate-pulse"
+            />
+          </div>
+          <h1
+            class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+          >
+            Find Your Perfect Match
+          </h1>
+          <p class="text-xl md:text-2xl text-base-content/80 py-4">
+            Connect with amazing people and discover meaningful relationships
+          </p>
+          <div class="flex flex-wrap gap-4 justify-center mt-8">
+            <a routerLink="/home" class="btn btn-primary btn-lg gap-2">
+              Get Started
+              <app-icon [icon]="ArrowRight" [size]="20" />
+            </a>
+            <a routerLink="/home" class="btn btn-outline btn-lg">
+              Learn More
+            </a>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-20 px-4">
+    <div class="container mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">
+          Why Choose DatingApp?
+        </h2>
+        <p class="text-xl text-base-content/70 max-w-2xl mx-auto">
+          Experience the best way to meet new people and build meaningful
+          connections
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body items-center text-center">
+            <div class="rounded-full bg-primary/10 p-4 mb-4">
+              <app-icon [icon]="Users" [size]="40" color="hsl(var(--p))" />
+            </div>
+            <h3 class="card-title text-2xl">Smart Matching</h3>
+            <p class="text-base-content/70">
+              Our advanced algorithm helps you find compatible matches based on
+              your preferences and interests.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body items-center text-center">
+            <div class="rounded-full bg-secondary/10 p-4 mb-4">
+              <app-icon [icon]="Shield" [size]="40" color="hsl(var(--s))" />
+            </div>
+            <h3 class="card-title text-2xl">Safe & Secure</h3>
+            <p class="text-base-content/70">
+              Your privacy and security are our top priorities. We protect your
+              data with industry-leading security.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body items-center text-center">
+            <div class="rounded-full bg-accent/10 p-4 mb-4">
+              <app-icon
+                [icon]="MessageCircle"
+                [size]="40"
+                color="hsl(var(--a))"
+              />
+            </div>
+            <h3 class="card-title text-2xl">Easy Messaging</h3>
+            <p class="text-base-content/70">
+              Connect and chat with your matches through our intuitive messaging
+              platform.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body items-center text-center">
+            <div class="rounded-full bg-primary/10 p-4 mb-4">
+              <app-icon [icon]="Star" [size]="40" color="hsl(var(--p))" />
+            </div>
+            <h3 class="card-title text-2xl">Verified Profiles</h3>
+            <p class="text-base-content/70">
+              All profiles are verified to ensure authentic connections and a
+              trustworthy community.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 5 -->
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body items-center text-center">
+            <div class="rounded-full bg-secondary/10 p-4 mb-4">
+              <app-icon [icon]="Sparkles" [size]="40" color="hsl(var(--s))" />
+            </div>
+            <h3 class="card-title text-2xl">Personalized Experience</h3>
+            <p class="text-base-content/70">
+              Customize your profile and preferences to get matches that truly
+              align with who you are.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 6 -->
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body items-center text-center">
+            <div class="rounded-full bg-accent/10 p-4 mb-4">
+              <app-icon [icon]="Heart" [size]="40" color="hsl(var(--a))" />
+            </div>
+            <h3 class="card-title text-2xl">Real Connections</h3>
+            <p class="text-base-content/70">
+              Focus on building genuine relationships with people who share your
+              values and interests.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section for Guests -->
+  @if (!authStore.isLoggedIn()) {
+  <section
+    class="py-20 px-4 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10"
+  >
+    <div class="container mx-auto">
+      <div class="card bg-base-100 shadow-2xl max-w-4xl mx-auto">
+        <div class="card-body text-center py-12">
+          <h2 class="card-title text-4xl justify-center mb-4">
+            Ready to Start Your Journey?
+          </h2>
+          <p class="text-xl text-base-content/70 mb-8">
+            Join thousands of happy couples who found love on DatingApp
+          </p>
+          <div class="flex flex-wrap gap-4 justify-center">
+            <a routerLink="/home" class="btn btn-primary btn-lg gap-2">
+              Create Free Account
+              <app-icon [icon]="ArrowRight" [size]="20" />
+            </a>
+            <a routerLink="/home" class="btn btn-outline btn-lg"> Sign In </a>
+          </div>
+          <div class="divider my-6">Or</div>
+          <div
+            class="flex flex-wrap gap-6 justify-center text-sm text-base-content/60"
+          >
+            <div class="flex items-center gap-2">
+              <app-icon
+                [icon]="CheckCircle2"
+                [size]="20"
+                color="hsl(var(--su))"
+              />
+              <span>Free to join</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <app-icon
+                [icon]="CheckCircle2"
+                [size]="20"
+                color="hsl(var(--su))"
+              />
+              <span>Verified profiles</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <app-icon
+                [icon]="CheckCircle2"
+                [size]="20"
+                color="hsl(var(--su))"
+              />
+              <span>Secure & private</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  }
+
+  <!-- Stats Section for Logged In Users -->
+  @if (authStore.isLoggedIn()) {
+  <section class="py-20 px-4 bg-base-200">
+    <div class="container mx-auto">
+      <div class="stats stats-vertical lg:stats-horizontal shadow w-full">
+        <div class="stat">
+          <div class="stat-figure text-primary">
+            <app-icon [icon]="Users" [size]="32" color="hsl(var(--p))" />
+          </div>
+          <div class="stat-title">Potential Matches</div>
+          <div class="stat-value text-primary">1,234</div>
+          <div class="stat-desc">People near you</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-figure text-secondary">
+            <app-icon
+              [icon]="MessageCircle"
+              [size]="32"
+              color="hsl(var(--s))"
+            />
+          </div>
+          <div class="stat-title">Messages</div>
+          <div class="stat-value text-secondary">42</div>
+          <div class="stat-desc">Unread messages</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-figure text-accent">
+            <app-icon [icon]="Heart" [size]="32" color="hsl(var(--a))" />
+          </div>
+          <div class="stat-title">Likes</div>
+          <div class="stat-value text-accent">89</div>
+          <div class="stat-desc">People who liked you</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  }
+</div>

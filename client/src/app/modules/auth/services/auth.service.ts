@@ -33,4 +33,11 @@ export class AuthService {
       registerPayload
     );
   }
+
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(
+      environment.apiUrl + APIEndpoints.FORGOT_PASSWORD,
+      { email }
+    );
+  }
 }

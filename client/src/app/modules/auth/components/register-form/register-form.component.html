@@ -1,100 +1,117 @@
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
   <div class="flex flex-col gap-3">
-    <input
-      type="text"
-      formControlName="displayName"
-      class="input input-bordered w-full"
-      [readOnly]="isLoading()"
-      [class.input-error]="
-        registerForm.get('displayName')?.invalid &&
-        registerForm.get('displayName')?.touched
-      "
-      [class.input-success]="
-        registerForm.get('displayName')?.valid &&
-        registerForm.get('displayName')?.touched
-      "
-      placeholder="Name"
-    />
-    @if(registerForm.get('displayName')?.invalid &&
-    registerForm.get('displayName')?.touched) {
-    <p class="text-error text-[14px]">
-      @for(error of registerForm.get('displayName')?.errors | keyvalue; track
-      error) { @switch (error.key) { @case ('required') { Name is required. }
-      @case ('minlength') { Name must be at least 2 characters. } @case
-      ('maxlength') { Name cannot exceed 100 characters. } } }
-    </p>
-    }
-
-    <input
-      type="email"
-      formControlName="email"
-      class="input input-bordered w-full"
-      [readOnly]="isLoading()"
-      [class.input-error]="
-        registerForm.get('email')?.invalid && registerForm.get('email')?.touched
-      "
-      [class.input-success]="
-        registerForm.get('email')?.valid && registerForm.get('email')?.touched
-      "
-      placeholder="Email"
-    />
-    @if(registerForm.get('email')?.invalid &&
-    registerForm.get('email')?.touched) {
-    <p class="text-error text-[14px]">
-      @for(error of registerForm.get('email')?.errors | keyvalue; track error) {
-      @switch (error.key) { @case ('required') { Email is required. } @case
-      ('email') { Invalid email format. } } }
-    </p>
-    }
-
-    <input
-      type="password"
-      formControlName="password"
-      [readOnly]="isLoading()"
-      class="input input-bordered w-full"
-      [class.input-error]="
-        registerForm.get('password')?.invalid &&
-        registerForm.get('password')?.touched
-      "
-      [class.input-success]="
-        registerForm.get('password')?.valid &&
-        registerForm.get('password')?.touched
-      "
-      placeholder="Password"
-    />
-    @if(registerForm.get('password')?.invalid &&
-    registerForm.get('password')?.touched) {
-    <p class="text-error text-[14px]">
-      @for(error of registerForm.get('password')?.errors | keyvalue; track
-      error) { @switch (error.key) { @case ('required') { Password is required.
-      } @case ('minlength') { Password must be at least 6 characters. } @case
-      ('passwordsMismatch') { Passwords do not match. } } }
-    </p>
-    }
-
-    <input
-      type="password"
-      formControlName="confirmPassword"
-      [readOnly]="isLoading()"
-      class="input input-bordered w-full"
-      [class.input-error]="
-        registerForm.get('confirmPassword')?.invalid &&
-        registerForm.get('confirmPassword')?.touched
-      "
-      [class.input-success]="
-        registerForm.get('confirmPassword')?.valid &&
-        registerForm.get('confirmPassword')?.touched
-      "
-      placeholder="Confirm Password"
-    />
-    @if(registerForm.get('confirmPassword')?.invalid &&
-    registerForm.get('confirmPassword')?.touched) {
-    <p class="text-error text-[14px]">
-      @for(error of registerForm.get('confirmPassword')?.errors | keyvalue;
-      track error) { @switch (error.key) { @case ('required') { Confirm Password
-      is required. } @case ('minlength') { Confirm Password must be at least 6
-      characters. } @case ('passwordsMismatch') { Passwords do not match. } } }
-    </p>
-    }
+    <div>
+      <input
+        type="text"
+        formControlName="displayName"
+        class="input input-bordered w-full"
+        [readOnly]="isLoading()"
+        [class.input-error]="
+          registerForm.get('displayName')?.invalid &&
+          registerForm.get('displayName')?.touched
+        "
+        [class.input-success]="
+          registerForm.get('displayName')?.valid &&
+          registerForm.get('displayName')?.touched
+        "
+        placeholder="Name"
+      />
+      @if(registerForm.get('displayName')?.invalid &&
+      registerForm.get('displayName')?.touched) {
+      <span class="text-error text-xs">
+        @for(error of registerForm.get('displayName')?.errors | keyvalue; track
+        error) { @switch (error.key) { @case ('required') { Name is required. }
+        @case ('minlength') { Name must be at least 2 characters. } @case
+        ('maxlength') { Name cannot exceed 100 characters. } } }
+      </span>
+      }
+    </div>
+    <div>
+      <input
+        type="email"
+        formControlName="email"
+        class="input input-bordered w-full"
+        [readOnly]="isLoading()"
+        [class.input-error]="
+          registerForm.get('email')?.invalid &&
+          registerForm.get('email')?.touched
+        "
+        [class.input-success]="
+          registerForm.get('email')?.valid && registerForm.get('email')?.touched
+        "
+        placeholder="Email"
+      />
+      @if(registerForm.get('email')?.invalid &&
+      registerForm.get('email')?.touched) {
+      <span class="text-error text-xs">
+        @for(error of registerForm.get('email')?.errors | keyvalue; track error)
+        { @switch (error.key) { @case ('required') { Email is required. } @case
+        ('email') { Invalid email format. } } }
+      </span>
+      }
+    </div>
+    <div>
+      <input
+        type="password"
+        formControlName="password"
+        [readOnly]="isLoading()"
+        class="input input-bordered w-full"
+        [class.input-error]="
+          registerForm.get('password')?.invalid &&
+          registerForm.get('password')?.touched
+        "
+        [class.input-success]="
+          registerForm.get('password')?.valid &&
+          registerForm.get('password')?.touched
+        "
+        placeholder="Password"
+      />
+      @if(registerForm.get('password')?.invalid &&
+      registerForm.get('password')?.touched) {
+      <span class="text-error text-xs">
+        @for(error of registerForm.get('password')?.errors | keyvalue; track
+        error) { @switch (error.key) { @case ('required') { Password is
+        required. } @case ('minlength') { Password must be at least 6
+        characters. } @case ('passwordsMismatch') { Passwords do not match. } }
+        }
+      </span>
+      }
+    </div>
+    <div>
+      <input
+        type="password"
+        formControlName="confirmPassword"
+        [readOnly]="isLoading()"
+        class="input input-bordered w-full"
+        [class.input-error]="
+          registerForm.get('confirmPassword')?.invalid &&
+          registerForm.get('confirmPassword')?.touched
+        "
+        [class.input-success]="
+          registerForm.get('confirmPassword')?.valid &&
+          registerForm.get('confirmPassword')?.touched
+        "
+        placeholder="Confirm Password"
+      />
+      @if(registerForm.get('confirmPassword')?.invalid &&
+      registerForm.get('confirmPassword')?.touched) {
+      <span class="text-error text-xs">
+        @for(error of registerForm.get('confirmPassword')?.errors | keyvalue;
+        track error) { @switch (error.key) { @case ('required') { Confirm
+        Password is required. } @case ('minlength') { Confirm Password must be
+        at least 6 characters. } @case ('passwordsMismatch') { Passwords do not
+        match. } } }
+      </span>
+      }
+    </div>
+    <button
+      type="submit"
+      class="btn btn-primary w-full"
+      [disabled]="isLoading()"
+    >
+      @if(isLoading()) {
+      <span class="loading loading-spinner loading-xs"></span>
+      } @else { Sign Up }
+    </button>
   </div>
 </form>

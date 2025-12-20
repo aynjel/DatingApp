@@ -10,13 +10,13 @@ import {
   withProps,
   withState,
 } from '@ngrx/signals';
-import { TokenResponse } from '../../../shared/models/common-models';
-import { RegisterUserRequest } from '../../../shared/models/dto/request/register-user.request';
-import { AuthUserResponse } from '../../../shared/models/dto/response/auth-user.response';
-import { User } from '../../../shared/models/user.model';
-import { ToastService } from '../../../shared/services/toast.service';
-import { GlobalStore } from '../../../store/global.store';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../modules/auth/services/auth.service';
+import { TokenResponse } from '../models/common-models';
+import { RegisterUserRequest } from '../models/dto/request/register-user.request';
+import { AuthUserResponse } from '../models/dto/response/auth-user.response';
+import { User } from '../models/user.model';
+import { ToastService } from '../services/toast.service';
+import { GlobalStore } from './global.store';
 
 type AuthStoreType = {
   currentUser: User | undefined;

@@ -10,8 +10,13 @@ export const routes: Routes = [
   {
     path: 'home',
     loadComponent: () =>
-      import('./pages/home/home.component').then((m) => m.HomeComponent),
+      import('./modules/home/home.component').then((m) => m.HomeComponent),
     title: 'Home',
+  },
+  {
+    path: 'auth',
+    loadChildren: () =>
+      import('./modules/auth/auth.routes').then((m) => m.authRoutes),
   },
   {
     path: 'profile',

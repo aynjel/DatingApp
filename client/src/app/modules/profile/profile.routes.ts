@@ -9,7 +9,7 @@ export const routes: Routes = [
   {
     path: 'me',
     loadComponent: () =>
-      import('./components/profile/profile.component').then(
+      import('./pages/profile/profile.component').then(
         (m) => m.ProfileComponent
       ),
     title: 'Profile Details',
@@ -17,7 +17,7 @@ export const routes: Routes = [
   {
     path: 'account-settings',
     loadComponent: () =>
-      import('./components/account-settings/account-settings.component').then(
+      import('./pages/account-settings/account-settings.component').then(
         (m) => m.AccountSettingsComponent
       ),
     title: 'Account Settings',
@@ -25,7 +25,7 @@ export const routes: Routes = [
   {
     path: 'edit',
     loadComponent: () =>
-      import('./components/edit-profile/edit-profile.component').then(
+      import('./pages/edit-profile/edit-profile.component').then(
         (m) => m.EditProfileComponent
       ),
     title: 'Edit Profile',

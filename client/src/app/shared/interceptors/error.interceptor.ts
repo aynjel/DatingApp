@@ -24,12 +24,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
               }
               throw modelErrors.flat();
             } else {
-              toast.show(error.error, 'error');
+              toast.show(error.error.detail || 'Bad Request', 'error');
             }
             break;
 
           case 401:
-            toast.show('Unauthorized', 'error');
+            toast.show(error.error.detail || 'Unauthorized', 'error');
             break;
 
           case 404:
@@ -44,7 +44,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             break;
 
           default:
-            toast.show('Something went wrong', 'error');
+            toast.show(error.error.detail || 'Something went wrong', 'error');
             break;
         }
       }

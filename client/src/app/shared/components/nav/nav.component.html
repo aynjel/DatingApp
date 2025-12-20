@@ -1,7 +1,7 @@
 <header
   class="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-secondary to-black text-white shadow-md"
 >
-  <div class="navbar container mx-auto">
+  <div class="navbar p-0 m-0 container mx-auto">
     <!-- Start: Brand & Mobile Menu -->
     <div class="navbar-start">
       <div class="dropdown">
@@ -110,61 +110,18 @@
         </ul>
       </div>
       } @else {
-      <button
+      <a
+        routerLink="/auth/register"
         class="btn btn-soft btn-outline rounded-full"
-        (click)="registerModalRef.open()"
       >
         Sign Up
-      </button>
-      <app-modal
-        #registerModalRef
-        title="Sign Up Account"
-        (onClose)="registerFormRef.registerForm.reset()"
-        ><app-register-form #registerFormRef></app-register-form>
-
-        <ng-container actions>
-          <form method="dialog">
-            <button
-              class="btn btn-ghost mr-2"
-              (click)="registerModalRef.close()"
-            >
-              Cancel
-            </button>
-          </form>
-          <button class="btn btn-primary" (click)="registerFormRef.onSubmit()">
-            @if (globalStore.isSubmitting()) {
-            <span class="loading loading-spinner"></span>
-            } @else { Submit }
-          </button>
-        </ng-container>
-      </app-modal>
-
-      <button
+      </a>
+      <a
+        routerLink="/auth/login"
         class="btn btn-secondary btn-outline rounded-full"
-        (click)="loginModalRef.open()"
       >
         Sign In
-      </button>
-      <app-modal
-        #loginModalRef
-        title="Sign In Account"
-        (onClose)="loginFormRef.loginForm.reset()"
-      >
-        <app-login-form #loginFormRef></app-login-form>
-
-        <ng-container actions>
-          <form method="dialog">
-            <button class="btn btn-ghost mr-2" (click)="loginModalRef.close()">
-              Cancel
-            </button>
-          </form>
-          <button class="btn btn-primary" (click)="loginFormRef.onSubmit()">
-            @if (globalStore.isSubmitting()) {
-            <span class="loading loading-spinner"></span>
-            } @else { Submit }
-          </button>
-        </ng-container>
-      </app-modal>
+      </a>
       }
     </div>
   </div>
