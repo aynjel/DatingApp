@@ -11,7 +11,7 @@ export interface TokenResponse {
 }
 
 export interface ApiError {
-  message: string;
-  statusCode: number;
-  details?: string;
+  title: string;
+  status: number;
+  detail: string;
 }

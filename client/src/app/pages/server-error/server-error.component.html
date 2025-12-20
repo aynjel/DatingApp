@@ -16,10 +16,7 @@
     />
   </svg>
 
-  <h1 class="card-title text-4xl justify-center">Server Error</h1>
-  <p class="text-xl text-center">
-    {{ error()?.message }}
-  </p>
+  <h1 class="card-title text-4xl justify-center">{{ error()?.title }}</h1>
   <div class="flex gap-4">
     <button class="btn btn-outline btn-secondary" (click)="goBack()">
       Go back
@@ -28,6 +25,6 @@
   </div>
 
   @if(showDetails()) {
-  <p>{{ error()?.details }}</p>
+  <p>{{ error()?.detail }}</p>
   }
 </div>

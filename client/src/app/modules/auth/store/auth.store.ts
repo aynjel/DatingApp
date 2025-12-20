@@ -118,6 +118,8 @@ export const AuthStore = signalStore(
           },
           error: (error: HttpErrorResponse) => {
             console.error('Get Current User error:', error);
+            // force logout
+            logout();
           },
         })
       )

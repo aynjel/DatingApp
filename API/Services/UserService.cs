@@ -1,4 +1,5 @@
 using API.Entities;
+using API.Exceptions;
 using API.Extensions;
 using API.Interfaces.Repository;
 using API.Interfaces.Services;
@@ -14,13 +15,17 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
     public async Task<IReadOnlyList<UserDetailsResponseDto>> GetAllAsync()
     {
         var users = await userRepository.GetAllAsync();
-        return [.. users.Select(u => u.ToDto())];
+        return users.Select(u => u.ToDto()).ToList();
     }
 
     public async Task<UserDetailsResponseDto> GetByIdAsync(string id)
     {
         var user = await userRepository.GetByIdAsync(id);
-        if (user is null) return null;
+        if (user is null)
+        {
+            logger.LogWarning("User with ID {UserId} not found", id);
+            throw new NotFoundException($"User with id '{id}' not found");
+        }
         return user.ToDto();
     }
 
@@ -30,7 +35,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         if (isEmailExists)
         {
             logger.LogWarning("Attempt to register with existing email: {Email}", registerDto.Email);
-            throw new Exception("Email already in use");
+            throw new ConflictException("Email already in use");
         }
 
         CreatePasswordHash(registerDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -51,10 +56,17 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
     public async Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
     {
         var user = await userRepository.GetAsync(u => u.Email == loginDto.Email);
+
+        if (user is null)
+        {
+            logger.LogWarning("Authentication attempt for non-existing email: {Email}", loginDto.Email);
+            throw new UnauthorizedException("Invalid credentials");
+        }
+
         if (!VerifyPasswordHash(loginDto.Password, user.PasswordHash, user.PasswordSalt))
         {
             logger.LogWarning("Authentication failed for user with email: {Email}", loginDto.Email);
-            throw new UnauthorizedAccessException("Invalid username or password");
+            throw new UnauthorizedException("Invalid credentials");
         }
 
         var accessToken = jwtService.GenerateToken(user.Id);
@@ -71,7 +83,11 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
     {
         var userId = jwtService.GetUserIdFromJwt(jwt);
         var user = await userRepository.GetByIdAsync(userId);
-        if (user is null) return null;
+        if (user is null)
+        {
+            logger.LogWarning("Current user with ID {UserId} not found", userId);
+            throw new NotFoundException($"User with id '{userId}' not found");
+        }
         return user.ToDto();
     }
 

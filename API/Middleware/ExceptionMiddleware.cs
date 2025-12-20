@@ -1,36 +1,41 @@
-using System;
-using System.Net;
 using System.Text.Json;
-using API.Model.Errors;
+using API.Exceptions;
 
 namespace API.Middleware;
 
 public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
 {
-  public async Task InvokeAsync(HttpContext context)
-  {
-    try
+    public async Task InvokeAsync(HttpContext context)
     {
-      await next(context);
+        try
+        {
+            await next(context);
+        }
+        catch (ApiException apiEx)
+        {
+            logger.LogWarning(apiEx, "Handled ApiException");
+            await WriteJsonResponseAsync(context, apiEx.StatusCode, apiEx.Message);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unhandled exception");
+            await WriteJsonResponseAsync(context, StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+        }
     }
-    catch (Exception ex)
+
+    private static async Task WriteJsonResponseAsync(HttpContext context, int statusCode, string message)
     {
-      logger.LogError(ex, "{message}", ex.Message);
-      context.Response.ContentType = "application/json";
-      context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = statusCode;
 
-      var response = env.IsDevelopment()
-        ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace)
-        : new ApiException(context.Response.StatusCode, ex.Message, "Internal server error");
+        var payload = new
+        {
+            title = statusCode >= 500 ? "Server Error" : "Error",
+            status = statusCode,
+            detail = message
+        };
 
-      var options = new JsonSerializerOptions
-      {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-      };
-
-      var json = JsonSerializer.Serialize(response, options);
-
-      await context.Response.WriteAsync(json);
+        var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        await context.Response.WriteAsync(JsonSerializer.Serialize(payload, options));
     }
-  }
 }
