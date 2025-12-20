@@ -1,107 +1,52 @@
 using API.Entities;
-using API.Extensions;
 using API.Interfaces.Repository;
-using API.Interfaces.Services;
-using API.Model.DTO.Response;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace API.Data.Repository;
 
-public class UserRepository(DataContext context, IGenerateJWTService jwtService) : IUserRepository
+public class UserRepository(DataContext context) : IUserRepository
 {
-    public async Task<IEnumerable<UserDetailsResponseDto>> GetUsersAsync()
+    public async Task<User> GetByIdAsync(string id)
     {
-        return await context.Users
-            .Select(u => new UserDetailsResponseDto
-            {
-                UserId = u.Id,
-                DisplayName = u.DisplayName,
-                Email = u.Email
-            })
-            .ToListAsync();
+        return await context.Users.FindAsync(id).AsTask();
     }
 
-    public async Task<UserDetailsResponseDto> GetByIdAsync(string id)
+    public async Task<User> GetAsync(Expression<Func<User, bool>> expression)
     {
-        var user = await context.Users.FindAsync(id);
-        if (user == null) return null;
-
-        return new UserDetailsResponseDto
-        {
-            UserId = user.Id,
-            DisplayName = user.DisplayName,
-            Email = user.Email
-        };
+        return await context.Users.AsNoTracking().FirstOrDefaultAsync(expression);
     }
-
-    public async Task<UserDetailsResponseDto> GetByEmailAsync(string email)
-    {
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        if (user is null) return null;
-
-        // var token = new TokenResponseDto(user.AccessToken, user.RefreshToken);
-        return new UserDetailsResponseDto
-        {
-            UserId = user.Id,
-            DisplayName = user.DisplayName,
-            Email = user.Email
-        };
-
-        // return userDetails.ToDto(token);
-    }
-
-    public async Task<bool> UserExistsAsync(string email)
+    public async Task<bool> IsEmailExistsAsync(string email)
     {
         return await context.Users.AnyAsync(u => u.Email == email);
     }
 
-    public async Task<UserAccountResponseDto> CreateUserAsync(User user)
+    public async Task<IReadOnlyList<User>> GetAllAsync()
     {
-        if (user is null) return null;
-        var accessToken = jwtService.GenerateToken(user.Id);
-        var refreshToken = jwtService.GenerateRefreshToken();
-        user.AccessToken = accessToken;
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
-        var createdUser = new UserAccountResponseDto
-        {
-            DisplayName = user.DisplayName,
-            Token = new TokenResponseDto(accessToken, refreshToken)
-        };
-        return createdUser;
+        return await context.Users.AsNoTracking().ToListAsync();
     }
 
-    public async Task<UserDetailsResponseDto> UpdateUserAsync(User user)
+
+    public async Task AddAsync(User user)
+    {
+        //var accessToken = jwtService.GenerateToken(user.Id);
+        //var refreshToken = jwtService.GenerateRefreshToken();
+        //user.AccessToken = accessToken;
+        //user.RefreshToken = refreshToken;
+        //user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(User user)
     {
         context.Users.Update(user);
         await context.SaveChangesAsync();
-        var userDto = new UserDetailsResponseDto
-        {
-            UserId = user.Id,
-            DisplayName = user.DisplayName,
-            Email = user.Email
-        };
-        return userDto;
     }
 
-    public async Task<(User, UserDetailsResponseDto)> GetUserAsync(string email)
+    public async Task DeleteAsync(User user)
     {
-        var user = await context.Users.SingleOrDefaultAsync(u => u.Email == email);
-        if (user == null) return (null, null);
-        var userDto = new UserDetailsResponseDto
-        {
-            UserId = user.Id,
-            DisplayName = user.DisplayName,
-            Email = user.Email
-        };
-        return (user, userDto);
-    }
-
-    public async Task<string> GetUserIdByEmailAsync(string email)
-    {
-        var user = await context.Users.SingleOrDefaultAsync(u => u.Email == email);
-        return user?.Id.ToString();
+        context.Users.Remove(user);
+        await context.SaveChangesAsync();
     }
 }

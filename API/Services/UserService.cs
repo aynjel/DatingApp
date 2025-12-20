@@ -1,76 +1,64 @@
-using System.Security.Cryptography;
-using System.Text;
+using API.Entities;
 using API.Extensions;
 using API.Interfaces.Repository;
 using API.Interfaces.Services;
 using API.Model.DTO.Request;
 using API.Model.DTO.Response;
-using API.Entities;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace API.Services;
 
-public class UserService(IUserRepository userRepository, IGenerateJWTService jwtService) : IUserService
+public class UserService(IUserRepository userRepository, IGenerateJWTService jwtService, ILogger<UserService> logger) : IUserService
 {
-    public async Task<IEnumerable<UserDetailsResponseDto>> GetUsersAsync()
+    public async Task<IReadOnlyList<UserDetailsResponseDto>> GetAllAsync()
     {
-        return await userRepository.GetUsersAsync();
+        var users = await userRepository.GetAllAsync();
+        return [.. users.Select(u => u.ToDto())];
     }
 
-    public async Task<UserDetailsResponseDto> GetUserByIdAsync(string id)
+    public async Task<UserDetailsResponseDto> GetByIdAsync(string id)
     {
-        return await userRepository.GetByIdAsync(id);
-    }
-
-    public async Task<UserDetailsResponseDto> GetUserByEmailAsync(string email)
-    {
-        var user = await userRepository.GetByEmailAsync(email);
-        return user;
+        var user = await userRepository.GetByIdAsync(id);
+        if (user is null) return null;
+        return user.ToDto();
     }
 
     public async Task<UserAccountResponseDto> CreateUserAsync(CreateUserRequestDto registerDto)
     {
-        // Check if user already exists
-        if (await userRepository.UserExistsAsync(registerDto.Email))
+        var isEmailExists = await userRepository.IsEmailExistsAsync(registerDto.Email);
+        if (isEmailExists)
         {
-            throw new InvalidOperationException("Email already exists");
+            logger.LogWarning("Attempt to register with existing email: {Email}", registerDto.Email);
+            throw new Exception("Email already in use");
         }
 
-        // Create password hash and salt
         CreatePasswordHash(registerDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-        // Create user entity
         var user = new User
         {
             DisplayName = registerDto.DisplayName,
-            Email = registerDto.Email.ToLower(),
+            Email = registerDto.Email,
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt,
         };
-
-        // Save user to database
-        var createdUser = await userRepository.CreateUserAsync(user);
-
-        // Return user details response
-        // return createdUser.ToDto(createdUser.Token);
-        return new()
-        {
-            DisplayName = createdUser.DisplayName,
-            Token = new TokenResponseDto(createdUser.Token.AccessToken, createdUser.Token.RefreshToken)
-        };
+        await userRepository.AddAsync(user);
+        var accessToken = jwtService.GenerateToken(user.Id);
+        var refreshToken = await jwtService.GenerateAndSaveTokenAsync(user.Id, accessToken);
+        return user.ToDto(new TokenResponseDto(accessToken, refreshToken));
     }
 
     public async Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
     {
-        // Validate user credentials
-        var (userEntity, user) = await userRepository.GetUserAsync(loginDto.Email);
-        if (userEntity is null || !VerifyPasswordHash(loginDto.Password, userEntity.PasswordHash, userEntity.PasswordSalt))
+        var user = await userRepository.GetAsync(u => u.Email == loginDto.Email);
+        if (!VerifyPasswordHash(loginDto.Password, user.PasswordHash, user.PasswordSalt))
         {
-            throw new InvalidOperationException("Invalid username or password");
+            logger.LogWarning("Authentication failed for user with email: {Email}", loginDto.Email);
+            throw new UnauthorizedAccessException("Invalid username or password");
         }
 
-        var accessToken = jwtService.GenerateToken(user.UserId);
-        var refreshToken = await jwtService.GenerateAndSaveTokenAsync(user.UserId, accessToken);
-
+        var accessToken = jwtService.GenerateToken(user.Id);
+        var refreshToken = await jwtService.GenerateAndSaveTokenAsync(user.Id, accessToken);
         return user.ToDto(new TokenResponseDto(accessToken, refreshToken));
     }
 
@@ -83,18 +71,8 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
     {
         var userId = jwtService.GetUserIdFromJwt(jwt);
         var user = await userRepository.GetByIdAsync(userId);
-        if (user is null)
-        {
-            return null;
-        }
-
-        var (_, userDetails) = await userRepository.GetUserAsync(user.Email);
-        if (userDetails is null)
-        {
-            return null;
-        }
-
-        return userDetails;
+        if (user is null) return null;
+        return user.ToDto();
     }
 
     #region Private Methods
