@@ -1,5 +1,5 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { MatchesComponent } from './matches.component';
 
 describe('MatchesComponent', () => {
@@ -8,9 +8,9 @@ describe('MatchesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatchesComponent]
-    })
-    .compileComponents();
+      imports: [MatchesComponent],
+      providers: [provideZonelessChangeDetection()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MatchesComponent);
     component = fixture.componentInstance;

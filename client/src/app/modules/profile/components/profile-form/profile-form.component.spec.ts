@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ProfileFormComponent } from './profile-form.component';
 
 describe('ProfileFormComponent', () => {
@@ -8,9 +9,9 @@ describe('ProfileFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProfileFormComponent]
-    })
-    .compileComponents();
+      imports: [ProfileFormComponent],
+      providers: [provideZonelessChangeDetection()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ProfileFormComponent);
     component = fixture.componentInstance;
