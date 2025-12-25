@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { ErrorEndpoints } from '../../shared/constants/api-endpoints.const';
+import { environment } from '../../../../environments/environment';
+import { ErrorEndpoints } from '../../constants/api-endpoints.const';
 
 @Component({
   selector: 'app-test-errors',

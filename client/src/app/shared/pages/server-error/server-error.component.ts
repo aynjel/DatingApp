@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiError } from '../../shared/models/common-models';
+import { ApiError } from '../../models/common-models';
 
 @Component({
   selector: 'app-server-error',
