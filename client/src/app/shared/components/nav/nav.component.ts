@@ -16,15 +16,15 @@ export class NavComponent {
     [
       {
         label: 'Matches',
-        routerLink: '/portal/users',
+        routerLink: '/members/matches',
       },
       {
         label: 'People',
-        routerLink: '/portal/lists',
+        routerLink: '/people/lists',
       },
       {
         label: 'Messages',
-        routerLink: '/portal/messages',
+        routerLink: '/messages/inbox',
       },
       // {
       //   label: 'Errors',

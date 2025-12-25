@@ -25,6 +25,26 @@ export const routes: Routes = [
     canActivate: [childAuthGuard],
   },
   {
+    path: 'members',
+    loadChildren: () =>
+      import('./modules/member-match/member-match.routes').then(
+        (m) => m.routes
+      ),
+    canActivate: [childAuthGuard],
+  },
+  {
+    path: 'people',
+    loadChildren: () =>
+      import('./modules/people/people.routes').then((m) => m.routes),
+    canActivate: [childAuthGuard],
+  },
+  {
+    path: 'messages',
+    loadChildren: () =>
+      import('./modules/message/message.routes').then((m) => m.routes),
+    canActivate: [childAuthGuard],
+  },
+  {
     path: 'portal',
     canActivate: [childAuthGuard],
     children: [
