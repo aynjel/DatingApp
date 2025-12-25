@@ -14,20 +14,4 @@ export const routes: Routes = [
       ),
     title: 'Profile Details',
   },
-  {
-    path: 'account-settings',
-    loadComponent: () =>
-      import('./pages/account-settings/account-settings.component').then(
-        (m) => m.AccountSettingsComponent
-      ),
-    title: 'Account Settings',
-  },
-  {
-    path: 'edit',
-    loadComponent: () =>
-      import('./pages/edit-profile/edit-profile.component').then(
-        (m) => m.EditProfileComponent
-      ),
-    title: 'Edit Profile',
-  },
 ];

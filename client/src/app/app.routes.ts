@@ -45,41 +45,9 @@ export const routes: Routes = [
     canActivate: [childAuthGuard],
   },
   {
-    path: 'portal',
-    canActivate: [childAuthGuard],
-    children: [
-      {
-        path: 'users',
-        loadComponent: () =>
-          import('./pages/users-list/users-list.component').then(
-            (m) => m.UsersListComponent
-          ),
-      },
-      {
-        path: 'users/:id',
-        loadComponent: () =>
-          import('./pages/user-details/user-details.component').then(
-            (m) => m.UserDetailsComponent
-          ),
-      },
-      {
-        path: 'lists',
-        loadComponent: () =>
-          import('./pages/lists/lists.component').then((m) => m.ListsComponent),
-      },
-      {
-        path: 'messages',
-        loadComponent: () =>
-          import('./pages/messages/messages.component').then(
-            (m) => m.MessagesComponent
-          ),
-      },
-    ],
-  },
-  {
     path: 'errors',
     loadComponent: () =>
-      import('./pages/test-errors/test-errors.component').then(
+      import('./shared/pages/test-errors/test-errors.component').then(
         (m) => m.TestErrorsComponent
       ),
     title: 'Test Errors',
@@ -87,7 +55,7 @@ export const routes: Routes = [
   {
     path: 'server-error',
     loadComponent: () =>
-      import('./pages/server-error/server-error.component').then(
+      import('./shared/pages/server-error/server-error.component').then(
         (m) => m.ServerErrorComponent
       ),
     title: 'Server Error',
@@ -95,7 +63,7 @@ export const routes: Routes = [
   {
     path: '**',
     loadComponent: () =>
-      import('./pages/not-found/not-found.component').then(
+      import('./shared/pages/not-found/not-found.component').then(
         (m) => m.NotFoundComponent
       ),
     title: 'Page Not Found',
