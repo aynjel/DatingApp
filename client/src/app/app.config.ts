@@ -19,17 +19,7 @@ import {
 } from '@angular/platform-browser';
 import { provideRouter, withViewTransitions } from '@angular/router';
 import { provideSweetAlert2 } from '@sweetalert2/ngx-sweetalert2';
-import {
-  ArrowRight,
-  CheckCircle2,
-  Heart,
-  LucideAngularModule,
-  MessageCircle,
-  Shield,
-  Sparkles,
-  Star,
-  Users,
-} from 'lucide-angular';
+import { icons, LucideAngularModule } from 'lucide-angular';
 import { AvatarModule } from 'ngx-avatar-2';
 import { routes } from './app.routes';
 import { errorInterceptor } from './shared/interceptors/error.interceptor';
@@ -74,19 +64,7 @@ export const appConfig: ApplicationConfig = {
       fireOnInit: false,
       dismissOnDestroy: true,
     }),
-    importProvidersFrom(
-      AvatarModule,
-      LucideAngularModule.pick({
-        Users,
-        Heart,
-        MessageCircle,
-        Sparkles,
-        Shield,
-        Star,
-        ArrowRight,
-        CheckCircle2,
-      })
-    ),
+    importProvidersFrom(AvatarModule, LucideAngularModule.pick(icons)),
     provideAppInitializer(async () => await initializeApp()),
   ],
 };

@@ -15,7 +15,7 @@
           >
             Welcome back, {{ authStore.currentUser()?.displayName || "there" }}!
             <lucide-icon
-              name="heart"
+              [name]="heartIcon"
               [size]="48"
               class="inline-block text-primary animate-pulse"
             />
@@ -26,7 +26,7 @@
           <div class="flex flex-wrap gap-4 justify-center mt-8">
             <a routerLink="/portal/users" class="btn btn-primary btn-lg gap-2">
               <lucide-icon
-                name="users"
+                [name]="usersIcon"
                 [size]="20"
                 class="inline-block text-white animate-pulse"
               />
@@ -37,7 +37,7 @@
               class="btn btn-secondary btn-lg gap-2"
             >
               <lucide-icon
-                name="message-circle"
+                [name]="messageCircleIcon"
                 [size]="20"
                 class="inline-block text-primary animate-pulse"
               />
@@ -45,7 +45,7 @@
             </a>
             <a routerLink="/profile/me" class="btn btn-outline btn-lg gap-2">
               <lucide-icon
-                name="sparkles"
+                [name]="sparklesIcon"
                 [size]="20"
                 class="inline-block text-primary animate-pulse"
               />
@@ -58,7 +58,7 @@
         <div class="space-y-6">
           <div class="flex justify-center mb-6">
             <lucide-icon
-              name="heart"
+              [name]="heartIcon"
               [size]="80"
               class="text-primary animate-pulse"
             />
@@ -75,7 +75,7 @@
             <a routerLink="/home" class="btn btn-primary btn-lg gap-2">
               Get Started
               <lucide-icon
-                name="arrow-right"
+                [name]="arrowRightIcon"
                 [size]="20"
                 class="inline-block text-primary animate-pulse"
               />
@@ -111,7 +111,7 @@
           <div class="card-body items-center text-center">
             <div class="rounded-full bg-primary/10 p-4 mb-4">
               <lucide-icon
-                name="users"
+                [name]="usersIcon"
                 [size]="40"
                 class="inline-block text-primary animate-pulse"
               />
@@ -131,7 +131,7 @@
           <div class="card-body items-center text-center">
             <div class="rounded-full bg-secondary/10 p-4 mb-4">
               <lucide-icon
-                name="shield"
+                [name]="shieldIcon"
                 [size]="40"
                 class="inline-block text-secondary animate-pulse"
               />
@@ -151,10 +151,9 @@
           <div class="card-body items-center text-center">
             <div class="rounded-full bg-accent/10 p-4 mb-4">
               <lucide-icon
-                name="message-circle"
+                [name]="messageCircleIcon"
                 [size]="40"
                 class="inline-block text-accent animate-pulse"
-              />
               />
             </div>
             <h3 class="card-title text-2xl">Easy Messaging</h3>
@@ -172,7 +171,7 @@
           <div class="card-body items-center text-center">
             <div class="rounded-full bg-primary/10 p-4 mb-4">
               <lucide-icon
-                name="star"
+                [name]="starIcon"
                 [size]="40"
                 class="inline-block text-primary animate-pulse"
               />
@@ -192,7 +191,7 @@
           <div class="card-body items-center text-center">
             <div class="rounded-full bg-secondary/10 p-4 mb-4">
               <lucide-icon
-                name="sparkles"
+                [name]="sparklesIcon"
                 [size]="40"
                 class="inline-block text-secondary animate-pulse"
               />
@@ -212,7 +211,7 @@
           <div class="card-body items-center text-center">
             <div class="rounded-full bg-accent/10 p-4 mb-4">
               <lucide-icon
-                name="heart"
+                [name]="heartIcon"
                 [size]="40"
                 class="inline-block text-accent animate-pulse"
               />
@@ -246,7 +245,7 @@
             <a routerLink="/home" class="btn btn-primary btn-lg gap-2">
               Create Free Account
               <lucide-icon
-                name="arrow-right"
+                [name]="arrowRightIcon"
                 [size]="20"
                 class="inline-block text-primary animate-pulse"
               />
@@ -259,7 +258,7 @@
           >
             <div class="flex items-center gap-2">
               <lucide-icon
-                name="check-circle-2"
+                [name]="checkCircle2Icon"
                 [size]="20"
                 class="inline-block text-success animate-pulse"
               />
@@ -267,7 +266,7 @@
             </div>
             <div class="flex items-center gap-2">
               <lucide-icon
-                name="check-circle-2"
+                [name]="checkCircle2Icon"
                 [size]="20"
                 class="inline-block text-success animate-pulse"
               />
@@ -275,7 +274,7 @@
             </div>
             <div class="flex items-center gap-2">
               <lucide-icon
-                name="check-circle-2"
+                [name]="checkCircle2Icon"
                 [size]="20"
                 class="inline-block text-success animate-pulse"
               />
@@ -296,7 +295,7 @@
         <div class="stat">
           <div class="stat-figure text-primary">
             <lucide-icon
-              name="users"
+              [name]="usersIcon"
               [size]="32"
               class="inline-block text-primary animate-pulse"
             />
@@ -309,7 +308,7 @@
         <div class="stat">
           <div class="stat-figure text-secondary">
             <lucide-icon
-              name="message-circle"
+              [name]="messageCircleIcon"
               [size]="32"
               class="inline-block text-secondary animate-pulse"
             />
@@ -322,7 +321,7 @@
         <div class="stat">
           <div class="stat-figure text-accent">
             <lucide-icon
-              name="heart"
+              [name]="heartIcon"
               [size]="32"
               class="inline-block text-accent animate-pulse"
             />

@@ -1,132 +1,134 @@
 <header
-  class="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-secondary to-black text-white shadow-md"
+  class="fixed top-0 left-0 w-full z-40 bg-gradient-to-r from-secondary to-black text-white shadow-md"
 >
-  <div class="navbar p-0 m-0 container mx-auto">
-    <!-- Start: Brand & Mobile Menu -->
-    <div class="navbar-start">
-      <div class="dropdown">
-        <button tabindex="0" class="btn btn-ghost lg:hidden">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-        <ul
-          tabindex="0"
-          class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow text-secondary font-semibold rounded-box w-52"
-        >
-          @if(authStore.isLoggedIn()) { @for (link of navigationLinks; track
-          link.routerLink) {
-          <li>
-            <a routerLink="/users" routerLinkActive="bg-secondary text-white">{{
-              link.label
-            }}</a>
-          </li>
-          } }
-          <li>
-            <a routerLink="/errors" routerLinkActive="bg-secondary text-white"
-              >Errors</a
-            >
-          </li>
-        </ul>
-      </div>
-      <a routerLink="/home" class="flex items-center gap-3"
-        ><svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
-          />
-        </svg>
+  <div class="navbar">
+    <div class="navbar-start flex items-center gap-3 px-4">
+      @if(authStore.isLoggedIn()) {
+      <button
+        (click)="toggleSidebar()"
+        class="btn btn-ghost btn-sm text-white hover:bg-white/10"
+        aria-label="Toggle sidebar"
+      >
+        <lucide-icon [name]="menuIcon" class="size-6" />
+      </button>
+      }
+      <a routerLink="/home" class="flex items-center gap-2">
+        <lucide-icon [name]="usersIcon" class="size-6" />
         <h2 class="text-xl font-bold">DatingApp</h2>
       </a>
     </div>
-
-    <!-- Center: Desktop Nav -->
-    <div class="navbar-center hidden lg:flex">
-      <ul class="menu menu-horizontal px-1 space-x-2 text-white font-semibold">
-        @if(authStore.isLoggedIn()) { @for (link of navigationLinks; track
-        link.routerLink) {
-        <li>
-          <a
-            routerLink="{{ link.routerLink }}"
-            routerLinkActive="bg-white text-secondary"
-            >{{ link.label }}</a
-          >
-        </li>
-        } }
-        <li>
-          <a routerLink="/errors" routerLinkActive="bg-white text-secondary"
-            >Errors</a
-          >
-        </li>
-      </ul>
-    </div>
-
-    <!-- User Icon with Dropdown -->
-    <div class="navbar-end space-x-2">
+    <div class="navbar-end flex items-center gap-2 px-4">
       @if(authStore.isLoggedIn()) {
-      <div class="dropdown dropdown-end">
-        <button
-          tabindex="0"
-          class="btn btn-sm btn-circle bg-white text-secondary"
-        >
-          <ngx-avatar
-            [name]="authStore.currentUser()?.displayName"
-            size="40"
-            [round]="true"
-          ></ngx-avatar>
-        </button>
-        <ul
-          tabindex="0"
-          class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-white text-secondary font-semibold rounded-box w-40"
-        >
-          <li routerLink="/profile/me">
-            <a>Profile ({{ authStore.currentUser()?.displayName }})</a>
-          </li>
-          <li routerLink="/profile/account-settings">
-            <a>Settings</a>
-          </li>
-          <li>
-            <a (click)="logoutAlert.fire()">Logout</a>
-          </li>
-        </ul>
-      </div>
-      } @else {
-      <a
-        routerLink="/auth/register"
-        class="btn btn-soft btn-outline rounded-full"
+      <!-- Logged in: Show search and notification icons -->
+      <button
+        class="btn btn-ghost btn-sm text-white hover:bg-white/10"
+        aria-label="Search"
       >
-        Sign Up
-      </a>
+        <lucide-icon [name]="searchIcon" class="size-6" />
+      </button>
+      <button
+        class="btn btn-ghost btn-sm text-white hover:bg-white/10"
+        aria-label="Notifications"
+      >
+        <lucide-icon [name]="bellIcon" class="size-6" />
+      </button>
+      } @else {
+      <!-- Not logged in: Show login and register buttons -->
       <a
         routerLink="/auth/login"
-        class="btn btn-secondary btn-outline rounded-full"
+        class="btn btn-ghost btn-sm text-white hover:bg-white/10 gap-2"
       >
-        Sign In
+        <lucide-icon [name]="loginIcon" class="size-5" />
+        Login
+      </a>
+      <a
+        routerLink="/auth/register"
+        class="btn btn-primary btn-sm text-white hover:opacity-90 gap-2"
+      >
+        <lucide-icon [name]="registerIcon" class="size-5" />
+        Register
       </a>
       }
     </div>
   </div>
 </header>
 
+<!-- Sidebar -->
+@if(authStore.isLoggedIn()) {
+<aside
+  class="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-secondary to-black text-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out"
+  [class.translate-x-0]="sidebarOpen()"
+  [class.-translate-x-full]="!sidebarOpen()"
+>
+  <!-- Header -->
+  <div class="flex items-center justify-between p-4 border-b border-white/10">
+    <div class="flex items-center gap-3 px-2">
+      <button
+        (click)="toggleSidebar()"
+        class="btn btn-ghost btn-sm text-white hover:bg-white/10"
+        aria-label="Close sidebar"
+      >
+        <lucide-icon [name]="menuIcon" class="size-6" />
+      </button>
+      <a
+        routerLink="/home"
+        (click)="closeSidebar()"
+        class="flex items-center gap-2"
+      >
+        <lucide-icon [name]="usersIcon" class="size-6" />
+        <h2 class="text-xl font-bold">DatingApp</h2>
+      </a>
+    </div>
+  </div>
+
+  <div class="p-2 border-b border-white/10">
+    <a
+      routerLink="/profile/me"
+      (click)="closeSidebar()"
+      class="flex items-center gap-3 hover:bg-white/10 p-2 rounded-lg transition-colors"
+    >
+      <ngx-avatar
+        [name]="authStore.currentUser()?.displayName"
+        size="40"
+        [round]="true"
+      ></ngx-avatar>
+      <span class="font-semibold">{{
+        authStore.currentUser()?.displayName
+      }}</span>
+    </a>
+  </div>
+
+  <!-- Navigation Links -->
+  <nav class="flex-1 overflow-y-auto py-4">
+    <ul class="menu p-0 w-full">
+      @for(link of navigationLinks; track link.routerLink) {
+      <li>
+        <a
+          [routerLink]="link.routerLink"
+          routerLinkActive="bg-white/70 text-black"
+          (click)="closeSidebar()"
+          class="flex items-center gap-3 hover:bg-white/10 font-semibold"
+        >
+          <lucide-icon [name]="link.icon" class="size-5" />
+          <span>{{ link.label }}</span>
+        </a>
+      </li>
+      }
+      <li class="mt-auto pt-4 border-t border-white/10">
+        <a
+          (click)="logoutAlert.fire(); closeSidebar()"
+          class="flex items-center gap-3 hover:bg-red-700/70 font-semibold text-red-400 hover:text-red-300"
+        >
+          <lucide-icon [name]="logoutIcon" class="size-5" />
+          <span>Logout</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+}
+
+<!-- Logout Confirmation -->
 <swal
   #logoutAlert
   title="Confirm logout?"

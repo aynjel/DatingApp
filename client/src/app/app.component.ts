@@ -8,7 +8,7 @@ import { NavComponent } from './shared/components/nav/nav.component';
   imports: [RouterOutlet, NavComponent, ToastComponent],
   template: `
     <app-nav />
-    <div class="mt-[4rem] w-full">
+    <div class="mt-[4rem] w-full transition-all duration-300" id="main-content">
       <router-outlet />
     </div>
     <app-toast />
