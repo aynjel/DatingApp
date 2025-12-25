@@ -1,17 +1,12 @@
+import { Member } from './member.model';
+
 export type User = {
   userId: string;
   displayName: string;
   email: string;
-  role: UserRole;
+  imageUrl?: string;
+  memberDetails?: Member;
 };
-
-export type UserRole = 'admin' | 'user' | 'guest';
-
-export enum UserRoleEnum {
-  ADMIN = 'admin',
-  USER = 'user',
-  GUEST = 'guest',
-}
 
 export interface Toast {
   id: number;

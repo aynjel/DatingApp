@@ -1,8 +1,21 @@
 export interface Member {
-  memberId: string;
-  fullName: string;
-  age: number;
+  id: string;
+  dateOfBirth: string;
+  imageUrl: string;
+  displayName: string;
+  created: string;
+  lastActive: string;
+  gender: string;
+  description: string;
   city: string;
   country: string;
-  photoUrl: string;
+  photos: Photo[];
+}
+
+export interface Photo {
+  id: string;
+  url: string;
+  publicId: string;
+  member: string;
+  memberId: string;
 }
