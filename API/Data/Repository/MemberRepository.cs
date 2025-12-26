@@ -6,20 +6,22 @@ namespace API.Data.Repository;
 
 public class MemberRepository(DataContext context) : IMemberRepository
 {
-  public async Task<Member> GetMemberByIdAsync(string id)
+  public async Task<Member?> GetMemberByIdAsync(string id)
   {
-    return await context.Members.FindAsync(id);
+    return await context.Members.FindAsync(id).AsTask();
   }
 
   public async Task<IReadOnlyList<Member>> GetMembersAsync()
   {
-    return await context.Members.ToListAsync();
+    return await context.Members.AsNoTracking().ToListAsync();
   }
 
   public async Task<IReadOnlyList<Photo>> GetPhotosByMemberIdAsync(string memberId)
   {
-    return await context.Photos
-      .Where(p => p.MemberId == memberId)
+    return await context.Members
+      .Where(p => p.Id == memberId)
+      .SelectMany(p => p.Photos)
+      .AsNoTracking()
       .ToListAsync();
   }
 

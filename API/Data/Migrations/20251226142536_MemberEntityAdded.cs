@@ -11,6 +11,20 @@ namespace API.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "FirstName",
+                table: "Users");
+
+            migrationBuilder.RenameColumn(
+                name: "Username",
+                table: "Users",
+                newName: "ImageUrl");
+
+            migrationBuilder.RenameColumn(
+                name: "LastName",
+                table: "Users",
+                newName: "DisplayName");
+
             migrationBuilder.CreateTable(
                 name: "Members",
                 columns: table => new
@@ -70,6 +84,22 @@ namespace API.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Members");
+
+            migrationBuilder.RenameColumn(
+                name: "ImageUrl",
+                table: "Users",
+                newName: "Username");
+
+            migrationBuilder.RenameColumn(
+                name: "DisplayName",
+                table: "Users",
+                newName: "LastName");
+
+            migrationBuilder.AddColumn<string>(
+                name: "FirstName",
+                table: "Users",
+                type: "nvarchar(max)",
+                nullable: true);
         }
     }
 }

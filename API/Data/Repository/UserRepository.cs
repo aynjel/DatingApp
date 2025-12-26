@@ -29,11 +29,6 @@ public class UserRepository(DataContext context) : IUserRepository
 
     public async Task AddAsync(User user)
     {
-        //var accessToken = jwtService.GenerateToken(user.Id);
-        //var refreshToken = jwtService.GenerateRefreshToken();
-        //user.AccessToken = accessToken;
-        //user.RefreshToken = refreshToken;
-        //user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         context.Users.Add(user);
         await context.SaveChangesAsync();
     }
