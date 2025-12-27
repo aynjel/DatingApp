@@ -1,4 +1,5 @@
 ﻿using API.Entities;
+using API.Model.DTO.Response;
 
 namespace API.Model.DTO.Response;
 
@@ -8,5 +9,5 @@ public class UserDetailsResponseDto
     public string DisplayName { get; set; }
     public string Email { get; set; }
     public string ImageUrl { get; set; }
-    public Member MemberDetails { get; set; }
+    public MemberResponseDto MemberDetails { get; set; }
 }
