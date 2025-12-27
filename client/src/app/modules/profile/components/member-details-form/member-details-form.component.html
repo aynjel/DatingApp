@@ -1,0 +1,222 @@
+<form
+  [formGroup]="memberDetailsForm"
+  (ngSubmit)="onCreateMemberDetailsSubmit()"
+  class="flex flex-col gap-6"
+>
+  <!-- Profile Picture -->
+  <div>
+    <label class="label">
+      <span class="label-text font-semibold">Profile Picture URL</span>
+    </label>
+    <input
+      type="text"
+      formControlName="imageUrl"
+      class="input input-bordered w-full"
+      [class.input-error]="
+        memberDetailsForm.get('imageUrl')?.invalid &&
+        memberDetailsForm.get('imageUrl')?.touched
+      "
+      [class.input-success]="
+        memberDetailsForm.get('imageUrl')?.valid &&
+        memberDetailsForm.get('imageUrl')?.touched
+      "
+      placeholder="https://example.com/image.jpg"
+    />
+    @if(memberDetailsForm.get('imageUrl')?.invalid &&
+    memberDetailsForm.get('imageUrl')?.touched) {
+    <span class="text-error text-xs mt-1">
+      @for(error of memberDetailsForm.get('imageUrl')?.errors | keyvalue; track
+      error) { @switch (error.key) { @case ('required') { Image URL is required.
+      } } }
+    </span>
+    }
+  </div>
+
+  <!-- Display Name -->
+  <div>
+    <label class="label">
+      <span class="label-text font-semibold">Display Name</span>
+    </label>
+    <input
+      type="text"
+      formControlName="displayName"
+      class="input input-bordered w-full"
+      [class.input-error]="
+        memberDetailsForm.get('displayName')?.invalid &&
+        memberDetailsForm.get('displayName')?.touched
+      "
+      [class.input-success]="
+        memberDetailsForm.get('displayName')?.valid &&
+        memberDetailsForm.get('displayName')?.touched
+      "
+      placeholder="Enter your display name"
+    />
+    @if(memberDetailsForm.get('displayName')?.invalid &&
+    memberDetailsForm.get('displayName')?.touched) {
+    <span class="text-error text-xs mt-1">
+      @for(error of memberDetailsForm.get('displayName')?.errors | keyvalue;
+      track error) { @switch (error.key) { @case ('required') { Display name is
+      required. } @case ('minlength') { Display name must be at least 2
+      characters. } @case ('maxlength') { Display name cannot exceed 100
+      characters. } } }
+    </span>
+    }
+  </div>
+
+  <!-- Date of Birth and Gender -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="label">
+        <span class="label-text font-semibold">Date of Birth</span>
+      </label>
+      <input
+        type="date"
+        formControlName="dateOfBirth"
+        class="input input-bordered w-full"
+        [class.input-error]="
+          memberDetailsForm.get('dateOfBirth')?.invalid &&
+          memberDetailsForm.get('dateOfBirth')?.touched
+        "
+        [class.input-success]="
+          memberDetailsForm.get('dateOfBirth')?.valid &&
+          memberDetailsForm.get('dateOfBirth')?.touched
+        "
+      />
+      @if(memberDetailsForm.get('dateOfBirth')?.invalid &&
+      memberDetailsForm.get('dateOfBirth')?.touched) {
+      <span class="text-error text-xs mt-1"> Date of birth is required. </span>
+      }
+    </div>
+
+    <div>
+      <label class="label">
+        <span class="label-text font-semibold">Gender</span>
+      </label>
+      <select
+        formControlName="gender"
+        class="select select-bordered w-full"
+        [class.input-error]="
+          memberDetailsForm.get('gender')?.invalid &&
+          memberDetailsForm.get('gender')?.touched
+        "
+        [class.input-success]="
+          memberDetailsForm.get('gender')?.valid &&
+          memberDetailsForm.get('gender')?.touched
+        "
+      >
+        <option value="" disabled selected>Select gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+      @if(memberDetailsForm.get('gender')?.invalid &&
+      memberDetailsForm.get('gender')?.touched) {
+      <span class="text-error text-xs mt-1"> Gender is required. </span>
+      }
+    </div>
+  </div>
+
+  <!-- Location -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="label">
+        <span class="label-text font-semibold">City</span>
+      </label>
+      <input
+        type="text"
+        formControlName="city"
+        class="input input-bordered w-full"
+        [class.input-error]="
+          memberDetailsForm.get('city')?.invalid &&
+          memberDetailsForm.get('city')?.touched
+        "
+        [class.input-success]="
+          memberDetailsForm.get('city')?.valid &&
+          memberDetailsForm.get('city')?.touched
+        "
+        placeholder="Enter your city"
+      />
+      @if(memberDetailsForm.get('city')?.invalid &&
+      memberDetailsForm.get('city')?.touched) {
+      <span class="text-error text-xs mt-1">
+        @for(error of memberDetailsForm.get('city')?.errors | keyvalue; track
+        error) { @switch (error.key) { @case ('required') { City is required. }
+        @case ('minlength') { City must be at least 2 characters. } @case
+        ('maxlength') { City cannot exceed 100 characters. } } }
+      </span>
+      }
+    </div>
+
+    <div>
+      <label class="label">
+        <span class="label-text font-semibold">Country</span>
+      </label>
+      <input
+        type="text"
+        formControlName="country"
+        class="input input-bordered w-full"
+        [class.input-error]="
+          memberDetailsForm.get('country')?.invalid &&
+          memberDetailsForm.get('country')?.touched
+        "
+        [class.input-success]="
+          memberDetailsForm.get('country')?.valid &&
+          memberDetailsForm.get('country')?.touched
+        "
+        placeholder="Enter your country"
+      />
+      @if(memberDetailsForm.get('country')?.invalid &&
+      memberDetailsForm.get('country')?.touched) {
+      <span class="text-error text-xs mt-1">
+        @for(error of memberDetailsForm.get('country')?.errors | keyvalue; track
+        error) { @switch (error.key) { @case ('required') { Country is required.
+        } @case ('minlength') { Country must be at least 2 characters. } @case
+        ('maxlength') { Country cannot exceed 100 characters. } } }
+      </span>
+      }
+    </div>
+  </div>
+
+  <!-- Description -->
+  <div>
+    <label class="label">
+      <span class="label-text font-semibold">About Me</span>
+    </label>
+    <textarea
+      formControlName="description"
+      class="textarea textarea-bordered w-full h-32"
+      [class.input-error]="
+        memberDetailsForm.get('description')?.invalid &&
+        memberDetailsForm.get('description')?.touched
+      "
+      [class.input-success]="
+        memberDetailsForm.get('description')?.valid &&
+        memberDetailsForm.get('description')?.touched
+      "
+      placeholder="Tell us about yourself..."
+    ></textarea>
+    @if(memberDetailsForm.get('description')?.invalid &&
+    memberDetailsForm.get('description')?.touched) {
+    <span class="text-error text-xs mt-1">
+      @for(error of memberDetailsForm.get('description')?.errors | keyvalue;
+      track error) { @switch (error.key) { @case ('required') { Description is
+      required. } @case ('minlength') { Description must be at least 10
+      characters. } @case ('maxlength') { Description cannot exceed 500
+      characters. } } }
+    </span>
+    }
+  </div>
+
+  <!-- Submit Button -->
+  <div class="card-actions justify-end mt-4">
+    <button
+      type="submit"
+      class="btn btn-primary w-full md:w-auto"
+      [disabled]="memberDetailsForm.invalid || isLoading()"
+    >
+      @if(isLoading()) {
+      <span class="loading loading-spinner loading-xs"></span>
+      } @else { Create Profile }
+    </button>
+  </div>
+</form>

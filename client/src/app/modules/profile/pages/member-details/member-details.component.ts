@@ -1,11 +1,9 @@
-import { Component, input } from '@angular/core';
-import { Member } from '../../../../shared/models/member.model';
+import { Component } from '@angular/core';
+import { MemberDetailsFormComponent } from '../../components/member-details-form/member-details-form.component';
 
 @Component({
   selector: 'app-member-details',
-  imports: [],
+  imports: [MemberDetailsFormComponent],
   templateUrl: './member-details.component.html',
 })
-export class MemberDetailsComponent {
-  protected member = input.required<Member>();
-}
+export class MemberDetailsComponent {}

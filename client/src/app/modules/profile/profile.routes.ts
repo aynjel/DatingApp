@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { memberResolver } from './resolvers/member.resolver';
 
 export const routes: Routes = [
   {
@@ -22,6 +21,5 @@ export const routes: Routes = [
         (m) => m.MemberDetailsComponent
       ),
     title: 'Member Profile',
-    resolve: { member: memberResolver },
   },
 ];

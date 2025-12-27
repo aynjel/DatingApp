@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { Member, Photo } from '../../../shared/models/member.model';
+import { CreateMemberDetailsRequest } from '../models/create-member.models';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,10 @@ export class MemberService {
     return this.http.get<Photo[]>(`${this.baseUrl}/${memberId}/photos`);
   }
 
-  public createMember(): Observable<Member> {
-    return this.http.post<Member>(this.baseUrl, {});
+  public createMemberDetails(
+    userId: string,
+    payload: CreateMemberDetailsRequest
+  ): Observable<Member> {
+    return this.http.post<Member>(`${this.baseUrl}/${userId}`, payload);
   }
 }

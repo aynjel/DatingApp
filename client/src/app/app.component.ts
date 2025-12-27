@@ -32,9 +32,15 @@ export class AppComponent {
 
   private _checkMemberDetails = effect(() => {
     const currentUser = this.authStore.currentUser();
+    const currentUrl = this.router.url;
 
     // If member details are not set up, redirect to setup page
-    if (currentUser && !currentUser.memberDetails) {
+    // But skip if already on the member-details page to avoid redirect loops
+    if (
+      currentUser &&
+      !currentUser.memberDetails &&
+      !currentUrl.includes('/profile/member-details')
+    ) {
       const userId = currentUser.userId;
       if (userId) {
         this.router.navigate(['/profile/member-details', userId]);

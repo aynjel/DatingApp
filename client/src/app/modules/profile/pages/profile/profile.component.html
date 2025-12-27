@@ -7,34 +7,62 @@
           <div
             class="w-48 h-48 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden"
           >
-            <img [src]="photos[0]" alt="Profile photo" />
+            @if(memberStore.member()?.imageUrl) {
+            <img [src]="memberStore.member()?.imageUrl" alt="Profile photo" />
+            } @else {
+            <ngx-avatar
+              [name]="memberStore.member()?.displayName"
+              size="192"
+              [round]="true"
+            />
+            }
           </div>
         </div>
 
         <h2 class="text-2xl font-semibold mt-4">
-          {{ user?.displayName ?? user?.name ?? "Jane Doe" }}
+          {{ memberStore.member()?.displayName }}
         </h2>
         <p class="text-sm text-base-content/60">
-          {{ user?.age ?? mock.age }} • {{ user?.location ?? mock.location }}
+          {{ memberStore.member()?.dateOfBirth | date }} •
+          {{ memberStore.member()?.city }}, {{ memberStore.member()?.country }}
         </p>
 
-        <div class="mt-4 flex gap-2">
+        <!-- Action Buttons -->
+        <div class="flex flex-col gap-3 mt-6 w-full">
+          <a
+            [routerLink]="['/profile/member-details', memberStore.member()?.id]"
+            class="btn btn-primary w-full gap-2"
+          >
+            <lucide-icon [name]="editIcon" class="size-5" />
+            Edit Profile
+          </a>
+          <button
+            type="button"
+            (click)="logoutAlert.fire()"
+            class="btn btn-outline btn-error w-full gap-2"
+          >
+            <lucide-icon [name]="logoutIcon" class="size-5" />
+            Logout
+          </button>
+        </div>
+
+        <!-- <div class="mt-4 flex gap-2">
           <button class="btn btn-primary">Message</button>
           <button class="btn">Like</button>
-        </div>
+        </div> -->
       </div>
 
-      <div class="mt-6">
+      <!-- <div class="mt-6">
         <div class="grid grid-cols-4 gap-2">
-          @for(p of photos; track p) {
+          @for(p of memberStore.member()?.photos; track p) {
           <img
-            [src]="p"
+            [src]="p.url"
             class="w-full h-20 object-cover rounded cursor-pointer"
             alt="Photo {{ $index + 1 }}"
           />
           }
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Right column: About, photos, details -->
@@ -42,25 +70,29 @@
       <div class="card bg-base-100 shadow p-6">
         <h3 class="text-xl font-semibold">About</h3>
         <p class="mt-3 text-sm text-base-content/80">
-          {{ user?.bio ?? mock.bio }}
+          {{ memberStore.member()?.description }}
         </p>
 
-        <div class="mt-4">
+        <!-- <div class="mt-4">
           <h4 class="font-medium">Interests</h4>
           <div class="mt-3 flex flex-wrap gap-2">
-            @for (interest of user?.interests ?? mock.interests; track interest)
+            @for (interest of memberStore.member()?.interests; track interest)
             {
             <span class="badge badge-outline">{{ interest }}</span>
             }
           </div>
-        </div>
+        </div> -->
       </div>
 
       <div class="card bg-base-100 shadow p-6">
         <h3 class="text-xl font-semibold">Photos</h3>
         <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-          @for (p of photos; track p) {
-          <img [src]="p" class="w-full h-40 object-cover rounded" alt="Photo" />
+          @for (p of memberStore.member()?.photos; track p) {
+          <img
+            [src]="p.url"
+            class="w-full h-40 object-cover rounded"
+            alt="Photo"
+          />
           }
         </div>
       </div>
@@ -71,27 +103,40 @@
           <div>
             <div class="text-xs text-base-content/60">Looking for</div>
             <div class="font-medium">
-              {{ user?.lookingFor ?? "Friendship, Relationship" }}
+              {{ "Friendship, Relationship" }}
             </div>
           </div>
           <div>
             <div class="text-xs text-base-content/60">Occupation</div>
             <div class="font-medium">
-              {{ user?.occupation ?? "Product Designer" }}
+              {{ "Product Designer" }}
             </div>
           </div>
           <div>
             <div class="text-xs text-base-content/60">Education</div>
             <div class="font-medium">
-              {{ user?.education ?? "Bachelor's Degree" }}
+              {{ "Bachelor's Degree" }}
             </div>
           </div>
           <div>
             <div class="text-xs text-base-content/60">Location</div>
-            <div class="font-medium">{{ user?.location ?? mock.location }}</div>
+            <div class="font-medium">
+              {{ memberStore.member()?.city }},
+              {{ memberStore.member()?.country }}
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<swal
+  #logoutAlert
+  title="Confirm logout?"
+  text="When confirmed you will be logged out"
+  icon="question"
+  [showCancelButton]="true"
+  [focusCancel]="true"
+  (confirm)="authStore.logout()"
+/>

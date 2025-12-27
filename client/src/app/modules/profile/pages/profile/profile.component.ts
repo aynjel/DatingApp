@@ -1,35 +1,27 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
+import { LogOutIcon, LucideAngularModule, PencilIcon } from 'lucide-angular';
+import { AvatarComponent } from 'ngx-avatar-2';
 import { AuthStore } from '../../../../shared/store/auth.store';
+import { MemberStore } from '../../../../shared/store/member.store';
 
 @Component({
   selector: 'app-profile',
-  imports: [],
+  imports: [
+    RouterLink,
+    DatePipe,
+    LucideAngularModule,
+    AvatarComponent,
+    SwalComponent,
+  ],
   templateUrl: './profile.component.html',
 })
 export class ProfileComponent {
   protected authStore = inject(AuthStore);
+  protected memberStore = inject(MemberStore);
 
-  // Mock fallback data for fields not present on the current user model
-  protected mock: any = {
-    displayName: 'Jane Doe',
-    age: 28,
-    location: 'New York, NY',
-    bio: 'Outdoor enthusiast. Coffee lover. Amateur photographer. Looking for someone to explore the world with.',
-    photos: [
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80&auto=format&fit=crop',
-    ],
-    interests: ['Hiking', 'Travel', 'Cooking', 'Photography'],
-  };
-
-  protected get user(): any {
-    return this.authStore.currentUser() ?? this.mock;
-  }
-
-  protected get photos(): string[] {
-    return this.user?.photos && this.user.photos.length
-      ? this.user.photos
-      : this.mock.photos;
-  }
+  readonly logoutIcon = LogOutIcon;
+  readonly editIcon = PencilIcon;
 }
