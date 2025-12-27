@@ -1,11 +1,14 @@
 using API.Entities;
+using API.Model.DTO.Request;
+using API.Model.DTO.Response;
 
 namespace API.Interfaces.Services;
 
 public interface IMemberService
 {
-  Task<IReadOnlyList<Member>> GetMembersAsync();
-  Task<Member> GetMemberByIdAsync(string id);
-  Task<IReadOnlyList<Photo>> GetPhotosByMemberIdAsync(string memberId);
-  Task<Member> CreateMemberDetails(string userId);
+    Task<IReadOnlyList<MemberResponseDto>> GetMembersAsync();
+    Task<MemberResponseDto> GetMemberByIdAsync(string id);
+    Task<IReadOnlyList<PhotoResponseDto>> GetPhotosByMemberIdAsync(string memberId);
+    Task<MemberResponseDto> CreateMemberDetails(string userId, MemberDetailsRequestDto memberDetails);
+    Task<MemberResponseDto> UpdateMemberDetails(string userId, MemberDetailsRequestDto memberDetails);
 }

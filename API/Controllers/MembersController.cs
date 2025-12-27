@@ -1,16 +1,17 @@
-using API.Entities;
 using API.Interfaces.Services;
+using API.Model.DTO.Request;
+using API.Model.DTO.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [Authorize]
-public class MembersController(IMemberService memberService) : BaseController
+public class MembersController(IMemberService memberService, IUserService userService) : BaseController
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers()
+    public async Task<ActionResult<IReadOnlyList<MemberResponseDto>>> GetMembers()
     {
         var members = await memberService.GetMembersAsync();
         return Ok(members);
@@ -19,7 +20,7 @@ public class MembersController(IMemberService memberService) : BaseController
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Member>> GetMember([FromRoute] string id)
+    public async Task<ActionResult<MemberResponseDto>> GetMember([FromRoute] string id)
     {
         var member = await memberService.GetMemberByIdAsync(id);
         if (member is null) return NotFound($"Member with ID {id} not found");
@@ -29,18 +30,50 @@ public class MembersController(IMemberService memberService) : BaseController
     [HttpGet("{id}/photos")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IReadOnlyList<Photo>>> GetPhotosByMemberId([FromRoute] string id)
+    public async Task<ActionResult<IReadOnlyList<PhotoResponseDto>>> GetPhotosByMemberId([FromRoute] string id)
     {
         var photos = await memberService.GetPhotosByMemberIdAsync(id);
-        if (photos is null) return NotFound($"No photos found for Member with ID {id}");
+        if (photos is null || photos.Count == 0) 
+            return NotFound($"No photos found for Member with ID {id}");
         return Ok(photos);
     }
 
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<Member>> CreateMember()
+    [HttpPost("{userId}")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<MemberResponseDto>> CreateMember(
+        [FromRoute] string userId, 
+        [FromBody] MemberDetailsRequestDto memberDetails)
     {
-        var newMember = await memberService.CreateMemberDetails("123");
-        return Ok(newMember);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var user = await userService.GetByIdAsync(userId);
+        if (user is null) 
+            return NotFound($"User with ID {userId} not found");
+
+        var newMember = await memberService.CreateMemberDetails(userId, memberDetails);
+        return CreatedAtAction(nameof(GetMember), new { id = newMember.Id }, newMember);
+    }
+
+    [HttpPut("{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<MemberResponseDto>> UpdateMember(
+        [FromRoute] string userId, 
+        [FromBody] MemberDetailsRequestDto memberDetails)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var user = await userService.GetByIdAsync(userId);
+        if (user is null) 
+            return NotFound($"User with ID {userId} not found");
+
+        var updatedMember = await memberService.UpdateMemberDetails(userId, memberDetails);
+        return Ok(updatedMember);
     }
 }
