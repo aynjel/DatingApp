@@ -1,6 +1,7 @@
 using API.Entities;
 using API.Exceptions;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces.Repository;
 using API.Interfaces.Services;
 using API.Model.DTO.Request;
@@ -105,6 +106,20 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
     {
         var members = await memberRepository.GetMembersAsync();
         return members.Select(m => m.ToDto()).ToList();
+    }
+
+    public async Task<PagedList<MemberResponseDto>> GetMembersAsync(PaginationParams paginationParams)
+    {
+        var pagedMembers = await memberRepository.GetMembersAsync(paginationParams);
+        
+        var memberDtos = pagedMembers.Items.Select(m => m.ToDto()).ToList();
+        
+        return new PagedList<MemberResponseDto>(
+            memberDtos,
+            pagedMembers.TotalCount,
+            pagedMembers.PageNumber,
+            pagedMembers.PageSize
+        );
     }
 
     public async Task<IReadOnlyList<PhotoResponseDto>> GetPhotosByMemberIdAsync(string memberId)

@@ -1,3 +1,5 @@
+using API.Extensions;
+using API.Helpers;
 using API.Interfaces.Services;
 using API.Model.DTO.Request;
 using API.Model.DTO.Response;
@@ -11,10 +13,18 @@ public class MembersController(IMemberService memberService, IUserService userSe
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyList<MemberResponseDto>>> GetMembers()
+    public async Task<ActionResult<IReadOnlyList<MemberResponseDto>>> GetMembers([FromQuery] PaginationParams paginationParams)
     {
-        var members = await memberService.GetMembersAsync();
-        return Ok(members);
+        var pagedMembers = await memberService.GetMembersAsync(paginationParams);
+        
+        Response.AddPaginationHeader(new PaginationHeader(
+            pagedMembers.PageNumber,
+            pagedMembers.PageSize,
+            pagedMembers.TotalCount,
+            pagedMembers.TotalPages
+        ));
+
+        return Ok(pagedMembers.Items);
     }
 
     [HttpGet("{id}")]

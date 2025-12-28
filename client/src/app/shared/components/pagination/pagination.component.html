@@ -1,0 +1,26 @@
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+  <div class="text-sm text-base-content/70">
+    Page {{ pagination().currentPage }} of {{ pagination().totalPages }}
+  </div>
+
+  <div class="join grid grid-cols-2">
+    <button
+      class="join-item btn btn-outline"
+      [class.btn-disabled]="!canGoPrevious()"
+      [disabled]="!canGoPrevious()"
+      (click)="onPrevious.emit()"
+    >
+      <lucide-icon [name]="chevronLeftIcon" class="size-4" />
+      Previous
+    </button>
+    <button
+      class="join-item btn btn-outline"
+      [class.btn-disabled]="!canGoNext()"
+      [disabled]="!canGoNext()"
+      (click)="onNext.emit()"
+    >
+      <lucide-icon [name]="chevronRightIcon" class="size-4" />
+      Next
+    </button>
+  </div>
+</div>

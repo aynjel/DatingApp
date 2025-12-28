@@ -1,0 +1,162 @@
+@if (member) {
+<div class="container mx-auto p-4 md:p-6">
+  <!-- Back Button -->
+  <button (click)="goBack()" class="btn btn-ghost btn-sm mb-4 gap-2">
+    <lucide-icon [name]="arrowLeftIcon" class="size-4" />
+    Back to People
+  </button>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Left Column: Profile Image and Basic Info -->
+    <div class="card bg-base-100 shadow-lg">
+      <div class="card-body items-center text-center">
+        <div class="avatar mb-4">
+          <div
+            class="w-48 h-48 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden"
+          >
+            @if (member.imageUrl) {
+            <img
+              [src]="member.imageUrl"
+              [alt]="member.displayName + ' photo'"
+              class="w-full h-full object-cover"
+            />
+            } @else {
+            <ngx-avatar [name]="member.displayName" size="192" [round]="true" />
+            }
+          </div>
+        </div>
+
+        <h1 class="text-3xl font-bold mb-2">{{ member.displayName }}</h1>
+
+        <div class="space-y-2 text-sm text-base-content/70 mb-4">
+          @if (member.dateOfBirth) {
+          <p>
+            <span class="font-medium">Age:</span>
+            {{ calculateAge(member.dateOfBirth) }} years old
+          </p>
+          } @if (member.city || member.country) {
+          <p>
+            <span class="font-medium">Location:</span>
+            {{ member.city }}@if (member.city && member.country) {, }
+            {{ member.country }}
+          </p>
+          } @if (member.gender) {
+          <p><span class="font-medium">Gender:</span> {{ member.gender }}</p>
+          } @if (member.lastActive) {
+          <p class="text-primary">
+            {{ getLastActiveText(member.lastActive) }}
+          </p>
+          }
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col gap-3 w-full mt-4">
+          <button class="btn btn-primary w-full gap-2">
+            <lucide-icon [name]="heartIcon" class="size-5" />
+            Like
+          </button>
+          <button class="btn btn-outline btn-primary w-full gap-2">
+            <lucide-icon [name]="messageIcon" class="size-5" />
+            Message
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Columns: About and Photos -->
+    <div class="md:col-span-2 space-y-6">
+      <!-- About Section -->
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <h2 class="card-title text-2xl mb-4">About</h2>
+          @if (member.description) {
+          <p class="text-base-content/80 leading-relaxed">
+            {{ member.description }}
+          </p>
+          } @else {
+          <p class="text-base-content/60 italic">No description provided.</p>
+          }
+        </div>
+      </div>
+
+      <!-- Photos Section -->
+      @if (member.photos && member.photos.length > 0) {
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <h2 class="card-title text-2xl mb-4">
+            Photos ({{ member.photos.length }})
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            @for (photo of member.photos; track photo.id) {
+            <div class="aspect-square overflow-hidden rounded-lg">
+              <img
+                [src]="photo.url"
+                [alt]="member.displayName + ' photo ' + ($index + 1)"
+                class="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
+              />
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- Additional Info -->
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <h2 class="card-title text-2xl mb-4">Details</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @if (member.dateOfBirth) {
+            <div>
+              <p class="text-sm font-medium text-base-content/60">
+                Date of Birth
+              </p>
+              <p class="text-base-content">{{ member.dateOfBirth | date }}</p>
+            </div>
+            } @if (member.created) {
+            <div>
+              <p class="text-sm font-medium text-base-content/60">
+                Member Since
+              </p>
+              <p class="text-base-content">{{ member.created | date }}</p>
+            </div>
+            } @if (member.lastActive) {
+            <div>
+              <p class="text-sm font-medium text-base-content/60">
+                Last Active
+              </p>
+              <p class="text-base-content">{{ member.lastActive | date }}</p>
+            </div>
+            } @if (member.city) {
+            <div>
+              <p class="text-sm font-medium text-base-content/60">City</p>
+              <p class="text-base-content">{{ member.city }}</p>
+            </div>
+            } @if (member.country) {
+            <div>
+              <p class="text-sm font-medium text-base-content/60">Country</p>
+              <p class="text-base-content">{{ member.country }}</p>
+            </div>
+            } @if (member.gender) {
+            <div>
+              <p class="text-sm font-medium text-base-content/60">Gender</p>
+              <p class="text-base-content">{{ member.gender }}</p>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+} @else {
+<div class="container mx-auto p-4 md:p-6">
+  <div class="text-center py-12">
+    <p class="text-xl text-base-content/70 mb-4">Member not found</p>
+    <button (click)="goBack()" class="btn btn-primary">
+      <lucide-icon [name]="arrowLeftIcon" class="size-4" />
+      Back to People
+    </button>
+  </div>
+</div>
+}

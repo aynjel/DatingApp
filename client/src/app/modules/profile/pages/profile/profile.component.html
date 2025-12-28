@@ -7,11 +7,11 @@
           <div
             class="w-48 h-48 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden"
           >
-            @if(memberStore.member()?.imageUrl) {
-            <img [src]="memberStore.member()?.imageUrl" alt="Profile photo" />
+            @if(memberDetails()?.imageUrl) {
+            <img [src]="memberDetails()?.imageUrl" alt="Profile photo" />
             } @else {
             <ngx-avatar
-              [name]="memberStore.member()?.displayName"
+              [name]="memberDetails()?.displayName"
               size="192"
               [round]="true"
             />
@@ -20,17 +20,17 @@
         </div>
 
         <h2 class="text-2xl font-semibold mt-4">
-          {{ memberStore.member()?.displayName }}
+          {{ memberDetails()?.displayName }}
         </h2>
         <p class="text-sm text-base-content/60">
-          {{ memberStore.member()?.dateOfBirth | date }} •
-          {{ memberStore.member()?.city }}, {{ memberStore.member()?.country }}
+          {{ memberDetails()?.dateOfBirth | date }} •
+          {{ memberDetails()?.city }}, {{ memberDetails()?.country }}
         </p>
 
         <!-- Action Buttons -->
         <div class="flex flex-col gap-3 mt-6 w-full">
           <a
-            [routerLink]="['/profile/member-details', memberStore.member()?.id]"
+            [routerLink]="['/profile/member-details', memberDetails()?.id]"
             class="btn btn-primary w-full gap-2"
           >
             <lucide-icon [name]="editIcon" class="size-5" />
@@ -70,7 +70,7 @@
       <div class="card bg-base-100 shadow p-6">
         <h3 class="text-xl font-semibold">About</h3>
         <p class="mt-3 text-sm text-base-content/80">
-          {{ memberStore.member()?.description }}
+          {{ memberDetails()?.description }}
         </p>
 
         <!-- <div class="mt-4">
@@ -87,7 +87,7 @@
       <div class="card bg-base-100 shadow p-6">
         <h3 class="text-xl font-semibold">Photos</h3>
         <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-          @for (p of memberStore.member()?.photos; track p) {
+          @for (p of memberDetails()?.photos; track p) {
           <img
             [src]="p.url"
             class="w-full h-40 object-cover rounded"
@@ -121,8 +121,8 @@
           <div>
             <div class="text-xs text-base-content/60">Location</div>
             <div class="font-medium">
-              {{ memberStore.member()?.city }},
-              {{ memberStore.member()?.country }}
+              {{ memberDetails()?.city }},
+              {{ memberDetails()?.country }}
             </div>
           </div>
         </div>
@@ -138,5 +138,5 @@
   icon="question"
   [showCancelButton]="true"
   [focusCancel]="true"
-  (confirm)="authStore.logout()"
+  (confirm)="onLogout()"
 />

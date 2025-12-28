@@ -1,4 +1,5 @@
 using API.Entities;
+using API.Helpers;
 using API.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,21 @@ public class MemberRepository(DataContext context) : IMemberRepository
       .Include(m => m.Photos)
       .AsNoTracking()
       .ToListAsync();
+  }
+
+  public async Task<PagedList<Member>> GetMembersAsync(PaginationParams paginationParams)
+  {
+    var query = context.Members
+      .Include(m => m.Photos)
+      .AsNoTracking()
+      .OrderByDescending(m => m.Created)
+      .AsQueryable();
+
+    return await PagedList<Member>.CreateAsync(
+      query, 
+      paginationParams.PageNumber, 
+      paginationParams.PageSize
+    );
   }
 
   public async Task<IReadOnlyList<Photo>> GetPhotosByMemberIdAsync(string memberId)

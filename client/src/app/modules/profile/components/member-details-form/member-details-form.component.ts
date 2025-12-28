@@ -1,11 +1,8 @@
 import { KeyValuePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ToastService } from '../../../../shared/services/toast.service';
 import { AuthStore } from '../../../../shared/store/auth.store';
 import { GlobalStore } from '../../../../shared/store/global.store';
-import { MemberStore } from '../../../../shared/store/member.store';
 import { CreateMemberDetailsRequest } from '../../models/create-member.models';
 
 @Component({
@@ -15,14 +12,13 @@ import { CreateMemberDetailsRequest } from '../../models/create-member.models';
 })
 export class MemberDetailsFormComponent {
   private authStore = inject(AuthStore);
-  private memberStore = inject(MemberStore);
   private globalStore = inject(GlobalStore);
   private formBuilder = inject(FormBuilder);
-  private router = inject(Router);
-  private toastService = inject(ToastService);
 
-  protected userDetails = computed(() => this.authStore.currentUser());
-  protected memberDetails = computed(() => this.userDetails()?.memberDetails);
+  protected currentUser = computed(() => this.authStore.currentUser());
+  protected memberDetails = computed(
+    () => this.authStore.currentUser()?.memberDetails
+  );
 
   protected isLoading = computed(() => this.globalStore.isSubmitting());
 
@@ -30,7 +26,7 @@ export class MemberDetailsFormComponent {
     dateOfBirth: ['', [Validators.required]],
     imageUrl: ['', [Validators.required]],
     displayName: [
-      this.userDetails()?.displayName,
+      this.currentUser()?.displayName,
       [Validators.required, Validators.minLength(2), Validators.maxLength(100)],
     ],
     gender: ['', [Validators.required]],
@@ -53,7 +49,7 @@ export class MemberDetailsFormComponent {
   });
 
   onCreateMemberDetailsSubmit(): void {
-    if (this.memberDetailsForm.invalid) {
+    if (this.memberDetailsForm.invalid || !this.currentUser()) {
       this.memberDetailsForm.markAllAsTouched();
       return;
     }
@@ -69,21 +65,10 @@ export class MemberDetailsFormComponent {
       country: value.country!,
     };
 
-    this.memberStore.createMemberDetails({
+    this.authStore.createMemberDetails({
       data: {
-        userId: this.authStore.currentUser()!.userId,
+        userId: this.currentUser()!.userId,
         payload: payload,
-      },
-      onSuccess: async () => {
-        this.toastService.show(
-          'Member details created successfully.',
-          'success'
-        );
-        this.router.navigate(['/profile/me']);
-      },
-      onError: (error) => {
-        this.toastService.show(error, 'error');
-        console.error('Create member details error:', error);
       },
     });
   }
