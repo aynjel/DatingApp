@@ -12,7 +12,6 @@ import {
   withState,
 } from '@ngrx/signals';
 import { AuthService } from '../../modules/auth/services/auth.service';
-import { CreateMemberDetailsRequest } from '../../modules/profile/models/create-member.models';
 import { TokenResponse } from '../models/common-models';
 import { RegisterUserRequest } from '../models/dto/request/register-user.request';
 import { AuthUserResponse } from '../models/dto/response/auth-user.response';
@@ -109,30 +108,6 @@ export const AuthStore = signalStore(
       )
     );
 
-    const createMemberDetails = store.globalStore.withFormSubmission<
-      { userId: string; payload: CreateMemberDetailsRequest },
-      Member
-    >(({ userId, payload }) =>
-      store.memberService.createMemberDetails(userId, payload).pipe(
-        tapResponse({
-          next: (response) => {
-            store.toastService.show(
-              `${response.displayName} profile created successfully.`,
-              'success'
-            );
-            setMemberDetails(response);
-            store.router.navigate(['/profile/me']);
-          },
-          error: (error: HttpErrorResponse) => {
-            store.toastService.show(
-              error.error.detail || 'Something went wrong',
-              'error'
-            );
-          },
-        })
-      )
-    );
-
     const logout = () => {
       store.resetState();
       setIsLoggedIn(false);
@@ -165,7 +140,8 @@ export const AuthStore = signalStore(
       signUp,
       logout,
       getCurrentUser,
-      createMemberDetails,
+
+      setMemberDetails,
     };
   })
 );

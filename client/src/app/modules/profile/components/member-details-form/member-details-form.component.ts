@@ -1,9 +1,9 @@
 import { KeyValuePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthStore } from '../../../../shared/store/auth.store';
 import { GlobalStore } from '../../../../shared/store/global.store';
 import { CreateMemberDetailsRequest } from '../../models/create-member.models';
+import { ProfileStore } from '../../store/profile.store';
 
 @Component({
   selector: 'app-member-details-form',
@@ -11,13 +11,15 @@ import { CreateMemberDetailsRequest } from '../../models/create-member.models';
   templateUrl: './member-details-form.component.html',
 })
 export class MemberDetailsFormComponent {
-  private authStore = inject(AuthStore);
+  private profileStore = inject(ProfileStore);
   private globalStore = inject(GlobalStore);
   private formBuilder = inject(FormBuilder);
 
-  protected currentUser = computed(() => this.authStore.currentUser());
+  protected currentUser = computed(() =>
+    this.profileStore.authStore.currentUser()
+  );
   protected memberDetails = computed(
-    () => this.authStore.currentUser()?.memberDetails
+    () => this.profileStore.authStore.currentUser()?.memberDetails
   );
 
   protected isLoading = computed(() => this.globalStore.isSubmitting());
@@ -65,7 +67,7 @@ export class MemberDetailsFormComponent {
       country: value.country!,
     };
 
-    this.authStore.createMemberDetails({
+    this.profileStore.createMemberDetails({
       data: {
         userId: this.currentUser()!.userId,
         payload: payload,

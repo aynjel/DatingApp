@@ -62,4 +62,20 @@ export class MemberDetailsComponent {
       return `Active ${months} month${months > 1 ? 's' : ''} ago`;
     }
   }
+
+  getMockInterests(): string[] {
+    // Mock interests data
+    return [
+      'Travel',
+      'Photography',
+      'Music',
+      'Cooking',
+      'Reading',
+      'Fitness',
+      'Art',
+      'Movies',
+      'Hiking',
+      'Dancing',
+    ];
+  }
 }
