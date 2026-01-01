@@ -1,0 +1,1 @@
+import"./chunk-JZHZPN4O.js";var o=[{path:"",redirectTo:"account",pathMatch:"full"},{path:"account",loadComponent:()=>import("./chunk-JNPCLGPL.js").then(t=>t.SettingsComponent),title:"Account Settings"}];export{o as routes};

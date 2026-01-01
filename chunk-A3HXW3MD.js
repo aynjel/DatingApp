@@ -1,1 +1,0 @@
-import"./chunk-JZHZPN4O.js";var t=[{path:"",redirectTo:"inbox",pathMatch:"full"},{path:"inbox",loadComponent:()=>import("./chunk-ZO5LYSKT.js").then(o=>o.InboxComponent),title:"Inbox"}];export{t as routes};

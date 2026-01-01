@@ -1,1 +1,0 @@
-import{Ga as n,cb as o,db as a,pb as m}from"./chunk-5SGA2RCQ.js";import"./chunk-JZHZPN4O.js";var s=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=n({type:t,selectors:[["app-matches"]],decls:2,vars:0,template:function(e,p){e&1&&(o(0,"p"),m(1,"matches works!"),a())},encapsulation:2})};export{s as MatchesComponent};
