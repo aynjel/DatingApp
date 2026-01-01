@@ -1,0 +1,60 @@
+<div class="container mx-auto p-4 md:p-6 max-w-4xl">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-3xl md:text-4xl font-bold mb-2">Settings</h1>
+    <p class="text-base-content/70">
+      Manage your account settings and preferences
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Left Sidebar - Navigation -->
+    <div class="lg:col-span-1">
+      <app-settings-sidebar
+        [currentUser]="currentUser()"
+        [memberDetails]="memberDetails()"
+      />
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Account Settings -->
+      <app-account-settings
+        [currentUser]="currentUser()"
+        [memberDetails]="memberDetails()"
+      />
+
+      <!-- Notifications Settings -->
+      <app-notifications-settings
+        [emailNotifications]="emailNotifications()"
+        [pushNotifications]="pushNotifications()"
+        (emailNotificationsChange)="onEmailNotificationsChange($event)"
+        (pushNotificationsChange)="onPushNotificationsChange($event)"
+      />
+
+      <!-- Privacy Settings -->
+      <app-privacy-settings
+        [profileVisibility]="profileVisibility()"
+        [showOnlineStatus]="showOnlineStatus()"
+        [allowMessagesFrom]="allowMessagesFrom()"
+        (profileVisibilityChange)="onProfileVisibilityChange($event)"
+        (showOnlineStatusChange)="onShowOnlineStatusChange($event)"
+        (allowMessagesFromChange)="onAllowMessagesFromChange($event)"
+      />
+
+      <!-- Security Settings -->
+      <app-security-settings />
+
+      <!-- Danger Zone -->
+      <app-danger-zone (logout)="onLogout()" />
+
+      <!-- Save Button -->
+      <div class="flex justify-end gap-2 mt-4">
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-primary" (click)="onSaveSettings()">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

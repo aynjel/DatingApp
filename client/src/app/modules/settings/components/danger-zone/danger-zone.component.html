@@ -1,0 +1,32 @@
+<div class="card bg-base-100 shadow-lg border-2 border-error/20">
+  <div class="card-body">
+    <h2 class="card-title text-xl text-error mb-4">Danger Zone</h2>
+
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <h3 class="font-medium">Logout</h3>
+          <p class="text-sm text-base-content/60">Sign out of your account</p>
+        </div>
+        <button
+          type="button"
+          (click)="logoutAlert.fire()"
+          class="btn btn-error btn-outline gap-2"
+        >
+          <lucide-icon [name]="logoutIcon" class="size-5" />
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<swal
+  #logoutAlert
+  title="Confirm logout?"
+  text="Are you sure you want to log out?"
+  icon="question"
+  [showCancelButton]="true"
+  [focusCancel]="true"
+  (confirm)="onLogout()"
+/>

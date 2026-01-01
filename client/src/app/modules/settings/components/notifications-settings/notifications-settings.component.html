@@ -1,0 +1,42 @@
+<div id="notifications" class="card bg-base-100 shadow-lg">
+  <div class="card-body">
+    <div class="flex items-center gap-3 mb-4">
+      <lucide-icon [name]="bellIcon" class="size-6 text-primary" />
+      <h2 class="card-title text-2xl">Notifications</h2>
+    </div>
+
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <h3 class="font-medium">Email Notifications</h3>
+          <p class="text-sm text-base-content/60">
+            Receive notifications via email
+          </p>
+        </div>
+        <input
+          type="checkbox"
+          class="toggle toggle-primary"
+          [checked]="emailNotifications()"
+          (change)="onEmailNotificationsChange($any($event.target).checked)"
+        />
+      </div>
+
+      <div class="divider my-2"></div>
+
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <h3 class="font-medium">Push Notifications</h3>
+          <p class="text-sm text-base-content/60">
+            Receive push notifications on your device
+          </p>
+        </div>
+        <input
+          type="checkbox"
+          class="toggle toggle-primary"
+          [checked]="pushNotifications()"
+          (change)="onPushNotificationsChange($any($event.target).checked)"
+        />
+      </div>
+    </div>
+  </div>
+</div>

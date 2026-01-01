@@ -45,6 +45,12 @@ export const routes: Routes = [
     canActivate: [childAuthGuard],
   },
   {
+    path: 'settings',
+    loadChildren: () =>
+      import('./modules/settings/settings.routes').then((m) => m.routes),
+    canActivate: [childAuthGuard],
+  },
+  {
     path: 'errors',
     loadComponent: () =>
       import('./shared/pages/test-errors/test-errors.component').then(

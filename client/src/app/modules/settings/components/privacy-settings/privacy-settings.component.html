@@ -1,0 +1,57 @@
+<div id="privacy" class="card bg-base-100 shadow-lg">
+  <div class="card-body">
+    <div class="flex items-center gap-3 mb-4">
+      <lucide-icon [name]="eyeIcon" class="size-6 text-primary" />
+      <h2 class="card-title text-2xl">Privacy</h2>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="label">
+          <span class="label-text font-medium">Profile Visibility</span>
+        </label>
+        <select
+          class="select select-bordered w-full"
+          [value]="profileVisibility()"
+          (change)="onProfileVisibilityChange($any($event.target).value)"
+        >
+          <option value="public">Public - Everyone can see your profile</option>
+          <option value="friends">Friends Only - Only your connections</option>
+          <option value="private">Private - Only you</option>
+        </select>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <h3 class="font-medium">Show Online Status</h3>
+          <p class="text-sm text-base-content/60">
+            Let others see when you're online
+          </p>
+        </div>
+        <input
+          type="checkbox"
+          class="toggle toggle-primary"
+          [checked]="showOnlineStatus()"
+          (change)="onShowOnlineStatusChange($any($event.target).checked)"
+        />
+      </div>
+
+      <div class="divider my-2"></div>
+
+      <div>
+        <label class="label">
+          <span class="label-text font-medium">Who can message you</span>
+        </label>
+        <select
+          class="select select-bordered w-full"
+          [value]="allowMessagesFrom()"
+          (change)="onAllowMessagesFromChange($any($event.target).value)"
+        >
+          <option value="everyone">Everyone</option>
+          <option value="friends">Friends Only</option>
+          <option value="none">No One</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>

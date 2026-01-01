@@ -1,0 +1,43 @@
+<div id="security" class="card bg-base-100 shadow-lg">
+  <div class="card-body">
+    <div class="flex items-center gap-3 mb-4">
+      <lucide-icon [name]="shieldIcon" class="size-6 text-primary" />
+      <h2 class="card-title text-2xl">Security</h2>
+    </div>
+
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <lucide-icon [name]="keyIcon" class="size-5" />
+            <h3 class="font-medium">Change Password</h3>
+          </div>
+          <p class="text-sm text-base-content/60">
+            Update your password to keep your account secure
+          </p>
+        </div>
+        <button
+          class="btn btn-outline btn-sm"
+          disabled
+          (click)="onChangePassword()"
+        >
+          Change
+        </button>
+      </div>
+
+      <div class="divider my-2"></div>
+
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <h3 class="font-medium">Two-Factor Authentication</h3>
+          <p class="text-sm text-base-content/60">
+            Add an extra layer of security to your account
+          </p>
+        </div>
+        <button class="btn btn-outline btn-sm" disabled (click)="onEnable2FA()">
+          Enable
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

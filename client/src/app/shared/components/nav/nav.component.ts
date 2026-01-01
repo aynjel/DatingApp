@@ -58,7 +58,7 @@ export class NavComponent {
     {
       label: 'Settings',
       icon: SettingsIcon,
-      routerLink: '/profile/me',
+      routerLink: '/settings/account',
     },
   ];
 

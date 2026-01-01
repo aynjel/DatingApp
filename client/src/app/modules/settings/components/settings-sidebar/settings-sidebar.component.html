@@ -1,0 +1,61 @@
+<div class="card bg-base-100 shadow-lg sticky top-4">
+  <div class="card-body p-4">
+    <div
+      class="flex items-center gap-3 mb-4 pb-4 border-b border-base-300"
+    >
+      <div class="avatar">
+        <div
+          class="w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2"
+        >
+          @if (memberDetails()?.imageUrl) {
+          <img
+            [src]="memberDetails()?.imageUrl"
+            [alt]="displayName() + ' photo'"
+            class="w-full h-full object-cover rounded-full"
+          />
+          } @else {
+          <ngx-avatar [name]="displayName()" size="48" [round]="true" />
+          }
+        </div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <h3 class="font-semibold truncate">{{ displayName() }}</h3>
+        <p class="text-xs text-base-content/60 truncate">
+          {{ currentUser()?.email }}
+        </p>
+      </div>
+    </div>
+
+    <nav class="space-y-1">
+      <a
+        href="#account"
+        class="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 transition-colors"
+      >
+        <lucide-icon [name]="userIcon" class="size-5" />
+        <span>Account</span>
+      </a>
+      <a
+        href="#notifications"
+        class="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 transition-colors"
+      >
+        <lucide-icon [name]="bellIcon" class="size-5" />
+        <span>Notifications</span>
+      </a>
+      <a
+        href="#privacy"
+        class="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 transition-colors"
+      >
+        <lucide-icon [name]="eyeIcon" class="size-5" />
+        <span>Privacy</span>
+      </a>
+      <a
+        href="#security"
+        class="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 transition-colors"
+      >
+        <lucide-icon [name]="shieldIcon" class="size-5" />
+        <span>Security</span>
+      </a>
+    </nav>
+  </div>
+</div>
+
