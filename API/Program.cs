@@ -116,7 +116,7 @@ app.UseSwaggerUI(c =>
 });
 
 // Root endpoint with environment-aware URLs
-app.MapGet("/api", () =>
+app.MapGet("/", () =>
 {
     var environment = app.Environment.EnvironmentName;
     var baseUrl = app.Environment.IsDevelopment() 
@@ -136,11 +136,10 @@ app.MapGet("/api", () =>
 });
 
 // Middleware pipeline
-// Temporarily disable HTTPS redirection for testing on production
-//if (!app.Environment.IsDevelopment())
-//{
-//    app.UseHttpsRedirection();
-//}
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseMiddleware<ExceptionMiddleware>();
 
