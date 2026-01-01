@@ -108,38 +108,55 @@ builder.Services.AddScoped<IGenerateJWTService, GenerateJWTService>();
 
 var app = builder.Build();
 
-// Exception page (Development only)
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "DatingApp API V1");
+    c.RoutePrefix = "swagger";
+});
 
-app.MapGet("/", () =>
+// Root endpoint with environment-aware URLs
+app.MapGet("/api", () =>
 {
-    if (app.Environment.IsDevelopment())
+    var environment = app.Environment.EnvironmentName;
+    var baseUrl = app.Environment.IsDevelopment() 
+        ? "http://localhost:5001" 
+        : "http://datingapp-001-site1.anytempurl.com";
+    
+    var dataAsJson = JsonSerializer.Serialize(new
     {
-        var dataAsJson = JsonSerializer.Serialize(new
-        {
-            Message = "Welcome to the DatingApp API",
-            Version = "v1",
-            Documentation = "Visit /swagger for API documentation and testing: https://localhost:5001/swagger",
-            AdditionalInfo = "This is a sample API for a dating application."
-        });
-        return Results.Content(dataAsJson, "application/json");
-    }
-    return Results.Content("Welcome to the DatingApp API", "text/plain");
+        Message = "Welcome to the DatingApp API",
+        Version = "v1",
+        Environment = environment,
+        Documentation = $"Visit /swagger for API documentation: {baseUrl}/swagger",
+        AdditionalInfo = "This is a sample API for a dating application.",
+        DatabaseConnection = app.Environment.IsDevelopment() ? "Local SQL Server" : "Production SQL Server"
+    });
+    return Results.Content(dataAsJson, "application/json");
 });
 
 // Middleware pipeline
-app.UseHttpsRedirection();
+// Temporarily disable HTTPS redirection for testing on production
+//if (!app.Environment.IsDevelopment())
+//{
+//    app.UseHttpsRedirection();
+//}
 
 app.UseMiddleware<ExceptionMiddleware>();
+
+// Environment-aware CORS configuration
+var allowedOrigins = app.Environment.IsDevelopment()
+    ? new[] { "https://localhost:4200", "http://localhost:4200" }
+    : new[] {
+        "https://aynjel.github.io/DatingApp",
+        "https://localhost:4200" // Keep for local testing against prod
+    };
+
 app.UseCors(x => x
     .AllowAnyHeader()
     .AllowAnyMethod()
-    .WithOrigins("https://localhost:4200")
+    .WithOrigins(allowedOrigins)
+    .AllowCredentials()
 );
 
 app.UseAuthentication();
@@ -147,19 +164,32 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Database migration and seeding
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    
     try
     {
         var context = services.GetRequiredService<DataContext>();
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        
+        logger.LogInformation("Starting database migration...");
+        logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
+        logger.LogInformation("Using connection: {Server}", 
+            connectionString.Contains("localhost") ? "Local SQL Server" : "Production SQL Server");
+        
         await context.Database.MigrateAsync();
+        logger.LogInformation("Database migration completed successfully");
+        
         await Seed.SeedUsers(context);
+        logger.LogInformation("Database seeding completed successfully");
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred during migration or seeding");
+        throw; // Re-throw to prevent app from starting with database issues
     }
 }
 
