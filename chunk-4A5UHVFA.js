@@ -1,1 +1,0 @@
-import{Ga as s,cb as n,db as o,vb as i}from"./chunk-4G5T5ETV.js";import"./chunk-JZHZPN4O.js";var p=class e{static \u0275fac=function(t){return new(t||e)};static \u0275cmp=s({type:e,selectors:[["app-lists"]],decls:2,vars:0,template:function(t,m){t&1&&(n(0,"p"),i(1,"lists works!"),o())},encapsulation:2})};export{p as ListsComponent};

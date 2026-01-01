@@ -1,0 +1,1 @@
+import{Ga as o,cb as t,db as i,pb as s}from"./chunk-5SGA2RCQ.js";import"./chunk-JZHZPN4O.js";var m=class n{static \u0275fac=function(e){return new(e||n)};static \u0275cmp=o({type:n,selectors:[["app-inbox"]],decls:2,vars:0,template:function(e,a){e&1&&(t(0,"p"),s(1,"inbox works!"),i())},encapsulation:2})};export{m as InboxComponent};
