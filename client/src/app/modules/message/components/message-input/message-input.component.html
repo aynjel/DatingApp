@@ -1,0 +1,34 @@
+<div class="flex items-end gap-2">
+  <!-- Attachment Button (Optional) -->
+  <button
+    type="button"
+    class="bottom-2 btn btn-ghost btn-sm btn-circle flex-shrink-0 hover:bg-base-200 transition-colors"
+    title="Attach file"
+  >
+    <lucide-icon [name]="paperclipIcon" class="size-5" />
+  </button>
+
+  <!-- Message Input Container -->
+  <div class="flex-1 relative bg-base-100 rounded-2xl border border-base-300">
+    <textarea
+      #textarea
+      [(ngModel)]="messageContent"
+      (keydown)="onKeyPress($event)"
+      (input)="onInput($event)"
+      placeholder="Type a message..."
+      class="textarea textarea-ghost w-full resize-none min-h-[44px] max-h-[120px] pr-12 border-0 bg-transparent"
+      rows="1"
+    ></textarea>
+
+    <!-- Send Button (Inside textarea area) -->
+    <button
+      type="button"
+      (click)="onSend()"
+      class="absolute right-2 bottom-2 btn btn-primary btn-sm btn-circle flex-shrink-0 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+      [disabled]="!hasContent"
+      title="Send message (Enter)"
+    >
+      <lucide-icon [name]="sendIcon" class="size-4" />
+    </button>
+  </div>
+</div>

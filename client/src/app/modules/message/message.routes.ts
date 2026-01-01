@@ -12,4 +12,10 @@ export const routes: Routes = [
       import('./pages/inbox/inbox.component').then((m) => m.InboxComponent),
     title: 'Inbox',
   },
+  {
+    path: 'thread/:id',
+    loadComponent: () =>
+      import('./pages/inbox/inbox.component').then((m) => m.InboxComponent),
+    title: 'Conversation',
+  },
 ];

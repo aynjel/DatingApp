@@ -4,6 +4,7 @@ export enum APIEndpoints {
   REGISTER = '/account/register',
   REFRESH_TOKEN = '/account/refresh-token',
   FORGOT_PASSWORD = '/account/forgot-password',
+  MESSAGES = '/messages',
 }
 
 export enum ErrorEndpoints {
