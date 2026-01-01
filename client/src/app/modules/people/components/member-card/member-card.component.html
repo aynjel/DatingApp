@@ -1,0 +1,64 @@
+<div
+  class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 group"
+>
+  <figure class="relative h-64 overflow-hidden bg-base-200">
+    @if (member().imageUrl) {
+    <img
+      [src]="member().imageUrl"
+      [alt]="member().displayName + ' photo'"
+      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+    />
+    } @else {
+    <div class="w-full h-full flex items-center justify-center">
+      <ngx-avatar [name]="member().displayName" size="120" [round]="true" />
+    </div>
+    }
+    <!-- Online Status Badge -->
+    @if (member().lastActive) {
+    <div class="absolute top-2 right-2">
+      <div class="badge badge-success badge-sm">Active</div>
+    </div>
+    }
+  </figure>
+  <div class="card-body p-4">
+    <h2 class="card-title text-lg mb-2 line-clamp-1">
+      {{ member().displayName }}
+    </h2>
+    <div class="space-y-1.5 text-sm text-base-content/70">
+      @if (member().dateOfBirth) {
+      <div class="flex items-center gap-2">
+        <span class="font-medium">Age:</span>
+        <span>{{ calculateAge(member().dateOfBirth) }} years old</span>
+      </div>
+      } @if (member().city || member().country) {
+      <div class="flex items-center gap-2">
+        <span class="font-medium">Location:</span>
+        <span class="truncate">
+          {{ member().city }}@if (member().city && member().country) {, }
+          {{ member().country }}
+        </span>
+      </div>
+      } @if (member().gender) {
+      <div class="flex items-center gap-2">
+        <span class="font-medium">Gender:</span>
+        <span>{{ member().gender }}</span>
+      </div>
+      }
+    </div>
+    <div class="card-actions justify-end mt-4 gap-2">
+      <a
+        [routerLink]="['/people/details', member().id]"
+        class="btn btn-primary btn-sm flex-1"
+      >
+        View Profile
+      </a>
+      <button
+        class="btn btn-ghost btn-sm btn-square"
+        title="Like"
+        (click)="$event.stopPropagation()"
+      >
+        <lucide-icon [name]="heartIcon" class="size-4" />
+      </button>
+    </div>
+  </div>
+</div>

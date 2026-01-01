@@ -1,22 +1,16 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  LucideAngularModule,
-} from 'lucide-angular';
-import { AvatarComponent } from 'ngx-avatar-2';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { MemberCardComponent } from '../../components/member-card/member-card.component';
+import {
+  PeopleFilterComponent,
+  PeopleFilterParams,
+} from '../../components/people-filter/people-filter.component';
 import { PeopleStore } from '../../store/people.store';
 
 @Component({
   selector: 'app-lists',
-  imports: [
-    LucideAngularModule,
-    AvatarComponent,
-    PaginationComponent,
-    RouterLink,
-  ],
+  imports: [MemberCardComponent, PeopleFilterComponent, PaginationComponent],
   templateUrl: './lists.component.html',
 })
 export class ListsComponent implements OnInit {
@@ -24,14 +18,13 @@ export class ListsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  readonly chevronLeftIcon = ChevronLeftIcon;
-  readonly chevronRightIcon = ChevronRightIcon;
-
   members = computed(() => this.peopleStore.members());
   pagination = computed(() => this.peopleStore.pagination());
+  searchTerm = computed(() => this.peopleStore.searchTerm());
 
   pageNumber = signal(1);
-  pageSize = signal(10);
+  pageSize = signal(12);
+  currentFilters = signal<PeopleFilterParams>({ searchTerm: '' });
 
   canGoPrevious = computed(() => this.pagination().currentPage > 1);
   canGoNext = computed(
@@ -45,7 +38,7 @@ export class ListsComponent implements OnInit {
         : 1;
       const pageSize = params['pageSize']
         ? Number(params['pageSize'])
-        : this.peopleStore.pagination().itemsPerPage;
+        : this.pageSize();
 
       this.pageNumber.set(pageNumber);
       this.pageSize.set(pageSize);
@@ -54,10 +47,26 @@ export class ListsComponent implements OnInit {
   }
 
   private fetchMembers(): void {
+    const filters = this.currentFilters();
     this.peopleStore.getMembers({
       pageNumber: this.pageNumber(),
       pageSize: this.pageSize(),
+      searchTerm: filters.searchTerm,
     });
+  }
+
+  onFilterChange(filters: PeopleFilterParams): void {
+    this.currentFilters.set(filters);
+    this.pageNumber.set(1); // Reset to first page when filtering
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        pageNumber: 1,
+        pageSize: this.pageSize(),
+      },
+      queryParamsHandling: 'merge',
+    });
+    // Fetch will be triggered by queryParams subscription
   }
 
   onPageChange(pageNumber: number): void {
@@ -81,19 +90,5 @@ export class ListsComponent implements OnInit {
     if (this.canGoNext()) {
       this.onPageChange(this.pagination().currentPage + 1);
     }
-  }
-
-  calculateAge(dateOfBirth: string): number {
-    const birthDate = new Date(dateOfBirth);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-    return age;
   }
 }

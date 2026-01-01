@@ -17,7 +17,7 @@ export class MemberService {
   private readonly baseUrl = environment.apiUrl + '/Members';
 
   public getMembers(
-    params?: PaginationParams
+    params?: PaginationParams & { searchTerm?: string }
   ): Observable<{ data: Member[]; pagination: PaginationHeaderResponse }> {
     let queryParams = new HttpParams();
     if (params?.pageNumber) {
@@ -25,6 +25,9 @@ export class MemberService {
     }
     if (params?.pageSize) {
       queryParams = queryParams.set('pageSize', params.pageSize);
+    }
+    if (params?.searchTerm) {
+      queryParams = queryParams.set('searchTerm', params.searchTerm);
     }
     return this.http
       .get<Member[]>(this.baseUrl, { params: queryParams, observe: 'response' })

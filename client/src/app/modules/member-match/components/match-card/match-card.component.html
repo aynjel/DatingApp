@@ -1,0 +1,106 @@
+<div
+  class="card bg-base-100 shadow-xl rounded-3xl transform transition-all duration-300 overflow-hidden"
+  [class.shadow-2xl]="isCurrent()"
+  [class.cursor-grab]="isCurrent()"
+  [class.active:cursor-grabbing]="isCurrent()"
+  [class.swipe-left]="swipeDirection() === 'left'"
+  [class.swipe-right]="swipeDirection() === 'right'"
+  [class.relative]="isCurrent()"
+  [class.absolute]="!isCurrent()"
+  [class.inset-0]="!isCurrent()"
+  [style.transform]="getStackTransform()"
+  [style.z-index]="getStackZIndex()"
+  [style.opacity]="getStackOpacity()"
+>
+  <!-- Main Image -->
+  <figure
+    class="relative h-[500px] w-full overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20"
+  >
+    @if (member().imageUrl) {
+    <img
+      [src]="member().imageUrl"
+      [alt]="member().displayName + ' photo'"
+      class="w-full h-full object-cover object-center"
+    />
+    } @else {
+    <div class="w-full h-full flex items-center justify-center">
+      <ngx-avatar
+        [name]="member().displayName"
+        [size]="isCurrent() ? 150 : 120"
+        [round]="true"
+      />
+    </div>
+    } @if (isCurrent()) {
+    <!-- Gradient Overlay -->
+    <div
+      class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
+    ></div>
+
+    <!-- Online Status Badge -->
+    @if (member().lastActive) {
+    <div class="absolute top-4 right-4 z-10">
+      <div class="badge badge-success badge-lg gap-2">
+        <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+        Active
+      </div>
+    </div>
+    }
+
+    <!-- Member Info Overlay -->
+    <div class="absolute bottom-20 left-0 right-0 p-6 text-white z-10">
+      <div class="flex items-center gap-3 mb-2">
+        <h2 class="text-3xl font-bold drop-shadow-lg">
+          {{ member().displayName }}
+        </h2>
+        @if (member().dateOfBirth) {
+        <span class="text-xl font-semibold drop-shadow-lg">
+          {{ calculateAge(member().dateOfBirth) }}
+        </span>
+        }
+      </div>
+
+      @if (member().city || member().country) {
+      <div class="flex items-center gap-2 mb-3 text-white/90">
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+          ></path>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+          ></path>
+        </svg>
+        <span class="text-lg">
+          {{ member().city }}@if (member().city && member().country) {, }{{
+            member().country
+          }}
+        </span>
+      </div>
+      } @if (member().description) {
+      <p class="text-white/90 text-sm line-clamp-2 drop-shadow">
+        {{ member().description }}
+      </p>
+      }
+    </div>
+    }
+  </figure>
+
+  <!-- Actions (only for current card) -->
+  @if (isCurrent()) {
+  <div class="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
+    <div class="pointer-events-auto">
+      <ng-content />
+    </div>
+  </div>
+  }
+</div>

@@ -3,79 +3,58 @@
   <div class="mb-6">
     <h1 class="text-3xl md:text-4xl font-bold mb-2">Discover People</h1>
     <p class="text-base-content/70">
-      Showing {{ members().length }} of {{ pagination().totalItems }} members
+      @if (searchTerm()) { Search results for "{{ searchTerm() }}" } @else {
+      Showing {{ members().length }} of {{ pagination().totalItems }} members }
     </p>
   </div>
+
+  <!-- Search and Filter Component -->
+  <app-people-filter
+    [searchTerm]="searchTerm()"
+    (filterChanged)="onFilterChange($event)"
+  />
 
   <!-- Members Grid -->
   @if (members().length > 0) {
   <div
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
   >
     @for (member of members(); track member.id) {
-    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow">
-      <figure class="relative h-64 overflow-hidden">
-        @if (member.imageUrl) {
-        <img
-          [src]="member.imageUrl"
-          [alt]="member.displayName + ' photo'"
-          class="w-full h-full object-cover"
-        />
-        } @else {
-        <div class="w-full h-full bg-base-200 flex items-center justify-center">
-          <ngx-avatar [name]="member.displayName" size="120" [round]="true" />
-        </div>
-        }
-      </figure>
-      <div class="card-body">
-        <h2 class="card-title text-xl">{{ member.displayName }}</h2>
-        <div class="space-y-1 text-sm text-base-content/70">
-          @if (member.dateOfBirth) {
-          <p>
-            <span class="font-medium">Age:</span>
-            {{ calculateAge(member.dateOfBirth) }} years old
-          </p>
-          } @if (member.city || member.country) {
-          <p>
-            <span class="font-medium">Location:</span>
-            {{ member.city }}@if (member.city && member.country) {, }
-            {{ member.country }}
-          </p>
-          } @if (member.gender) {
-          <p><span class="font-medium">Gender:</span> {{ member.gender }}</p>
-          }
-        </div>
-        @if (member.description) {
-        <p class="text-sm text-base-content/60 line-clamp-2 mt-2">
-          {{ member.description }}
-        </p>
-        }
-        <div class="card-actions justify-end mt-4">
-          <a
-            [routerLink]="['/people/details', member.id]"
-            class="btn btn-primary btn-sm"
-          >
-            View Profile
-          </a>
-        </div>
-      </div>
-    </div>
+    <app-member-card [member]="member" />
     }
   </div>
   } @else {
-  <div class="text-center py-12">
-    <p class="text-xl text-base-content/70">No members found</p>
+  <div class="card bg-base-100 shadow-lg">
+    <div class="card-body text-center py-16">
+      <div class="text-6xl mb-4">🔍</div>
+      <h3 class="text-2xl font-bold mb-2">No members found</h3>
+      <p class="text-base-content/70 mb-4">
+        @if (searchTerm() || currentFilters().gender || currentFilters().city) {
+        Try adjusting your search or filter criteria } @else { There are no
+        members available at the moment }
+      </p>
+      @if (searchTerm() || currentFilters().gender || currentFilters().city) {
+      <button
+        class="btn btn-primary"
+        (click)="onFilterChange({ searchTerm: '' })"
+      >
+        Clear Filters
+      </button>
+      }
+    </div>
   </div>
   }
 
   <!-- Pagination Controls -->
   @if (pagination().totalPages > 1) {
-  <app-pagination
-    [pagination]="pagination()"
-    [canGoPrevious]="canGoPrevious()"
-    [canGoNext]="canGoNext()"
-    (onPrevious)="goToPrevious()"
-    (onNext)="goToNext()"
-  />
+  <div class="mt-8">
+    <app-pagination
+      [pagination]="pagination()"
+      [canGoPrevious]="canGoPrevious()"
+      [canGoNext]="canGoNext()"
+      (onPrevious)="goToPrevious()"
+      (onNext)="goToNext()"
+    />
+  </div>
   }
 </div>

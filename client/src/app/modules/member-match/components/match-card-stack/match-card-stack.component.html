@@ -1,0 +1,41 @@
+<div class="relative min-h-[600px] flex items-center justify-center">
+  <!-- Empty State -->
+  @if (isStackEmpty) {
+  <div class="card bg-base-100 shadow-2xl w-full max-w-md">
+    <div class="card-body text-center py-16">
+      <div class="text-6xl mb-4">💫</div>
+      <h3 class="text-2xl font-bold mb-2">You've seen everyone!</h3>
+      <p class="text-base-content/70 mb-6">
+        Check back later for more matches or adjust your preferences.
+      </p>
+      <ng-content select="[reset-button]" />
+    </div>
+  </div>
+  }
+
+  <!-- Card Stack -->
+  @if (hasMoreCards) {
+  <div class="relative w-full max-w-md mx-auto" style="perspective: 1000px">
+    <!-- Upcoming cards (background stack) -->
+    @for (member of upcomingMembers(); track member.id; let i = $index) {
+    <app-match-card [member]="member" [isCurrent]="false" [stackIndex]="i" />
+    }
+
+    <!-- Current card (top of stack) -->
+    @if (currentMember(); as member) {
+    <app-match-card
+      [member]="member"
+      [isCurrent]="true"
+      [swipeDirection]="swipeDirection()"
+    >
+      <app-match-actions
+        [memberId]="member.id"
+        [isAnimating]="isAnimating()"
+        (onLike)="onLike.emit()"
+        (onPass)="onPass.emit()"
+      />
+    </app-match-card>
+    }
+  </div>
+  }
+</div>

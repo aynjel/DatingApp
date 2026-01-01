@@ -1,0 +1,140 @@
+<div class="card bg-base-100 shadow-lg mb-6">
+  <div class="card-body p-4">
+    <!-- Search Bar -->
+    <div class="flex gap-3 mb-4">
+      <div class="flex-1 relative">
+        <lucide-icon
+          [name]="searchIcon"
+          class="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-base-content/40"
+        />
+        <input
+          type="text"
+          [value]="searchInput()"
+          (input)="onSearchInput($event)"
+          placeholder="Search by name, location, or interests..."
+          class="input input-bordered w-full pl-10 pr-10"
+        />
+        @if (searchInput()) {
+        <button
+          (click)="onClearSearch()"
+          class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle"
+        >
+          <lucide-icon [name]="xIcon" class="size-4" />
+        </button>
+        }
+      </div>
+      <button
+        (click)="toggleFilters()"
+        class="btn btn-outline gap-2"
+        [class.btn-primary]="showFilters() || hasActiveFilters()"
+      >
+        <lucide-icon [name]="filterIcon" class="size-4" />
+        Filters @if (hasActiveFilters()) {
+        <span class="badge badge-primary badge-sm">{{
+          getActiveFilterCount()
+        }}</span>
+        }
+      </button>
+    </div>
+
+    <!-- Advanced Filters -->
+    @if (showFilters()) {
+    <div class="border-t border-base-300 pt-4 mt-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Gender Filter -->
+        <div>
+          <label class="label">
+            <span class="label-text font-medium">Gender</span>
+          </label>
+          <select
+            class="select select-bordered w-full"
+            [value]="genderFilter()"
+            (change)="
+              genderFilter.set($any($event.target).value); onFilterChange()
+            "
+          >
+            <option value="">All</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Age Range -->
+        <div>
+          <label class="label">
+            <span class="label-text font-medium">Min Age</span>
+          </label>
+          <input
+            type="number"
+            class="input input-bordered w-full"
+            [value]="minAgeFilter()"
+            (change)="onMinAgeChange($event)"
+            placeholder="18"
+            min="18"
+            max="100"
+          />
+        </div>
+
+        <div>
+          <label class="label">
+            <span class="label-text font-medium">Max Age</span>
+          </label>
+          <input
+            type="number"
+            class="input input-bordered w-full"
+            [value]="maxAgeFilter()"
+            (change)="onMaxAgeChange($event)"
+            placeholder="100"
+            min="18"
+            max="100"
+          />
+        </div>
+
+        <!-- Location Filters -->
+        <div>
+          <label class="label">
+            <span class="label-text font-medium">City</span>
+          </label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            [value]="cityFilter()"
+            (input)="
+              cityFilter.set($any($event.target).value); onFilterChange()
+            "
+            placeholder="Enter city"
+          />
+        </div>
+
+        <div>
+          <label class="label">
+            <span class="label-text font-medium">Country</span>
+          </label>
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            [value]="countryFilter()"
+            (input)="
+              countryFilter.set($any($event.target).value); onFilterChange()
+            "
+            placeholder="Enter country"
+          />
+        </div>
+
+        <!-- Clear Filters Button -->
+        <div class="flex items-end">
+          @if (hasActiveFilters()) {
+          <button
+            (click)="onClearFilters()"
+            class="btn btn-ghost btn-sm w-full"
+          >
+            Clear Filters
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>

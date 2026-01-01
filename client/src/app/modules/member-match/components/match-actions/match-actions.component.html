@@ -1,0 +1,34 @@
+<div
+  class="p-6 bg-base-100/95 backdrop-blur-md rounded-b-3xl shadow-lg border-t border-base-300/20"
+>
+  <div class="flex items-center justify-center gap-6">
+    <!-- Pass Button -->
+    <button
+      class="btn btn-circle btn-lg btn-ghost hover:btn-error transition-all duration-300 hover:scale-110 active:scale-95"
+      (click)="handlePass()"
+      [disabled]="isAnimating()"
+      title="Pass"
+    >
+      <lucide-icon [name]="xIcon" class="size-8" />
+    </button>
+
+    <!-- View Profile Button -->
+    <a
+      [routerLink]="['/people/details', memberId()]"
+      class="btn btn-primary btn-lg px-8 hover:scale-105 transition-all duration-300"
+      title="View Profile"
+    >
+      View Profile
+    </a>
+
+    <!-- Like Button -->
+    <button
+      class="btn btn-circle btn-lg btn-ghost hover:btn-primary hover:bg-primary hover:text-primary-content transition-all duration-300 hover:scale-110 active:scale-95"
+      (click)="handleLike()"
+      [disabled]="isAnimating()"
+      title="Like"
+    >
+      <lucide-icon [name]="heartIcon" class="size-8" />
+    </button>
+  </div>
+</div>

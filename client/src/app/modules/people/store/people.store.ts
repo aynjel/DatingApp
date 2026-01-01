@@ -20,6 +20,7 @@ import { GlobalStore } from '../../../shared/store/global.store';
 type PeopleStoreType = {
   members: Member[];
   pagination: PaginationHeaderResponse;
+  searchTerm: string;
 };
 
 const initialState: PeopleStoreType = {
@@ -30,6 +31,7 @@ const initialState: PeopleStoreType = {
     totalItems: 0,
     totalPages: 0,
   },
+  searchTerm: '',
 };
 
 export const PeopleStore = signalStore(
@@ -42,15 +44,16 @@ export const PeopleStore = signalStore(
   })),
   withMethods((store) => {
     const getMembers = store.globalStore.withApiState<
-      PaginationParams,
+      PaginationParams & { searchTerm?: string },
       { data: Member[]; pagination: PaginationHeaderResponse }
-    >(({ pageNumber = 1, pageSize = 10 }) =>
-      store.memberService.getMembers({ pageNumber, pageSize }).pipe(
+    >(({ pageNumber = 1, pageSize = 10, searchTerm = '' }) =>
+      store.memberService.getMembers({ pageNumber, pageSize, searchTerm }).pipe(
         tapResponse({
           next: (response) => {
             patchState(store, {
               members: response.data,
               pagination: response.pagination,
+              searchTerm: searchTerm || '',
             });
           },
           error: (error: HttpErrorResponse) => {
