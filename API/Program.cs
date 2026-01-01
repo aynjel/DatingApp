@@ -148,7 +148,7 @@ app.UseMiddleware<ExceptionMiddleware>();
 var allowedOrigins = app.Environment.IsDevelopment()
     ? new[] { "https://localhost:4200", "http://localhost:4200" }
     : new[] {
-        "https://aynjel.github.io/DatingApp",
+        "https://aynjel.github.io",
         "https://localhost:4200" // Keep for local testing against prod
     };
 
