@@ -121,7 +121,7 @@ app.MapGet("/api", () =>
     var environment = app.Environment.EnvironmentName;
     var baseUrl = app.Environment.IsDevelopment() 
         ? "http://localhost:5001" 
-        : "http://datingapp-001-site1.anytempurl.com";
+        : "http://datingapplication.runasp.net";
     
     var dataAsJson = JsonSerializer.Serialize(new
     {
