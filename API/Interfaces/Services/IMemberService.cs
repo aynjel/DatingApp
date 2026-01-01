@@ -7,8 +7,7 @@ namespace API.Interfaces.Services;
 
 public interface IMemberService
 {
-    Task<IReadOnlyList<MemberResponseDto>> GetMembersAsync();
-    Task<PagedList<MemberResponseDto>> GetMembersAsync(PaginationParams paginationParams);
+    Task<PagedList<MemberResponseDto>> GetMembersAsync(string searchTerm, PaginationParams paginationParams);
     Task<MemberResponseDto> GetMemberByIdAsync(string id);
     Task<IReadOnlyList<PhotoResponseDto>> GetPhotosByMemberIdAsync(string memberId);
     Task<MemberResponseDto> CreateMemberDetails(string userId, MemberDetailsRequestDto memberDetails);

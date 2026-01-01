@@ -102,15 +102,9 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
         return member?.ToDto();
     }
 
-    public async Task<IReadOnlyList<MemberResponseDto>> GetMembersAsync()
+    public async Task<PagedList<MemberResponseDto>> GetMembersAsync(string searchTerm, PaginationParams paginationParams)
     {
-        var members = await memberRepository.GetMembersAsync();
-        return members.Select(m => m.ToDto()).ToList();
-    }
-
-    public async Task<PagedList<MemberResponseDto>> GetMembersAsync(PaginationParams paginationParams)
-    {
-        var pagedMembers = await memberRepository.GetMembersAsync(paginationParams);
+        var pagedMembers = await memberRepository.GetMembersAsync(searchTerm, paginationParams);
         
         var memberDtos = pagedMembers.Items.Select(m => m.ToDto()).ToList();
         

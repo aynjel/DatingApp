@@ -20,7 +20,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstname\": \"Tony\",\r\n    \"lastname\": \"Parker\",\r\n    \"username\": \"tp76\",\r\n    \"email\": \"tp.1@gmail.com\",\r\n    \"password\": \"test123\"\r\n}",
+							"raw": "{\r\n    \"displayName\": \"Tony\",\r\n    \"email\": \"bruce.banner@gmail.com\",\r\n    \"password\": \"bruce123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -28,12 +28,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/account/register",
+							"raw": "{{baseURL}}/Account/register",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"account",
+								"Account",
 								"register"
 							]
 						}
@@ -50,13 +50,12 @@
 									"const user = pm.response.json();\r",
 									"\r",
 									"pm.test(\"Has properties\", function() {\r",
-									"    pm.expect(user).to.have.property(\"accessToken\");\r",
-									"    pm.expect(user).to.have.property(\"refreshToken\");\r",
+									"    pm.expect(user).to.have.property(\"token\");\r",
 									"});\r",
 									"\r",
 									"if (pm.test(\"Has properties\")) {\r",
-									"    pm.globals.set(\"accessToken\", user.accessToken);\r",
-									"    pm.globals.set(\"refreshToken\", user.refreshToken);\r",
+									"    pm.globals.set(\"accessToken\", user.token.accessToken);\r",
+									"    pm.globals.set(\"refreshToken\", user.token.refreshToken);\r",
 									"}"
 								],
 								"type": "text/javascript",
@@ -81,12 +80,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/account/login",
+							"raw": "{{baseURL}}/Account/login",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"account",
+								"Account",
 								"login"
 							]
 						}
@@ -118,12 +117,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseURL}}/account/refresh-token",
+							"raw": "{{baseURL}}/Account/refresh-token",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"account",
+								"Account",
 								"refresh-token"
 							]
 						}
@@ -153,12 +152,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseURL}}/account/current-user",
+							"raw": "{{baseURL}}/Account/current-user",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"account",
+								"Account",
 								"current-user"
 							]
 						}
@@ -420,12 +419,120 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/members",
+							"raw": "{{baseURL}}/Members?pageNumber=1&pageSize=5&searchTerm=angel",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"members"
+								"Members"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								},
+								{
+									"key": "searchTerm",
+									"value": "angel"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Member",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/members/member-id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"members",
+								"member-id"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Member Photos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/members/member-id/photos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"members",
+								"member-id",
+								"photos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Member Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"dateOfBirth\": \"2000-07-13\",\r\n  \"imageUrl\": \"https://randomuser.me/api/portraits/men/69.jpg\",\r\n  \"displayName\": \"Tony\",\r\n  \"gender\": \"Male\",\r\n  \"description\": \"Tony's bio description\",\r\n  \"city\": \"Toledo\",\r\n  \"country\": \"Philippines\",\r\n  \"photoUrls\": [\r\n    \"https://randomuser.me/api/portraits/men/57.jpg\",\r\n    \"https://randomuser.me/api/portraits/men/77.jpg\",\r\n    \"https://randomuser.me/api/portraits/men/87.jpg\"\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/Members/960f8d03-b852-4ec7-971a-c63c126af939",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"Members",
+								"960f8d03-b852-4ec7-971a-c63c126af939"
 							]
 						}
 					},
