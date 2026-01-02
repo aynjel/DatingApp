@@ -1,2 +1,0 @@
-import"./chunk-GH7VMSIE.js";var t=[{path:"login",loadComponent:()=>import("./chunk-MUTXEMJL.js").then(o=>o.LoginComponent),title:"Sign In"},{path:"register",loadComponent:()=>import("./chunk-Y7JJLXTN.js").then(o=>o.RegisterComponent),title:"Sign Up"},{path:"forgot-password",loadComponent:()=>import("./chunk-VFGPLC3A.js").then(o=>o.ForgotPasswordComponent),title:"Forgot Password"}];export{t as authRoutes};
-//# sourceMappingURL=chunk-2B6KPZO6.js.map

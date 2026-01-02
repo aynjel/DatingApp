@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/modules/auth/auth.routes.ts"],
-  "sourcesContent": ["import { Routes } from '@angular/router';\r\n\r\nexport const authRoutes: Routes = [\r\n  {\r\n    path: 'login',\r\n    loadComponent: () =>\r\n      import('./pages/login/login.component').then((m) => m.LoginComponent),\r\n    title: 'Sign In',\r\n  },\r\n  {\r\n    path: 'register',\r\n    loadComponent: () =>\r\n      import('./pages/register/register.component').then(\r\n        (m) => m.RegisterComponent\r\n      ),\r\n    title: 'Sign Up',\r\n  },\r\n  {\r\n    path: 'forgot-password',\r\n    loadComponent: () =>\r\n      import('./pages/forgot-password/forgot-password.component').then(\r\n        (m) => m.ForgotPasswordComponent\r\n      ),\r\n    title: 'Forgot Password',\r\n  },\r\n];\r\n"],
-  "mappings": "4BAEO,IAAMA,EAAqB,CAChC,CACEC,KAAM,QACNC,cAAeA,IACb,OAAO,qBAA+B,EAAEC,KAAMC,GAAMA,EAAEC,cAAc,EACtEC,MAAO,WAET,CACEL,KAAM,WACNC,cAAeA,IACb,OAAO,qBAAqC,EAAEC,KAC3CC,GAAMA,EAAEG,iBAAiB,EAE9BD,MAAO,WAET,CACEL,KAAM,kBACNC,cAAeA,IACb,OAAO,qBAAmD,EAAEC,KACzDC,GAAMA,EAAEI,uBAAuB,EAEpCF,MAAO,kBACR",
-  "names": ["authRoutes", "path", "loadComponent", "then", "m", "LoginComponent", "title", "RegisterComponent", "ForgotPasswordComponent"]
-}

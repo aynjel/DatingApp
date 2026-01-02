@@ -486,3 +486,6 @@ $RECYCLE.BIN/
 API/appsettings.json
 API/obj/project.nuget.cache
 API/obj/Debug/net8.0/API.AssemblyInfoInputs.cache
+API/wwwroot/
+API/Properties/PublishProfiles/*.pubxml
+API/Properties/launchSettings.json

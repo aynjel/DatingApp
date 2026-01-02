@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/shared/constants/api-endpoints.const.ts"],
-  "sourcesContent": ["export enum APIEndpoints {\r\n  CURRENT_USER = '/account/current-user',\r\n  LOGIN = '/account/login',\r\n  REGISTER = '/account/register',\r\n  REFRESH_TOKEN = '/account/refresh-token',\r\n  FORGOT_PASSWORD = '/account/forgot-password',\r\n  MESSAGES = '/messages',\r\n}\r\n\r\nexport enum ErrorEndpoints {\r\n  TEST = 'test',\r\n  NOT_FOUND = 'not-found',\r\n  SERVER_ERROR = 'server-error',\r\n  UNAUTHORIZED = 'unauthorized',\r\n  BAD_REQUEST = 'bad-request',\r\n  REGISTER = 'register',\r\n}\r\n"],
-  "mappings": "AAAA,IAAYA,EAAZ,SAAYA,EAAY,CACtBA,OAAAA,EAAA,aAAA,wBACAA,EAAA,MAAA,iBACAA,EAAA,SAAA,oBACAA,EAAA,cAAA,yBACAA,EAAA,gBAAA,2BACAA,EAAA,SAAA,YANUA,CAOZ,EAPYA,GAAY,CAAA,CAAA,EASZC,EAAZ,SAAYA,EAAc,CACxBA,OAAAA,EAAA,KAAA,OACAA,EAAA,UAAA,YACAA,EAAA,aAAA,eACAA,EAAA,aAAA,eACAA,EAAA,YAAA,cACAA,EAAA,SAAA,WANUA,CAOZ,EAPYA,GAAc,CAAA,CAAA",
-  "names": ["APIEndpoints", "ErrorEndpoints"]
-}
