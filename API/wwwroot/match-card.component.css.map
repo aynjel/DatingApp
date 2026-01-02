@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/modules/member-match/components/match-card/match-card.component.scss", "src/app/modules/member-match/components/match-card/match-card.component.scss"],
+  "sourcesContent": [".swipe-left {\n  transform: translateX(-100%) rotate(-15deg);\n  opacity: 0;\n}\n\n.swipe-right {\n  transform: translateX(100%) rotate(15deg);\n  opacity: 0;\n}\n", ".swipe-left {\n  transform: translateX(-100%) rotate(-15deg);\n  opacity: 0;\n}\n\n.swipe-right {\n  transform: translateX(100%) rotate(15deg);\n  opacity: 0;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJmaWxlOi8vL0M6L1VzZXJzL0hvbWUvRGVza3RvcC9wcm9qZWN0cy9EYXRpbmdBcHAvY2xpZW50L3NyYy9hcHAvbW9kdWxlcy9tZW1iZXItbWF0Y2gvY29tcG9uZW50cy9tYXRjaC1jYXJkL21hdGNoLWNhcmQuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBOzs7QUFHRjtFQUNFO0VBQ0EiLCJzb3VyY2VzQ29udGVudCI6WyIuc3dpcGUtbGVmdCB7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlWCgtMTAwJSkgcm90YXRlKC0xNWRlZyk7XG4gIG9wYWNpdHk6IDA7XG59XG5cbi5zd2lwZS1yaWdodCB7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlWCgxMDAlKSByb3RhdGUoMTVkZWcpO1xuICBvcGFjaXR5OiAwO1xufVxuIl19 */"],
+  "mappings": "AAAA,CAAA,WACE,UAAA,UAAA,OAAA,OAAA,QACA,QAAA,CCCF,CDEA,CAAA,YACE,UAAA,UAAA,MAAA,OAAA,OACA,QAAA,CCCF",
+  "names": []
+}

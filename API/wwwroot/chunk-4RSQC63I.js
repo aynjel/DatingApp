@@ -1,0 +1,2 @@
+var R=function(e){return e.CURRENT_USER="/account/current-user",e.LOGIN="/account/login",e.REGISTER="/account/register",e.REFRESH_TOKEN="/account/refresh-token",e.FORGOT_PASSWORD="/account/forgot-password",e.MESSAGES="/messages",e}(R||{}),u=function(e){return e.TEST="test",e.NOT_FOUND="not-found",e.SERVER_ERROR="server-error",e.UNAUTHORIZED="unauthorized",e.BAD_REQUEST="bad-request",e.REGISTER="register",e}(u||{});export{R as a,u as b};
+//# sourceMappingURL=chunk-4RSQC63I.js.map

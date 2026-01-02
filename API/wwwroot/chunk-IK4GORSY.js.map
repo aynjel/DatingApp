@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/modules/message/message.routes.ts"],
+  "sourcesContent": ["import { Routes } from '@angular/router';\n\nexport const routes: Routes = [\n  {\n    path: '',\n    redirectTo: 'inbox',\n    pathMatch: 'full',\n  },\n  {\n    path: 'inbox',\n    loadComponent: () =>\n      import('./pages/inbox/inbox.component').then((m) => m.InboxComponent),\n    title: 'Inbox',\n  },\n  {\n    path: 'thread/:id',\n    loadComponent: () =>\n      import('./pages/inbox/inbox.component').then((m) => m.InboxComponent),\n    title: 'Conversation',\n  },\n];\n"],
+  "mappings": "4BAEO,IAAMA,EAAiB,CAC5B,CACEC,KAAM,GACNC,WAAY,QACZC,UAAW,QAEb,CACEF,KAAM,QACNG,cAAeA,IACb,OAAO,qBAA+B,EAAEC,KAAMC,GAAMA,EAAEC,cAAc,EACtEC,MAAO,SAET,CACEP,KAAM,aACNG,cAAeA,IACb,OAAO,qBAA+B,EAAEC,KAAMC,GAAMA,EAAEC,cAAc,EACtEC,MAAO,eACR",
+  "names": ["routes", "path", "redirectTo", "pathMatch", "loadComponent", "then", "m", "InboxComponent", "title"]
+}

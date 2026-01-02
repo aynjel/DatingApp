@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/modules/profile/profile.routes.ts"],
+  "sourcesContent": ["import { Routes } from '@angular/router';\r\n\r\nexport const routes: Routes = [\r\n  {\r\n    path: '',\r\n    redirectTo: 'me',\r\n    pathMatch: 'full',\r\n  },\r\n  {\r\n    path: 'me',\r\n    loadComponent: () =>\r\n      import('./pages/profile/profile.component').then(\r\n        (m) => m.ProfileComponent\r\n      ),\r\n    title: 'Profile Details',\r\n  },\r\n  {\r\n    path: 'member-details/:id',\r\n    loadComponent: () =>\r\n      import('./pages/member-details/member-details.component').then(\r\n        (m) => m.MemberDetailsComponent\r\n      ),\r\n    title: 'Member Profile',\r\n  },\r\n];\r\n"],
+  "mappings": "4BAEO,IAAMA,EAAiB,CAC5B,CACEC,KAAM,GACNC,WAAY,KACZC,UAAW,QAEb,CACEF,KAAM,KACNG,cAAeA,IACb,OAAO,qBAAmC,EAAEC,KACzCC,GAAMA,EAAEC,gBAAgB,EAE7BC,MAAO,mBAET,CACEP,KAAM,qBACNG,cAAeA,IACb,OAAO,qBAAiD,EAAEC,KACvDC,GAAMA,EAAEG,sBAAsB,EAEnCD,MAAO,iBACR",
+  "names": ["routes", "path", "redirectTo", "pathMatch", "loadComponent", "then", "m", "ProfileComponent", "title", "MemberDetailsComponent"]
+}

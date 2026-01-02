@@ -116,13 +116,13 @@ app.UseSwaggerUI(c =>
 });
 
 // Root endpoint with environment-aware URLs
-app.MapGet("/", () =>
+app.MapGet("/api", () =>
 {
     var environment = app.Environment.EnvironmentName;
-    var baseUrl = app.Environment.IsDevelopment() 
-        ? "http://localhost:5001" 
+    var baseUrl = app.Environment.IsDevelopment()
+        ? "http://localhost:5001"
         : "http://datingapplication.runasp.net";
-    
+
     var dataAsJson = JsonSerializer.Serialize(new
     {
         Message = "Welcome to the DatingApp API",
@@ -136,10 +136,7 @@ app.MapGet("/", () =>
 });
 
 // Middleware pipeline
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
+app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
@@ -149,6 +146,7 @@ var allowedOrigins = app.Environment.IsDevelopment()
     : new[] {
         "https://aynjel.github.io",
         "https://dating-application-puce.vercel.app",
+        "http://localhost:4200",
         "https://localhost:4200" // Keep for local testing against prod
     };
 
@@ -162,7 +160,11 @@ app.UseCors(x => x
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
+app.MapFallbackToController("Index", "Fallback");
 
 // Database migration and seeding
 using (var scope = app.Services.CreateScope())

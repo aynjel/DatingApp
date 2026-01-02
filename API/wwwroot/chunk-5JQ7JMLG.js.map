@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/modules/member-match/member-match.routes.ts"],
+  "sourcesContent": ["import { Routes } from '@angular/router';\n\nexport const routes: Routes = [\n  {\n    path: '',\n    redirectTo: 'matches',\n    pathMatch: 'full',\n  },\n  {\n    path: 'matches',\n    loadComponent: () =>\n      import('./pages/matches/matches.component').then(\n        (m) => m.MatchesComponent\n      ),\n    title: 'Matches',\n  },\n];\n"],
+  "mappings": "4BAEO,IAAMA,EAAiB,CAC5B,CACEC,KAAM,GACNC,WAAY,UACZC,UAAW,QAEb,CACEF,KAAM,UACNG,cAAeA,IACb,OAAO,qBAAmC,EAAEC,KACzCC,GAAMA,EAAEC,gBAAgB,EAE7BC,MAAO,UACR",
+  "names": ["routes", "path", "redirectTo", "pathMatch", "loadComponent", "then", "m", "MatchesComponent", "title"]
+}
