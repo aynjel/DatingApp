@@ -148,6 +148,7 @@ var allowedOrigins = app.Environment.IsDevelopment()
     ? new[] { "https://localhost:4200", "http://localhost:4200" }
     : new[] {
         "https://aynjel.github.io",
+        "https://dating-application-puce.vercel.app",
         "https://localhost:4200" // Keep for local testing against prod
     };
 
