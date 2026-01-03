@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Text;
 using API.Data;
 using API.Data.Repository;
+using API.Helpers;
 using API.Interfaces.Repository;
 using API.Interfaces.Services;
 using API.Middleware;
@@ -268,6 +269,9 @@ builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IGenerateJWTService, GenerateJWTService>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 // ============================================
 // BUILD THE APPLICATION

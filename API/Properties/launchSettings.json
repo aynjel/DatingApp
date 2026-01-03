@@ -9,7 +9,7 @@
 				"ASPNETCORE_ENVIRONMENT": "Development"
 			},
 			"dotnetRunMessages": true,
-			"applicationUrl": "http://localhost:5001;"
+			"applicationUrl": "https://localhost:5001"
 		},
 		"Production": {
 			"commandName": "Project",
@@ -19,7 +19,7 @@
 				"ASPNETCORE_ENVIRONMENT": "Production"
 			},
 			"dotnetRunMessages": true,
-			"applicationUrl": "https://localhost:5001;"
+			"applicationUrl": "https://localhost:5001"
 		}
 	}
 }

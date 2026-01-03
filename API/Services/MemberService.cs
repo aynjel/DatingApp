@@ -124,6 +124,33 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
         return photos.Select(p => p.ToDto()).ToList();
     }
 
+    public async Task<bool> SaveAllAsync()
+    {
+        return await memberRepository.SaveAllAsync();
+    }
+
+    public async Task<Photo> AddPhotoAsync(string memberId, Photo photo)
+    {
+        var member = await memberRepository.GetMemberByIdAsync(memberId);
+        if (member is null)
+        {
+            throw new NotFoundException($"Member with ID {memberId} not found");
+        }
+
+        // Check if member has a profile image, if not set this photo as profile image
+        if (string.IsNullOrEmpty(member.ImageUrl))
+        {
+            member.ImageUrl = photo.Url;
+            member.User.ImageUrl = photo.Url;
+        }
+
+        member.Photos.Add(photo);
+        memberRepository.Update(member);
+        
+        await memberRepository.SaveAllAsync();
+        return photo;
+    }
+
     #region Private Helper Methods
 
     private static void AddPhotosToMember(Member member, List<string> photoUrls, string defaultImageUrl)

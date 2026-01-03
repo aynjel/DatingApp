@@ -13,9 +13,10 @@ public class MemberRepository(DataContext context) : IMemberRepository
         await context.SaveChangesAsync();
     }
 
-    public async Task<Member?> GetMemberByIdAsync(string id)
+    public async Task<Member> GetMemberByIdAsync(string id)
     {
         return await context.Members
+            .Include(m => m.User)
             .Include(m => m.Photos)
             .FirstOrDefaultAsync(m => m.Id == id);
     }

@@ -12,4 +12,6 @@ public interface IMemberService
     Task<IReadOnlyList<PhotoResponseDto>> GetPhotosByMemberIdAsync(string memberId);
     Task<MemberResponseDto> CreateMemberDetails(string userId, MemberDetailsRequestDto memberDetails);
     Task<MemberResponseDto> UpdateMemberDetails(string userId, MemberDetailsRequestDto memberDetails);
+    Task<bool> SaveAllAsync();
+    Task<Photo> AddPhotoAsync(string memberId, Photo photo);
 }

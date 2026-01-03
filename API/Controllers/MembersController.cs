@@ -1,3 +1,4 @@
+using API.Entities;
 using API.Extensions;
 using API.Helpers;
 using API.Interfaces.Services;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Authorize]
-public class MembersController(IMemberService memberService, IUserService userService) : BaseController
+public class MembersController(IMemberService memberService, IUserService userService, IPhotoService photoService) : BaseController
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -91,5 +92,38 @@ public class MembersController(IMemberService memberService, IUserService userSe
 
         var updatedMember = await memberService.UpdateMemberDetails(userId, memberDetails);
         return Ok(updatedMember);
+    }
+
+    [HttpPost("add-photo")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<PhotoResponseDto>> AddPhoto([FromForm] IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest("No file provided");
+
+        // Get current member ID from JWT token
+        var memberId = User.GetMemberId();
+
+        // Upload photo to Cloudinary
+        var result = await photoService.UploadPhotoAsync(file);
+        if (result.Error != null) 
+            return BadRequest(result.Error.Message);
+
+        // Create photo entity
+        var photo = new Photo
+        {
+            Id = Guid.NewGuid().ToString(),
+            Url = result.SecureUrl.AbsoluteUri,
+            PublicId = result.PublicId,
+            MemberId = memberId
+        };
+
+        // Add photo to member
+        var addedPhoto = await memberService.AddPhotoAsync(memberId, photo);
+
+        return Ok(addedPhoto.ToDto());
     }
 }
