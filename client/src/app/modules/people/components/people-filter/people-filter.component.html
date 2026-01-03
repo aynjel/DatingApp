@@ -27,6 +27,7 @@
       <button
         (click)="toggleFilters()"
         class="btn btn-outline gap-2"
+        disabled
         [class.btn-primary]="showFilters() || hasActiveFilters()"
       >
         <lucide-icon [name]="filterIcon" class="size-4" />

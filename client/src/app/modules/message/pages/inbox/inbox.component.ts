@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertComponent } from '../../../../shared/components/alert/alert.component';
 import { Conversation, Message } from '../../../../shared/models/message.model';
 import { AuthStore } from '../../../../shared/store/auth.store';
 import { ConversationListComponent } from '../../components/conversation-list/conversation-list.component';
@@ -8,7 +9,7 @@ import { MessageStore } from '../../store/message.store';
 
 @Component({
   selector: 'app-inbox',
-  imports: [ConversationListComponent, ThreadComponent],
+  imports: [ConversationListComponent, ThreadComponent, AlertComponent],
   templateUrl: './inbox.component.html',
 })
 export class InboxComponent {

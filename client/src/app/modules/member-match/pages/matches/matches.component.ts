@@ -1,12 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { AlertComponent } from '@component/alert/alert.component';
 import { LucideAngularModule, SparklesIcon } from 'lucide-angular';
 import { PeopleStore } from '../../../people/store/people.store';
 import { MatchCardStackComponent } from '../../components/match-card-stack/match-card-stack.component';
 
 @Component({
   selector: 'app-matches',
-  imports: [CommonModule, LucideAngularModule, MatchCardStackComponent],
+  imports: [
+    CommonModule,
+    LucideAngularModule,
+    MatchCardStackComponent,
+    AlertComponent,
+  ],
   templateUrl: './matches.component.html',
 })
 export class MatchesComponent implements OnInit {

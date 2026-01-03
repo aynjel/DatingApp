@@ -1,5 +1,5 @@
 @if(isVisible()){
-<div class="alert shadow-lg" [ngClass]="alertClass">
+<div class="alert shadow-lg rounded-none" [ngClass]="alertClass">
   <span>{{ message() }}</span>
   @if(dismissible()){
   <button

@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { AlertComponent } from '@component/alert/alert.component';
 import { AuthStore } from '../../../../shared/store/auth.store';
 import { AccountSettingsComponent } from '../../components/account-settings/account-settings.component';
 import { DangerZoneComponent } from '../../components/danger-zone/danger-zone.component';
@@ -16,6 +17,7 @@ import { SettingsSidebarComponent } from '../../components/settings-sidebar/sett
     PrivacySettingsComponent,
     SecuritySettingsComponent,
     DangerZoneComponent,
+    AlertComponent,
   ],
   templateUrl: './settings.component.html',
 })
