@@ -19,6 +19,7 @@ public static class MemberExtensions
             Description = member.Description,
             City = member.City,
             Country = member.Country,
+            Interests = member.Interests ?? new List<string>(),
             Photos = member.Photos?.Select(p => p.ToDto()).ToList() ?? new List<PhotoResponseDto>()
         };
     }

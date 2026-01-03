@@ -12,5 +12,6 @@ public class MemberResponseDto
     public string Description { get; set; }
     public string City { get; set; }
     public string Country { get; set; }
+    public List<string> Interests { get; set; } = new();
     public List<PhotoResponseDto> Photos { get; set; } = new();
 }

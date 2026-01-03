@@ -27,5 +27,8 @@ public class MemberDetailsRequestDto
     [Required(ErrorMessage = "Country is required")]
     public string Country { get; set; }
     
+    [MaxLength(10, ErrorMessage = "Maximum 10 interests allowed")]
+    public List<string> Interests { get; set; } = new();
+    
     public List<string> PhotoUrls { get; set; } = new();
 }

@@ -39,6 +39,7 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
             City = memberDetails.City,
             Country = memberDetails.Country,
             Gender = memberDetails.Gender,
+            Interests = memberDetails.Interests ?? new List<string>(),
             Created = DateTime.UtcNow,
             LastActive = DateTime.UtcNow,
             Photos = new List<Photo>()
@@ -76,6 +77,7 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
         existingMember.City = memberDetails.City;
         existingMember.Country = memberDetails.Country;
         existingMember.Gender = memberDetails.Gender;
+        existingMember.Interests = memberDetails.Interests ?? new List<string>();
         existingMember.LastActive = DateTime.UtcNow;
 
         // Handle photos update
