@@ -1,6 +1,6 @@
 <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
   <div class="text-sm text-base-content/70">
-    Page {{ pagination().currentPage }} of {{ pagination().totalPages }}
+    Page {{ currentPage() }} of {{ totalPages() }}
   </div>
 
   <div class="join grid grid-cols-2">
@@ -8,7 +8,7 @@
       class="join-item btn btn-outline"
       [class.btn-disabled]="!canGoPrevious()"
       [disabled]="!canGoPrevious()"
-      (click)="onPrevious.emit()"
+      (click)="goToPrevious()"
     >
       <lucide-icon [name]="chevronLeftIcon" class="size-4" />
       Previous
@@ -17,7 +17,7 @@
       class="join-item btn btn-outline"
       [class.btn-disabled]="!canGoNext()"
       [disabled]="!canGoNext()"
-      (click)="onNext.emit()"
+      (click)="goToNext()"
     >
       <lucide-icon [name]="chevronRightIcon" class="size-4" />
       Next

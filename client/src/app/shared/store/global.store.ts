@@ -10,10 +10,12 @@ export type WithCallbacks<T, S> = {
 
 type GlobalStore = {
   isSubmitting: boolean;
+  isLoading: boolean;
 };
 
 const initialState: GlobalStore = {
   isSubmitting: false,
+  isLoading: false,
 };
 
 export const GlobalStore = signalStore(
@@ -44,7 +46,16 @@ export const GlobalStore = signalStore(
       );
     },
     withApiState<T, S>(source$: (data: T) => Observable<S>) {
-      return rxMethod<T>(pipe(switchMap(source$)));
+      return rxMethod<T>(
+        pipe(
+          tap(() => patchState(store, { isLoading: true })),
+          switchMap((data) =>
+            source$(data).pipe(
+              finalize(() => patchState(store, { isLoading: false }))
+            )
+          )
+        )
+      );
     },
   }))
 );

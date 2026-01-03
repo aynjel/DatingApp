@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { GlobalStore } from '../../../../shared/store/global.store';
 import { MemberCardComponent } from '../../components/member-card/member-card.component';
 import {
   PeopleFilterComponent,
@@ -14,6 +15,7 @@ import { PeopleStore } from '../../store/people.store';
   templateUrl: './lists.component.html',
 })
 export class ListsComponent implements OnInit {
+  private globalStore = inject(GlobalStore);
   private peopleStore = inject(PeopleStore);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -22,26 +24,40 @@ export class ListsComponent implements OnInit {
   pagination = computed(() => this.peopleStore.pagination());
   searchTerm = computed(() => this.peopleStore.searchTerm());
 
-  pageNumber = signal(1);
-  pageSize = signal(12);
-  currentFilters = signal<PeopleFilterParams>({ searchTerm: '' });
+  isLoading = computed(() => this.globalStore.isLoading());
 
-  canGoPrevious = computed(() => this.pagination().currentPage > 1);
-  canGoNext = computed(
-    () => this.pagination().currentPage < this.pagination().totalPages
-  );
+  pageNumber = signal(1);
+  pageSize = signal(10);
+  currentFilters = signal<PeopleFilterParams>({ searchTerm: '' });
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      const pageNumber = params['pageNumber']
-        ? Number(params['pageNumber'])
-        : 1;
-      const pageSize = params['pageSize']
-        ? Number(params['pageSize'])
-        : this.pageSize();
-
-      this.pageNumber.set(pageNumber);
-      this.pageSize.set(pageSize);
+      this.pageNumber.update((prev) =>
+        params['pageNumber'] ? Number(params['pageNumber']) : prev
+      );
+      this.pageSize.update((prev) =>
+        params['pageSize'] ? Number(params['pageSize']) : prev
+      );
+      this.currentFilters.update((prev) =>
+        params['searchTerm']
+          ? { ...prev, searchTerm: params['searchTerm'] }
+          : prev
+      );
+      this.currentFilters.update((prev) =>
+        params['gender'] ? { ...prev, gender: params['gender'] } : prev
+      );
+      this.currentFilters.update((prev) =>
+        params['minAge'] ? { ...prev, minAge: Number(params['minAge']) } : prev
+      );
+      this.currentFilters.update((prev) =>
+        params['maxAge'] ? { ...prev, maxAge: Number(params['maxAge']) } : prev
+      );
+      this.currentFilters.update((prev) =>
+        params['city'] ? { ...prev, city: params['city'] } : prev
+      );
+      this.currentFilters.update((prev) =>
+        params['country'] ? { ...prev, country: params['country'] } : prev
+      );
       this.fetchMembers();
     });
   }
@@ -49,27 +65,41 @@ export class ListsComponent implements OnInit {
   private fetchMembers(): void {
     const filters = this.currentFilters();
     this.peopleStore.getMembers({
-      pageNumber: this.pageNumber(),
-      pageSize: this.pageSize(),
       searchTerm: filters.searchTerm,
+      gender: filters.gender,
+      minAge: filters.minAge,
+      maxAge: filters.maxAge,
+      city: filters.city,
+      country: filters.country,
+      pagination: {
+        pageNumber: this.pageNumber(),
+        pageSize: this.pageSize(),
+      },
     });
   }
 
   onFilterChange(filters: PeopleFilterParams): void {
     this.currentFilters.set(filters);
-    this.pageNumber.set(1); // Reset to first page when filtering
+    // Reset to page 1 when filters change
+    this.pageNumber.set(1);
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
+        searchTerm: filters.searchTerm,
+        gender: filters.gender,
+        minAge: filters.minAge,
+        maxAge: filters.maxAge,
+        city: filters.city,
+        country: filters.country,
         pageNumber: 1,
         pageSize: this.pageSize(),
       },
       queryParamsHandling: 'merge',
     });
-    // Fetch will be triggered by queryParams subscription
   }
 
   onPageChange(pageNumber: number): void {
+    this.pageNumber.set(pageNumber);
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
@@ -78,17 +108,6 @@ export class ListsComponent implements OnInit {
       },
       queryParamsHandling: 'merge',
     });
-  }
-
-  goToPrevious(): void {
-    if (this.canGoPrevious()) {
-      this.onPageChange(this.pagination().currentPage - 1);
-    }
-  }
-
-  goToNext(): void {
-    if (this.canGoNext()) {
-      this.onPageChange(this.pagination().currentPage + 1);
-    }
+    this.fetchMembers();
   }
 }

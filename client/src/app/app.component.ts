@@ -21,24 +21,29 @@ import { AuthStore } from './shared/store/auth.store';
   `,
 })
 export class AppComponent {
-  protected authStore = inject(AuthStore);
+  private authStore = inject(AuthStore);
   private router = inject(Router);
 
+  protected isLoggedIn: Signal<boolean> = computed(() => {
+    return this.authStore.isLoggedIn();
+  });
+
   protected isMemberDetailsSetup: Signal<boolean> = computed(() => {
-    const currentUser = this.authStore.currentUser();
-    if (!currentUser) return false;
-    return !!currentUser.memberDetails;
+    const memberDetails = this.authStore.memberDetails();
+    if (!memberDetails) return false;
+    return !!memberDetails;
   });
 
   private _checkMemberDetails = effect(() => {
     const currentUser = this.authStore.currentUser();
+    const memberDetails = this.authStore.memberDetails();
     const currentUrl = this.router.url;
 
     // If member details are not set up, redirect to setup page
     // But skip if already on the member-details page to avoid redirect loops
     if (
       currentUser &&
-      !currentUser.memberDetails &&
+      !memberDetails &&
       !currentUrl.includes('/profile/member-details')
     ) {
       const userId = currentUser.userId;

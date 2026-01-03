@@ -39,33 +39,32 @@ export class PeopleFilterComponent {
   countryFilter = signal('');
 
   constructor() {
-    // Initialize search input from input
+    // Initialize searchInput from searchTerm input
     effect(() => {
-      this.searchInput.set(this.searchTerm());
+      const term = this.searchTerm();
+      if (term) {
+        this.searchInput.set(term);
+      }
     });
-  }
-
-  onSearch(): void {
-    this.emitFilterChange();
   }
 
   onSearchInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.searchInput.set(value);
-    // Debounce search - emit after user stops typing
-    this.emitFilterChange();
+    // Don't emit on input - wait for submit button
   }
 
   onClearSearch(): void {
     this.searchInput.set('');
-    this.emitFilterChange();
+    // Don't emit - user needs to click submit
   }
 
   toggleFilters(): void {
     this.showFilters.update((value) => !value);
   }
 
-  onFilterChange(): void {
+  onSubmitFilters(): void {
+    // Emit all filters when submit button is clicked
     this.emitFilterChange();
   }
 
@@ -75,6 +74,9 @@ export class PeopleFilterComponent {
     this.maxAgeFilter.set(undefined);
     this.cityFilter.set('');
     this.countryFilter.set('');
+    // Clear search as well
+    this.searchInput.set('');
+    // Emit empty filters immediately when clearing
     this.emitFilterChange();
   }
 
@@ -114,12 +116,12 @@ export class PeopleFilterComponent {
   onMinAgeChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.minAgeFilter.set(value ? +value : undefined);
-    this.onFilterChange();
+    // Don't emit - wait for submit button
   }
 
   onMaxAgeChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.maxAgeFilter.set(value ? +value : undefined);
-    this.onFilterChange();
+    // Don't emit - wait for submit button
   }
 }

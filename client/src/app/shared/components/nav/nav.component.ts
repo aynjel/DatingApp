@@ -1,5 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import {
   BellIcon,
@@ -20,12 +27,19 @@ import { AuthStore } from '../../store/auth.store';
 
 @Component({
   selector: 'app-nav',
-  imports: [RouterLink, LucideAngularModule, SwalComponent, AvatarComponent],
+  imports: [
+    RouterLink,
+    LucideAngularModule,
+    SwalComponent,
+    AvatarComponent,
+    RouterLinkActive,
+  ],
   templateUrl: './nav.component.html',
 })
 export class NavComponent {
   protected authStore = inject(AuthStore);
   protected sidebarOpen = signal(false);
+  @ViewChild('sidebar') sidebarElement?: ElementRef<HTMLElement>;
 
   readonly menuIcon = MenuIcon;
   readonly usersIcon = UsersRoundIcon;
@@ -68,5 +82,30 @@ export class NavComponent {
 
   closeSidebar() {
     this.sidebarOpen.set(false);
+  }
+
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeKey(event: Event) {
+    if (this.sidebarOpen()) {
+      this.closeSidebar();
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.sidebarOpen()) {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+    const sidebar = this.sidebarElement?.nativeElement;
+    const menuButton = (event.target as HTMLElement).closest(
+      'button[aria-label="Toggle sidebar"]'
+    );
+
+    // Close sidebar if click is outside the sidebar and not on the menu toggle button
+    if (sidebar && !sidebar.contains(target) && !menuButton) {
+      this.closeSidebar();
+    }
   }
 }

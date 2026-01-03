@@ -11,17 +11,18 @@
           type="text"
           [value]="searchInput()"
           (input)="onSearchInput($event)"
+          (keydown.enter)="onSubmitFilters()"
           placeholder="Search by name, location, or interests..."
-          class="input input-bordered w-full pl-10 pr-10"
+          class="input input-bordered w-full pl-6 pr-6"
         />
-        @if (searchInput()) {
+        <!-- @if (searchInput()) {
         <button
           (click)="onClearSearch()"
           class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle"
         >
           <lucide-icon [name]="xIcon" class="size-4" />
         </button>
-        }
+        } -->
       </div>
       <button
         (click)="toggleFilters()"
@@ -34,6 +35,10 @@
           getActiveFilterCount()
         }}</span>
         }
+      </button>
+      <button (click)="onSubmitFilters()" class="btn btn-primary gap-2">
+        <lucide-icon [name]="searchIcon" class="size-4" />
+        Search
       </button>
     </div>
 
@@ -49,9 +54,7 @@
           <select
             class="select select-bordered w-full"
             [value]="genderFilter()"
-            (change)="
-              genderFilter.set($any($event.target).value); onFilterChange()
-            "
+            (change)="genderFilter.set($any($event.target).value)"
           >
             <option value="">All</option>
             <option value="Male">Male</option>
@@ -100,9 +103,7 @@
             type="text"
             class="input input-bordered w-full"
             [value]="cityFilter()"
-            (input)="
-              cityFilter.set($any($event.target).value); onFilterChange()
-            "
+            (input)="cityFilter.set($any($event.target).value)"
             placeholder="Enter city"
           />
         </div>
@@ -115,23 +116,27 @@
             type="text"
             class="input input-bordered w-full"
             [value]="countryFilter()"
-            (input)="
-              countryFilter.set($any($event.target).value); onFilterChange()
-            "
+            (input)="countryFilter.set($any($event.target).value)"
             placeholder="Enter country"
           />
         </div>
 
-        <!-- Clear Filters Button -->
-        <div class="flex items-end">
-          @if (hasActiveFilters()) {
+        <!-- Action Buttons -->
+        <div class="flex items-end gap-2">
+          @if (hasActiveFilters() || searchInput()) {
           <button
             (click)="onClearFilters()"
-            class="btn btn-ghost btn-sm w-full"
+            class="btn btn-ghost btn-sm flex-1"
           >
-            Clear Filters
+            Clear All
           </button>
           }
+          <button
+            (click)="onSubmitFilters()"
+            class="btn btn-primary btn-sm flex-1"
+          >
+            Apply Filters
+          </button>
         </div>
       </div>
     </div>

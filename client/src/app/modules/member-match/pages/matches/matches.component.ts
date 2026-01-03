@@ -48,8 +48,10 @@ export class MatchesComponent implements OnInit {
   loadMembers(): void {
     this.isInitialLoad.set(true);
     this.peopleStore.getMembers({
-      pageNumber: 1,
-      pageSize: 20,
+      pagination: {
+        pageNumber: 1,
+        pageSize: 20,
+      },
       searchTerm: '',
     });
     // Mark as loaded once members are available
@@ -102,8 +104,10 @@ export class MatchesComponent implements OnInit {
     const pagination = this.peopleStore.pagination();
     if (pagination.currentPage < pagination.totalPages) {
       this.peopleStore.getMembers({
-        pageNumber: pagination.currentPage + 1,
-        pageSize: 20,
+        pagination: {
+          pageNumber: pagination.currentPage + 1,
+          pageSize: 20,
+        },
         searchTerm: '',
       });
     }
