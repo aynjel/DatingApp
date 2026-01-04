@@ -201,6 +201,10 @@ app.MapGet("/api", (HttpContext httpContext) =>
         ? "https://localhost:5001"
         : $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
 
+    var description = app.Environment.IsDevelopment()
+        ? "Local Database Server"
+        : "Production Database Server";
+
     var response = new
     {
         Message = "Welcome to the DatingApp API",
@@ -208,6 +212,7 @@ app.MapGet("/api", (HttpContext httpContext) =>
         Environment = environment,
         Timestamp = DateTime.UtcNow,
         Documentation = $"{baseUrl}/scalar/v1",
+        Description = description,
         OpenApiJson = $"{baseUrl}/openapi/v1.json",
         HealthCheck = $"{baseUrl}/health",
         Endpoints = new
@@ -271,78 +276,78 @@ app.MapScalarApiReference(options =>
 app.MapFallbackToController("Index", "Fallback");
 
 #region DATABASE INITIALIZATION & SEEDING
-//    using (var scope = app.Services.CreateScope())
-//    {
-//        var services = scope.ServiceProvider;
-//        var logger = services.GetRequiredService<ILogger<Program>>();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
 
-//        try
-//        {
-//            var context = services.GetRequiredService<DataContext>();
-//            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    try
+    {
+        var context = services.GetRequiredService<DataContext>();
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-//            logger.LogInformation("========================================");
-//            logger.LogInformation("Starting Application Initialization");
-//            logger.LogInformation("========================================");
-//            logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
-//            logger.LogInformation("Database: {Database}",
-//                connectionString?.Contains("localhost") == true ? "Local SQL Server" : "Production SQL Server");
+        logger.LogInformation("========================================");
+        logger.LogInformation("Starting Application Initialization");
+        logger.LogInformation("========================================");
+        logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
+        logger.LogInformation("Database: {Database}",
+            connectionString?.Contains("localhost") == true ? "Local SQL Server" : "Production SQL Server");
 
-//            // Run migrations
-//            if (app.Environment.IsDevelopment())
-//            {
-//                logger.LogInformation("Running database migrations...");
-//                await context.Database.MigrateAsync();
-//                logger.LogInformation("Database migrations completed successfully");
+        // Run migrations
+        if (app.Environment.IsDevelopment())
+        {
+            logger.LogInformation("Running database migrations...");
+            await context.Database.MigrateAsync();
+            logger.LogInformation("Database migrations completed successfully");
 
-//                // Seed data in development
-//                logger.LogInformation("Seeding database...");
-//                await Seed.SeedUsers(context);
-//                logger.LogInformation("Database seeding completed successfully");
-//            }
-//            else
-//            {
-//                // Production: Only migrate if explicitly configured
-//                var runMigrations = builder.Configuration.GetValue<bool>("RunMigrationsOnStartup", false);
-//                if (runMigrations)
-//                {
-//                    logger.LogInformation("Running production database migrations...");
-//                    await context.Database.MigrateAsync();
-//                    logger.LogInformation("Production migrations completed successfully");
+            // Seed data in development
+            logger.LogInformation("Seeding database...");
+            await Seed.SeedUsers(context);
+            logger.LogInformation("Database seeding completed successfully");
+        }
+        else
+        {
+            // Production: Only migrate if explicitly configured
+            var runMigrations = builder.Configuration.GetValue<bool>("RunMigrationsOnStartup", false);
+            if (runMigrations)
+            {
+                logger.LogInformation("Running production database migrations...");
+                await context.Database.MigrateAsync();
+                logger.LogInformation("Production migrations completed successfully");
 
-//                    // Seed only if database is empty
-//                    var hasUsers = await context.Users.AnyAsync();
-//                    if (!hasUsers)
-//                    {
-//                        logger.LogInformation("Database is empty. Seeding initial data...");
-//                        await Seed.SeedUsers(context);
-//                        logger.LogInformation("Initial data seeding completed");
-//                    }
-//                }
-//                else
-//                {
-//                    logger.LogInformation("Skipping migrations (RunMigrationsOnStartup=false)");
-//                }
-//            }
+                // Seed only if database is empty
+                var hasUsers = await context.Users.AnyAsync();
+                if (!hasUsers)
+                {
+                    logger.LogInformation("Database is empty. Seeding initial data...");
+                    await Seed.SeedUsers(context);
+                    logger.LogInformation("Initial data seeding completed");
+                }
+            }
+            else
+            {
+                logger.LogInformation("Skipping migrations (RunMigrationsOnStartup=false)");
+            }
+        }
 
-//            logger.LogInformation("========================================");
-//            logger.LogInformation("Application Initialization Complete");
-//            logger.LogInformation("========================================");
-//        }
-//        catch (Exception ex)
-//        {
-//            logger.LogError(ex, "An error occurred during application initialization");
+        logger.LogInformation("========================================");
+        logger.LogInformation("Application Initialization Complete");
+        logger.LogInformation("========================================");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred during application initialization");
 
-//            if (!app.Environment.IsDevelopment())
-//            {
-//                // In production, prevent app from starting if critical initialization fails
-//                logger.LogCritical("Critical initialization failure in production. Application will not start.");
-//                throw;
-//            }
+        if (!app.Environment.IsDevelopment())
+        {
+            // In production, prevent app from starting if critical initialization fails
+            logger.LogCritical("Critical initialization failure in production. Application will not start.");
+            throw;
+        }
 
-//            logger.LogWarning("Application will continue despite initialization errors in development environment");
-//        }
-//    }
+        logger.LogWarning("Application will continue despite initialization errors in development environment");
+    }
+}
 #endregion
 
 // ============================================
