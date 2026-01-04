@@ -13,18 +13,13 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Events;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ============================================
-// SECTION 1: CORS CONFIGURATION
-// ============================================
 builder.Services.AddCors(options =>
 {
-    // Development Policy - Allow local Angular dev server
     options.AddPolicy("DevelopmentPolicy", corsBuilder =>
     {
         corsBuilder
@@ -37,7 +32,6 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 
-    // Production Policy - Specific domains only
     options.AddPolicy("ProductionPolicy", corsBuilder =>
     {
         corsBuilder
@@ -51,9 +45,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ============================================
-// SECTION 2: AUTHENTICATION & AUTHORIZATION
-// ============================================
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -74,56 +65,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// ============================================
-// SECTION 3: LOGGING CONFIGURATION (SERILOG)
-// ============================================
-builder.Host.UseSerilog((context, configuration) =>
+builder.Host.UseSerilog((context, services, configuration) =>
 {
-    if (context.HostingEnvironment.IsDevelopment())
-    {
-        // Development: Verbose console logging
-        configuration
-            .MinimumLevel.Debug()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
-            .Enrich.FromLogContext()
-            .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
-            .WriteTo.Console(
-                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
-            );
-    }
-    else
-    {
-        // Production: File logging with rotation
-        configuration
-            .MinimumLevel.Information()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Error)
-            .MinimumLevel.Override("System", LogEventLevel.Warning)
-            .Enrich.FromLogContext()
-            .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
-            .WriteTo.File(
-                path: "Logs/log-.txt",
-                rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 7,
-                fileSizeLimitBytes: 10_000_000,
-                outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz}] [{Level:u3}] {Message:lj}{NewLine}{Exception}"
-            )
-            .WriteTo.Console(
-                restrictedToMinimumLevel: LogEventLevel.Error
-            );
-    }
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services);
 });
 
-// ============================================
-// SECTION 4: CONTROLLERS & JSON SERIALIZATION
-// ============================================
 builder.Services.AddControllers();
 
-// ============================================
-// SECTION 5: DATABASE CONFIGURATION
-// ============================================
+builder.Services.AddOpenApi();
+
+#region DATABASE CONTEXT CONFIGURATION
 builder.Services.AddDbContext<DataContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -151,10 +104,8 @@ builder.Services.AddDbContext<DataContext>(options =>
         options.EnableDetailedErrors();
     }
 });
+#endregion
 
-// ============================================
-// SECTION 6: RESPONSE COMPRESSION (PRODUCTION)
-// ============================================
 if (!builder.Environment.IsDevelopment())
 {
     builder.Services.AddResponseCompression(options =>
@@ -175,74 +126,6 @@ if (!builder.Environment.IsDevelopment())
     });
 }
 
-// ============================================
-// SECTION 7: SWAGGER CONFIGURATION (DEV ONLY)
-// ============================================
-//if (builder.Environment.IsDevelopment())
-//{
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(c =>
-    {
-        c.SwaggerDoc("v1", new OpenApiInfo
-        {
-            Title = "DatingApp API",
-            Version = "v1",
-            Description = "DatingApp API endpoints - Development Environment",
-            Contact = new OpenApiContact
-            {
-                Name = "Dating App Team",
-                Url = new Uri("https://github.com/aynjel/DatingApp")
-            },
-            License = new OpenApiLicense
-            {
-                Name = "MIT License",
-                Url = new Uri("https://opensource.org/licenses/MIT")
-            }
-        });
-
-        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-        {
-            Description = @"JWT Authorization header using the Bearer scheme. 
-                          Enter 'Bearer' [space] and then your token in the text input below.
-                          Example: 'Bearer 12345abcdef'",
-            Name = "Authorization",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.ApiKey,
-            Scheme = "Bearer",
-            BearerFormat = "JWT"
-        });
-
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                Array.Empty<string>()
-            }
-        });
-
-        // Enable annotations for better Swagger documentation
-        c.EnableAnnotations();
-
-        // Include XML comments if available
-        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-        if (File.Exists(xmlPath))
-        {
-            c.IncludeXmlComments(xmlPath);
-        }
-    });
-//}
-
-// ============================================
-// SECTION 8: HEALTH CHECKS
-// ============================================
 builder.Services.AddHealthChecks()
     .AddCheck("database", () =>
     {
@@ -260,9 +143,7 @@ builder.Services.AddHealthChecks()
     })
     .AddCheck("self", () => HealthCheckResult.Healthy("Application is running"));
 
-// ============================================
-// SECTION 9: APPLICATION SERVICES (DI)
-// ============================================
+#region DEPENDENCY INJECTION FOR REPOSITORIES & SERVICES
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
@@ -272,17 +153,13 @@ builder.Services.AddScoped<IGenerateJWTService, GenerateJWTService>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+#endregion
 
-// ============================================
-// BUILD THE APPLICATION
-// ============================================
 var app = builder.Build();
 
 // ============================================
 // MIDDLEWARE PIPELINE
 // ============================================
-
-// 1. EXCEPTION HANDLING
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -290,65 +167,36 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error");
-    app.UseHsts(); // HTTP Strict Transport Security
+    app.UseHsts();
 }
 
-// 2. HTTPS REDIRECTION
 app.UseHttpsRedirection();
 
-// 3. STATIC FILES
-// This allows serving Angular app without authentication
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-// 4. ROUTING
 app.UseRouting();
 
-// 5. CORS
-var corsPolicy = app.Environment.IsDevelopment() 
-    ? "DevelopmentPolicy" 
-    : "ProductionPolicy";
-app.UseCors(corsPolicy);
+app.UseCors(app.Environment.IsDevelopment() ? "DevelopmentPolicy" : "ProductionPolicy");
 
-// 6. AUTHENTICATION
 app.UseAuthentication();
-
-// 7. AUTHORIZATION
 app.UseAuthorization();
 
-// 8. RESPONSE COMPRESSION (PRODUCTION ONLY)
 if (!app.Environment.IsDevelopment())
 {
     app.UseResponseCompression();
 }
 
-// 9. CUSTOM MIDDLEWARE
 app.UseMiddleware<ExceptionMiddleware>();
 
 // ============================================
-// SWAGGER UI (DEVELOPMENT ONLY)
+// ENDPOINT MAPPING
 // ============================================
-//if (app.Environment.IsDevelopment())
-//{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "DatingApp API V1");
-        c.RoutePrefix = "swagger";
-        c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-    });
-//}
-
-// ============================================
-// ENDPOINT MAPPINGS
-// ============================================
-
-// Root endpoint with environment-aware information
+#region API ROOT ENDPOINT
 app.MapGet("/api", (HttpContext httpContext) =>
 {
     var environment = app.Environment.EnvironmentName;
     
-    // Dynamically determine base URL from request
     var baseUrl = app.Environment.IsDevelopment()
         ? "https://localhost:5001"
         : $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
@@ -359,9 +207,8 @@ app.MapGet("/api", (HttpContext httpContext) =>
         Version = "v1",
         Environment = environment,
         Timestamp = DateTime.UtcNow,
-        Documentation = app.Environment.IsDevelopment() 
-            ? $"{baseUrl}/swagger" 
-            : "Swagger is disabled in production for security",
+        Documentation = $"{baseUrl}/scalar/v1",
+        OpenApiJson = $"{baseUrl}/openapi/v1.json",
         HealthCheck = $"{baseUrl}/health",
         Endpoints = new
         {
@@ -373,14 +220,15 @@ app.MapGet("/api", (HttpContext httpContext) =>
         {
             Host = httpContext.Request.Host.ToString(),
             Protocol = httpContext.Request.Scheme,
-            IsHttps = httpContext.Request.IsHttps
+            httpContext.Request.IsHttps
         }
     };
 
     return Results.Json(response);
 }).AllowAnonymous();
+#endregion
 
-// Health check endpoint
+#region HEALTH CHECK ENDPOINT
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
     ResponseWriter = async (context, report) =>
@@ -402,21 +250,27 @@ app.MapHealthChecks("/health", new HealthCheckOptions
         await context.Response.WriteAsJsonAsync(response);
     }
 }).AllowAnonymous();
+#endregion
 
 // API Controllers
 app.MapControllers();
 
-// SPA Fallback
+// OpenAPI endpoint
+app.MapOpenApi();
+
+// Scalar API Documentation UI
+app.MapScalarApiReference(options =>
+{
+    options
+        .WithTitle("DatingApp API Documentation")
+        .WithTheme(ScalarTheme.Purple)
+        .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+});
+
 // Catches all unmatched routes and returns index.html for Angular routing
 app.MapFallbackToController("Index", "Fallback");
 
-// ============================================
-// DATABASE MIGRATION & SEEDING
-// ============================================
-//var isSwaggerGen = args.Any(arg => arg.Contains("swagger", StringComparison.OrdinalIgnoreCase));
-
-//if (!isSwaggerGen)
-//{
+#region DATABASE INITIALIZATION & SEEDING
 //    using (var scope = app.Services.CreateScope())
 //    {
 //        var services = scope.ServiceProvider;
@@ -489,7 +343,7 @@ app.MapFallbackToController("Index", "Fallback");
 //            logger.LogWarning("Application will continue despite initialization errors in development environment");
 //        }
 //    }
-//}
+#endregion
 
 // ============================================
 // START THE APPLICATION
