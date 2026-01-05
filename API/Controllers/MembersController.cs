@@ -95,11 +95,10 @@ public class MembersController(IMemberService memberService, IUserService userSe
     }
 
     [HttpPost("add-photo")]
-    [ApiExplorerSettings(IgnoreApi = true)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<PhotoResponseDto>> AddPhoto([FromForm] IFormFile file)
+    public async Task<ActionResult> AddPhoto([FromForm] IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("No file provided");
@@ -121,9 +120,41 @@ public class MembersController(IMemberService memberService, IUserService userSe
             MemberId = memberId
         };
 
-        // Add photo to member
-        var addedPhoto = await memberService.AddPhotoAsync(memberId, photo);
+        var success = await memberService.AddPhotoAsync(memberId, photo);
 
-        return Ok(addedPhoto.ToDto());
+        if (!success)
+            return BadRequest("Failed to add photo");
+
+        return NoContent();
+    }
+
+    [HttpPut("set-main-photo/{photoId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> SetMainPhoto([FromRoute] string photoId)
+    {
+        var memberId = User.GetMemberId();
+        var success = await memberService.SetMainPhotoAsync(memberId, photoId);
+        
+        if (!success)
+            return BadRequest("Failed to set main photo");
+
+        return NoContent();
+    }
+
+    [HttpDelete("delete-photo/{photoId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> DeletePhoto([FromRoute] string photoId)
+    {
+        var memberId = User.GetMemberId();
+        var success = await memberService.DeletePhotoAsync(memberId, photoId);
+        
+        if (!success)
+            return BadRequest("Failed to delete photo");
+
+        return NoContent();
     }
 }

@@ -6,4 +6,5 @@ public class PhotoResponseDto
     public string Url { get; set; }
     public string PublicId { get; set; }
     public string MemberId { get; set; }
+    public bool IsMain { get; set; }
 }

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Services;
 
-public class MemberService(IMemberRepository memberRepository, IUserRepository userRepository) : IMemberService
+public class MemberService(IMemberRepository memberRepository, IUserRepository userRepository, IPhotoService photoService) : IMemberService
 {
     public async Task<MemberResponseDto> CreateMemberDetails(string userId, MemberDetailsRequestDto memberDetails)
     {
@@ -90,30 +90,76 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
         return photos.Select(p => p.ToDto()).ToList();
     }
 
-    public async Task<bool> SaveAllAsync()
-    {
-        return await memberRepository.SaveAllAsync();
-    }
-
-    public async Task<Photo> AddPhotoAsync(string memberId, Photo photo)
+    public async Task<bool> AddPhotoAsync(string memberId, Photo photo)
     {
         var member = await memberRepository.GetMemberByIdAsync(memberId) ?? throw new NotFoundException($"Member with ID {memberId} not found");
 
-        // Check if member has a profile image, if not set this photo as profile image
-        if (string.IsNullOrEmpty(member.ImageUrl))
-        {
-            member.ImageUrl = photo.Url;
-            member.User.ImageUrl = photo.Url;
-        }
+        photo.IsMain = true;
+        member.ImageUrl = photo.Url;
+        member.User.ImageUrl = photo.Url;
 
         member.Photos.Add(photo);
         memberRepository.Update(member);
-        
-        await memberRepository.SaveAllAsync();
-        return photo;
+
+        return await SaveAllAsync();
+    }
+
+    public async Task<bool> SetMainPhotoAsync(string memberId, string photoId)
+    {
+        var member = await memberRepository.GetMemberByIdAsync(memberId) 
+            ?? throw new NotFoundException($"Member with ID {memberId} not found");
+
+        var photo = member.Photos.FirstOrDefault(p => p.Id == photoId)
+            ?? throw new NotFoundException($"Photo with ID {photoId} not found");
+
+        if (photo.IsMain)
+            throw new BadRequestException("This is already the main photo");
+
+        // Set all photos to non-main
+        foreach (var p in member.Photos)
+        {
+            p.IsMain = false;
+        }
+
+        // Set the selected photo as main
+        photo.IsMain = true;
+        member.ImageUrl = photo.Url;
+        member.User.ImageUrl = photo.Url;
+
+        memberRepository.Update(member);
+        return await SaveAllAsync();
+    }
+
+    public async Task<bool> DeletePhotoAsync(string memberId, string photoId)
+    {
+        var member = await memberRepository.GetMemberByIdAsync(memberId)
+            ?? throw new NotFoundException($"Member with ID {memberId} not found");
+
+        var photo = member.Photos.FirstOrDefault(p => p.Id == photoId)
+            ?? throw new NotFoundException($"Photo with ID {photoId} not found");
+
+        if (photo.IsMain)
+            throw new BadRequestException("You cannot delete your main photo");
+
+        // Delete from Cloudinary if it has a PublicId
+        if (!string.IsNullOrEmpty(photo.PublicId))
+        {
+            var result = await photoService.DeletePhotoAsync(photo.PublicId);
+            if (result.Error != null)
+                throw new BadRequestException($"Failed to delete photo from Cloudinary: {result.Error.Message}");
+        }
+
+        member.Photos.Remove(photo);
+        memberRepository.Update(member);
+        return await SaveAllAsync();
     }
 
     #region Private Helper Methods
+
+    private async Task<bool> SaveAllAsync()
+    {
+        return await memberRepository.SaveAllAsync();
+    }
 
     private static void AddPhotosToMember(Member member, List<string> photoUrls)
     {

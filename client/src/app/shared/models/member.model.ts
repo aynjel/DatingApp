@@ -19,4 +19,5 @@ export interface Photo {
   publicId: string;
   member: string;
   memberId: string;
+  isMain: boolean;
 }

@@ -19,8 +19,8 @@ public static class MemberExtensions
             Description = member.Description,
             City = member.City,
             Country = member.Country,
-            Interests = member.Interests ?? new List<string>(),
-            Photos = member.Photos?.Select(p => p.ToDto()).ToList() ?? new List<PhotoResponseDto>()
+            Interests = member.Interests ?? [],
+            Photos = member.Photos?.Select(p => p.ToDto()).ToList() ?? []
         };
     }
 
@@ -31,7 +31,8 @@ public static class MemberExtensions
             Id = photo.Id,
             Url = photo.Url,
             PublicId = photo.PublicId ?? string.Empty,
-            MemberId = photo.MemberId
+            MemberId = photo.MemberId,
+            IsMain = photo.IsMain
         };
     }
 }
