@@ -100,8 +100,50 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
 
         member.Photos.Add(photo);
         memberRepository.Update(member);
+        
+        return await memberRepository.SaveAllAsync();
+    }
 
-        return await SaveAllAsync();
+    public async Task<IReadOnlyList<Photo>> AddPhotosAsync(string memberId, List<Photo> photos)
+    {
+        if (photos == null || photos.Count == 0)
+            throw new BadRequestException("No photos provided");
+
+        var member = await memberRepository.GetMemberByIdAsync(memberId) 
+            ?? throw new NotFoundException($"Member with ID {memberId} not found");
+
+        var isFirstBatch = member.Photos.Count == 0;
+        var hasNoImageUrl = string.IsNullOrEmpty(member.ImageUrl);
+
+        foreach (var photo in photos)
+        {
+            // Set first photo as main if member has no photos
+            if (isFirstBatch && photo == photos.First())
+            {
+                photo.IsMain = true;
+                member.ImageUrl = photo.Url;
+                member.User.ImageUrl = photo.Url;
+                isFirstBatch = false;
+            }
+            else if (hasNoImageUrl && photo == photos.First())
+            {
+                photo.IsMain = true;
+                member.ImageUrl = photo.Url;
+                member.User.ImageUrl = photo.Url;
+                hasNoImageUrl = false;
+            }
+            else
+            {
+                photo.IsMain = false;
+            }
+
+            member.Photos.Add(photo);
+        }
+
+        memberRepository.Update(member);
+        await memberRepository.SaveAllAsync();
+        
+        return photos;
     }
 
     public async Task<bool> SetMainPhotoAsync(string memberId, string photoId)

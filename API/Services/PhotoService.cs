@@ -19,6 +19,8 @@ public class PhotoService : IPhotoService
         _cloudinary = new Cloudinary(account);
     }
 
+    public HashSet<string> allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp"];
+
     public async Task<DeletionResult> DeletePhotoAsync(string publicId)
     {
         var deleteParams = new DeletionParams(publicId);

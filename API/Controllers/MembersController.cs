@@ -12,6 +12,9 @@ namespace API.Controllers;
 [Authorize]
 public class MembersController(IMemberService memberService, IUserService userService, IPhotoService photoService) : BaseController
 {
+
+    private readonly HashSet<string> allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<MemberResponseDto>>> GetMembers([FromQuery] GetMembersParamsRequestDto getMembersParamsDto)
@@ -94,17 +97,29 @@ public class MembersController(IMemberService memberService, IUserService userSe
         return Ok(updatedMember);
     }
 
-    [HttpPost("add-photo")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [HttpPost("add-profile-photo")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> AddPhoto([FromForm] IFormFile file)
+    public async Task<ActionResult<PhotoResponseDto>> AddPhoto([FromForm] IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("No file provided");
 
-        // Get current member ID from JWT token
+        if (file.Length > 5 * 1024 * 1024)
+            return BadRequest("File size cannot exceed 5MB");
+
+        // Validate file type
+        var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(fileExtension))
+            return BadRequest("Invalid file type. Only JPG, JPEG, PNG, GIF, and WEBP are allowed");
+
         var memberId = User.GetMemberId();
+
+        // Check if member already has 10 photos
+        var existingPhotos = await memberService.GetPhotosByMemberIdAsync(memberId);
+        if (existingPhotos.Count >= 10)
+            return BadRequest("Maximum of 10 photos allowed per member");
 
         // Upload photo to Cloudinary
         var result = await photoService.UploadPhotoAsync(file);
@@ -126,6 +141,99 @@ public class MembersController(IMemberService memberService, IUserService userSe
             return BadRequest("Failed to add photo");
 
         return NoContent();
+    }
+
+    [HttpPost("add-photos")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<BatchPhotoUploadResponseDto>> AddPhotos([FromForm] List<IFormFile> files)
+    {
+        if (files == null || files.Count == 0)
+            return BadRequest("No files provided");
+
+        var memberId = User.GetMemberId();
+
+        // Check existing photos count
+        var existingPhotos = await memberService.GetPhotosByMemberIdAsync(memberId);
+        var availableSlots = 10 - existingPhotos.Count;
+
+        if (availableSlots <= 0)
+            return BadRequest("Maximum of 10 photos allowed per member. Please delete some photos before uploading new ones");
+
+        // Validate total count doesn't exceed limit
+        if (files.Count > availableSlots)
+            return BadRequest($"You can only upload {availableSlots} more photo(s). Maximum of 10 photos allowed per member");
+
+        var uploadedPhotos = new List<Photo>();
+        var errors = new List<string>();
+
+        // Upload all photos to Cloudinary
+        foreach (var file in files)
+        {
+            if (file.Length == 0)
+            {
+                errors.Add($"File {file.FileName} is empty");
+                continue;
+            }
+
+            // Validate file size (max 5MB)
+            if (file.Length > 5 * 1024 * 1024)
+            {
+                errors.Add($"File {file.FileName} exceeds 5MB size limit");
+                continue;
+            }
+
+            // Validate file type
+            var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                errors.Add($"File {file.FileName} has invalid type. Only JPG, JPEG, PNG, GIF, and WEBP are allowed");
+                continue;
+            }
+
+            try
+            {
+                var result = await photoService.UploadPhotoAsync(file);
+                if (result.Error != null)
+                {
+                    errors.Add($"Failed to upload {file.FileName}: {result.Error.Message}");
+                    continue;
+                }
+
+                var photo = new Photo
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Url = result.SecureUrl.AbsoluteUri,
+                    PublicId = result.PublicId,
+                    MemberId = memberId
+                };
+
+                uploadedPhotos.Add(photo);
+            }
+            catch (Exception ex)
+            {
+                errors.Add($"Error uploading {file.FileName}: {ex.Message}");
+            }
+        }
+
+        // If no photos were successfully uploaded, return error
+        if (uploadedPhotos.Count == 0)
+            return BadRequest(new { message = "Failed to upload any photos", errors });
+
+        // Add all photos to member
+        var addedPhotos = await memberService.AddPhotosAsync(memberId, uploadedPhotos);
+
+        // Return success with any errors
+        var response = new BatchPhotoUploadResponseDto
+        {
+            Photos = addedPhotos.Select(p => p.ToDto()).ToList(),
+            TotalUploaded = addedPhotos.Count,
+            TotalFailed = errors.Count,
+            Errors = errors.Count > 0 ? errors : null
+        };
+
+        return Ok(response);
     }
 
     [HttpPut("set-main-photo/{photoId}")]
