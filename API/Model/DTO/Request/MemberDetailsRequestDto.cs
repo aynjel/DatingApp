@@ -7,13 +7,6 @@ public class MemberDetailsRequestDto
     [Required(ErrorMessage = "Date of Birth is required")]
     public DateOnly DateOfBirth { get; set; }
     
-    [Required(ErrorMessage = "Profile image is required")]
-    public string ImageUrl { get; set; }
-    
-    [Required(ErrorMessage = "Display name is required")]
-    [StringLength(100, MinimumLength = 2, ErrorMessage = "Display name must be between 2 and 100 characters")]
-    public string DisplayName { get; set; }
-    
     [Required(ErrorMessage = "Gender is required")]
     public string Gender { get; set; }
     
@@ -28,7 +21,5 @@ public class MemberDetailsRequestDto
     public string Country { get; set; }
     
     [MaxLength(10, ErrorMessage = "Maximum 10 interests allowed")]
-    public List<string> Interests { get; set; } = new();
-    
-    public List<string> PhotoUrls { get; set; } = new();
+    public List<string> Interests { get; set; } = [];
 }

@@ -14,38 +14,29 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
 {
     public async Task<MemberResponseDto> CreateMemberDetails(string userId, MemberDetailsRequestDto memberDetails)
     {
-        var user = await userRepository.GetByIdAsync(userId);
-        if (user is null)
-        {
-            throw new NotFoundException($"User with ID {userId} not found");
-        }
-
+        var user = await userRepository.GetByIdAsync(userId) ?? throw new NotFoundException($"User with ID {userId} not found");
         var existingMember = await memberRepository.GetMemberByIdAsync(userId);
         if (existingMember is not null)
         {
             throw new ConflictException($"Member details already exist for user {userId}. Use update endpoint instead.");
         }
 
-        user.ImageUrl = memberDetails.ImageUrl;
+        user.ImageUrl = "https://ui-avatars.com/api/?name=" + user.DisplayName;
         await userRepository.UpdateAsync(user);
-
         var member = new Member
         {
             Id = userId,
-            DisplayName = memberDetails.DisplayName,
             DateOfBirth = memberDetails.DateOfBirth,
             Description = memberDetails.Description,
-            ImageUrl = memberDetails.ImageUrl,
             City = memberDetails.City,
             Country = memberDetails.Country,
             Gender = memberDetails.Gender,
-            Interests = memberDetails.Interests ?? new List<string>(),
+            Interests = memberDetails.Interests,
             Created = DateTime.UtcNow,
             LastActive = DateTime.UtcNow,
-            Photos = new List<Photo>()
+            DisplayName = user.DisplayName,
+            ImageUrl = user.ImageUrl,
         };
-
-        AddPhotosToMember(member, memberDetails.PhotoUrls, memberDetails.ImageUrl);
 
         await memberRepository.AddAsync(member);
         return member.ToDto();
@@ -53,63 +44,38 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
 
     public async Task<MemberResponseDto> UpdateMemberDetails(string userId, MemberDetailsRequestDto memberDetails)
     {
-        var user = await userRepository.GetByIdAsync(userId);
-        if (user is null)
-        {
-            throw new NotFoundException($"User with ID {userId} not found");
-        }
-
-        var existingMember = await memberRepository.GetMemberByIdAsync(userId);
-        if (existingMember is null)
-        {
-            throw new NotFoundException($"Member details not found for user {userId}. Create member details first.");
-        }
-
-        // Update user profile image
-        user.ImageUrl = memberDetails.ImageUrl;
-        await userRepository.UpdateAsync(user);
+        var existingMember = await memberRepository.GetMemberByIdAsync(userId) ?? throw new NotFoundException($"Member details not found for user {userId}. Create member details first.");
 
         // Update member details
-        existingMember.DisplayName = memberDetails.DisplayName;
+        existingMember.DisplayName = existingMember.DisplayName;
         existingMember.DateOfBirth = memberDetails.DateOfBirth;
         existingMember.Description = memberDetails.Description;
-        existingMember.ImageUrl = memberDetails.ImageUrl;
         existingMember.City = memberDetails.City;
         existingMember.Country = memberDetails.Country;
         existingMember.Gender = memberDetails.Gender;
-        existingMember.Interests = memberDetails.Interests ?? new List<string>();
+        existingMember.Interests = memberDetails.Interests;
         existingMember.LastActive = DateTime.UtcNow;
 
-        // Handle photos update
-        if (memberDetails.PhotoUrls != null && memberDetails.PhotoUrls.Any())
+        memberRepository.Update(existingMember);
+        if (await memberRepository.SaveAllAsync())
         {
-            // Remove existing photos
-            existingMember.Photos.Clear();
-            
-            // Add new photos
-            AddPhotosToMember(existingMember, memberDetails.PhotoUrls, memberDetails.ImageUrl);
+            var updatedMember = await memberRepository.GetMemberByIdAsync(userId);
+            return updatedMember.ToDto();
         }
 
-        memberRepository.Update(existingMember);
-        await memberRepository.SaveAllAsync();
-
-        // Reload member with photos to return updated data
-        var updatedMember = await memberRepository.GetMemberByIdAsync(userId);
-        return updatedMember.ToDto();
+        throw new Exception("Failed to update member details");
     }
 
     public async Task<MemberResponseDto> GetMemberByIdAsync(string id)
     {
         var member = await memberRepository.GetMemberByIdAsync(id);
-        return member?.ToDto();
+        return member.ToDto();
     }
 
     public async Task<PagedList<MemberResponseDto>> GetMembersAsync(string searchTerm, PaginationParams paginationParams)
     {
         var pagedMembers = await memberRepository.GetMembersAsync(searchTerm, paginationParams);
-        
         var memberDtos = pagedMembers.Items.Select(m => m.ToDto()).ToList();
-        
         return new PagedList<MemberResponseDto>(
             memberDtos,
             pagedMembers.TotalCount,
@@ -131,11 +97,7 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
 
     public async Task<Photo> AddPhotoAsync(string memberId, Photo photo)
     {
-        var member = await memberRepository.GetMemberByIdAsync(memberId);
-        if (member is null)
-        {
-            throw new NotFoundException($"Member with ID {memberId} not found");
-        }
+        var member = await memberRepository.GetMemberByIdAsync(memberId) ?? throw new NotFoundException($"Member with ID {memberId} not found");
 
         // Check if member has a profile image, if not set this photo as profile image
         if (string.IsNullOrEmpty(member.ImageUrl))
@@ -153,9 +115,9 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
 
     #region Private Helper Methods
 
-    private static void AddPhotosToMember(Member member, List<string> photoUrls, string defaultImageUrl)
+    private static void AddPhotosToMember(Member member, List<string> photoUrls)
     {
-        if (photoUrls != null && photoUrls.Any())
+        if (photoUrls != null || photoUrls.Count > 0)
         {
             foreach (var photoUrl in photoUrls)
             {
@@ -167,17 +129,6 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
                     MemberId = member.Id
                 });
             }
-        }
-        else
-        {
-            // Add default profile image as first photo
-            member.Photos.Add(new Photo
-            {
-                Id = Guid.NewGuid().ToString(),
-                Url = defaultImageUrl,
-                PublicId = string.Empty,
-                MemberId = member.Id
-            });
         }
     }
 

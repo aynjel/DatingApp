@@ -15,7 +15,7 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
     public async Task<IReadOnlyList<UserDetailsResponseDto>> GetAllAsync()
     {
         var users = await userRepository.GetAllAsync();
-        return users.Select(u => u.ToDto()).ToList();
+        return [.. users.Select(u => u.ToDto())];
     }
 
     public async Task<UserDetailsResponseDto> GetByIdAsync(string id)
@@ -88,6 +88,9 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
             logger.LogWarning("Current user with ID {UserId} not found", userId);
             throw new NotFoundException($"User with id '{userId}' not found");
         }
+
+        user.Member?.LastActive = DateTime.UtcNow;
+
         return user.ToDto();
     }
 

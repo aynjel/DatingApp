@@ -55,17 +55,17 @@ public class MembersController(IMemberService memberService, IUserService userSe
         return Ok(photos);
     }
 
-    [HttpPost("{userId}")]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<MemberResponseDto>> CreateMember(
-        [FromRoute] string userId, 
-        [FromBody] MemberDetailsRequestDto memberDetails)
+    public async Task<ActionResult<MemberResponseDto>> CreateMember([FromBody] MemberDetailsRequestDto memberDetails)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        var userId = User.GetUserId();
 
         var user = await userService.GetByIdAsync(userId);
         if (user is null) 
@@ -75,16 +75,16 @@ public class MembersController(IMemberService memberService, IUserService userSe
         return CreatedAtAction(nameof(GetMember), new { id = newMember.Id }, newMember);
     }
 
-    [HttpPut("{userId}")]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<MemberResponseDto>> UpdateMember(
-        [FromRoute] string userId, 
-        [FromBody] MemberDetailsRequestDto memberDetails)
+    public async Task<ActionResult<MemberResponseDto>> UpdateMember([FromBody] MemberDetailsRequestDto memberDetails)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        var userId = User.GetUserId();
 
         var user = await userService.GetByIdAsync(userId);
         if (user is null) 
