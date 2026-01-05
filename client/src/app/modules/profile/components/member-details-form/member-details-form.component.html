@@ -3,64 +3,17 @@
   (ngSubmit)="onCreateMemberDetailsSubmit()"
   class="flex flex-col gap-6"
 >
-  <!-- Profile Picture -->
-  <div>
-    <label class="label">
-      <span class="label-text font-semibold">Profile Picture URL</span>
-    </label>
-    <input
-      type="text"
-      formControlName="imageUrl"
-      class="input input-bordered w-full"
-      [class.input-error]="
-        memberDetailsForm.get('imageUrl')?.invalid &&
-        memberDetailsForm.get('imageUrl')?.touched
-      "
-      [class.input-success]="
-        memberDetailsForm.get('imageUrl')?.valid &&
-        memberDetailsForm.get('imageUrl')?.touched
-      "
-      placeholder="https://example.com/image.jpg"
-    />
-    @if(memberDetailsForm.get('imageUrl')?.invalid &&
-    memberDetailsForm.get('imageUrl')?.touched) {
-    <span class="text-error text-xs mt-1">
-      @for(error of memberDetailsForm.get('imageUrl')?.errors | keyvalue; track
-      error) { @switch (error.key) { @case ('required') { Image URL is required.
-      } } }
-    </span>
-    }
-  </div>
-
   <!-- Display Name -->
   <div>
-    <label class="label">
-      <span class="label-text font-semibold">Display Name</span>
+    <label class="input w-full">
+      <lucide-icon [name]="lockIcon" class="size-4 mr-2 text-gray-400" />
+      <input
+        type="text"
+        [value]="currentUser()?.displayName"
+        disabled
+        class="cursor-not-allowed"
+      />
     </label>
-    <input
-      type="text"
-      formControlName="displayName"
-      class="input input-bordered w-full"
-      [class.input-error]="
-        memberDetailsForm.get('displayName')?.invalid &&
-        memberDetailsForm.get('displayName')?.touched
-      "
-      [class.input-success]="
-        memberDetailsForm.get('displayName')?.valid &&
-        memberDetailsForm.get('displayName')?.touched
-      "
-      placeholder="Enter your display name"
-    />
-    @if(memberDetailsForm.get('displayName')?.invalid &&
-    memberDetailsForm.get('displayName')?.touched) {
-    <span class="text-error text-xs mt-1">
-      @for(error of memberDetailsForm.get('displayName')?.errors | keyvalue;
-      track error) { @switch (error.key) { @case ('required') { Display name is
-      required. } @case ('minlength') { Display name must be at least 2
-      characters. } @case ('maxlength') { Display name cannot exceed 100
-      characters. } } }
-    </span>
-    }
   </div>
 
   <!-- Date of Birth and Gender -->
@@ -207,6 +160,77 @@
     }
   </div>
 
+  <!-- Interests -->
+  <div>
+    <label class="label">
+      <span class="label-text font-semibold">Interests</span>
+    </label>
+    <div class="flex flex-wrap gap-2 mb-2">
+      @for(interest of getSelectedInterests(); track interest) {
+      <div class="badge badge-lg badge-outline gap-2">
+        <span>{{ interest }}</span>
+        <button
+          type="button"
+          (click)="removeInterest(interest)"
+          class="btn btn-xs btn-circle btn-ghost p-0 h-4 w-4 min-h-0"
+        >
+          <lucide-icon [name]="removeIcon" class="size-3" />
+        </button>
+      </div>
+      }
+    </div>
+    <div class="flex gap-2">
+      <div class="flex-1">
+        <input
+          type="text"
+          [value]="interestInput()"
+          (input)="interestInput.set($any($event.target).value)"
+          class="input input-bordered w-full"
+          [class.input-error]="
+            (memberDetailsForm.get('interests')?.invalid &&
+              memberDetailsForm.get('interests')?.touched) ||
+            interestError()
+          "
+          [class.input-success]="
+            memberDetailsForm.get('interests')?.valid &&
+            memberDetailsForm.get('interests')?.touched
+          "
+          [disabled]="getSelectedInterests().length >= maxInterests"
+          placeholder="Add an interest"
+          (keydown.enter)="addInterest($event)"
+        />
+        @if(memberDetailsForm.get('interests')?.invalid &&
+        memberDetailsForm.get('interests')?.touched) {
+        <span class="text-error text-xs mt-1 block">
+          @for(error of memberDetailsForm.get('interests')?.errors | keyvalue;
+          track error) { @switch (error.key) { @case ('required') {
+          <span>At least one interest is required.</span>
+          } } }
+        </span>
+        }
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="addInterest($event)"
+        [disabled]="
+          getSelectedInterests().length >= maxInterests ||
+          interestInput().trim() === ''
+        "
+      >
+        <lucide-icon [name]="addIcon" class="size-4" />
+        Add
+      </button>
+    </div>
+    @if(interestError()) {
+    <span class="text-error text-xs mt-1 block">{{ interestError() }}</span>
+    }
+    <span class="text-xs text-info mt-1 block">
+      <lucide-icon [name]="infoIcon" class="size-4 inline-block mr-1" />
+      You can add up to {{ maxInterests }} interests.
+    </span>
+  </div>
+
   <!-- Submit Button -->
   <div class="card-actions justify-end mt-4">
     <button
@@ -216,7 +240,7 @@
     >
       @if(isLoading()) {
       <span class="loading loading-spinner loading-xs"></span>
-      } @else { Create Profile }
+      } @else { Save }
     </button>
   </div>
 </form>

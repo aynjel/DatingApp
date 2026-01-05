@@ -61,9 +61,14 @@ export class MemberService {
   }
 
   public createMemberDetails(
-    userId: string,
     payload: CreateMemberDetailsRequest
   ): Observable<Member> {
-    return this.http.post<Member>(`${this.baseUrl}/${userId}`, payload);
+    return this.http.post<Member>(this.baseUrl, payload);
+  }
+
+  public updateMemberDetails(
+    payload: CreateMemberDetailsRequest
+  ): Observable<Member> {
+    return this.http.put<Member>(this.baseUrl, payload);
   }
 }

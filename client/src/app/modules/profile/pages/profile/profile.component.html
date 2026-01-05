@@ -71,15 +71,9 @@
         <div class="mt-4">
           <h4 class="font-medium">Interests</h4>
           <div class="mt-3 flex flex-wrap gap-2">
-            <span class="badge badge-outline">Programming</span>
-            <span class="badge badge-outline">Reading</span>
-            <span class="badge badge-outline">Traveling</span>
-            <span class="badge badge-outline">Cooking</span>
-            <span class="badge badge-outline">Photography</span>
-            <span class="badge badge-outline">Music</span>
-            <span class="badge badge-outline">Movies</span>
-            <span class="badge badge-outline">Sports</span>
-            <span class="badge badge-outline">Gaming</span>
+            @for(interest of memberDetails()?.interests; track interest) {
+            <span class="badge badge-outline">{{ interest }}</span>
+            }
           </div>
         </div>
       </div>
@@ -102,27 +96,24 @@
         <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <div>
             <div class="text-xs text-base-content/60">Looking for</div>
-            <div class="font-medium">
-              {{ "Friendship, Relationship" }}
-            </div>
+            <div class="font-medium">Not Specified</div>
           </div>
           <div>
             <div class="text-xs text-base-content/60">Occupation</div>
-            <div class="font-medium">
-              {{ "Product Designer" }}
-            </div>
+            <div class="font-medium">Not Specified</div>
           </div>
           <div>
             <div class="text-xs text-base-content/60">Education</div>
-            <div class="font-medium">
-              {{ "Bachelor's Degree" }}
-            </div>
+            <div class="font-medium">Not Specified</div>
           </div>
           <div>
-            <div class="text-xs text-base-content/60">Location</div>
+            <div class="text-xs text-base-content/60">Religion</div>
+            <div class="font-medium">Not Specified</div>
+          </div>
+          <div>
+            <div class="text-xs text-base-content/60">Address</div>
             <div class="font-medium">
-              {{ memberDetails()?.city }},
-              {{ memberDetails()?.country }}
+              {{ memberDetails()?.city }}, {{ memberDetails()?.country }}
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@ export interface Member {
   description: string;
   city: string;
   country: string;
+  interests: string[];
   photos: Photo[];
 }
 

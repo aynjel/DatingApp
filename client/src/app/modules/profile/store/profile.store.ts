@@ -21,10 +21,10 @@ export const ProfileStore = signalStore(
   })),
   withMethods((store) => {
     const createMemberDetails = store.globalStore.withFormSubmission<
-      { userId: string; payload: CreateMemberDetailsRequest },
+      CreateMemberDetailsRequest,
       Member
-    >(({ userId, payload }) =>
-      store.memberService.createMemberDetails(userId, payload).pipe(
+    >((payload) =>
+      store.memberService.createMemberDetails(payload).pipe(
         tapResponse({
           next: (response) => {
             store.toastService.show(
@@ -44,8 +44,33 @@ export const ProfileStore = signalStore(
       )
     );
 
+    const updateMemberDetails = store.globalStore.withFormSubmission<
+      CreateMemberDetailsRequest,
+      Member
+    >((payload) =>
+      store.memberService.updateMemberDetails(payload).pipe(
+        tapResponse({
+          next: (response) => {
+            store.toastService.show(
+              `${response.displayName} profile updated successfully.`,
+              'success'
+            );
+            store.authStore.setMemberDetails(response);
+            store.router.navigate(['/profile/me']);
+          },
+          error: (error: HttpErrorResponse) => {
+            store.toastService.show(
+              error.error.detail || 'Something went wrong',
+              'error'
+            );
+          },
+        })
+      )
+    );
+
     return {
       createMemberDetails,
+      updateMemberDetails,
     };
   })
 );
