@@ -1,0 +1,21 @@
+@if(photos() && photos().length > 0) {
+<div class="card bg-base-100 shadow p-6">
+  <h3 class="text-xl font-semibold">Photos</h3>
+  <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+    @for (p of photos(); track p.id || p.url) {
+    <div class="relative overflow-hidden rounded group cursor-pointer">
+      <img
+        [src]="p.url"
+        class="w-full h-40 object-cover rounded group-hover:opacity-75 transition-opacity"
+        alt="Photo"
+      />
+      <!-- @if(p.isMain) {
+      <div class="absolute top-2 right-2 badge badge-primary badge-sm">
+        Main
+      </div>
+      } -->
+    </div>
+    }
+  </div>
+</div>
+}

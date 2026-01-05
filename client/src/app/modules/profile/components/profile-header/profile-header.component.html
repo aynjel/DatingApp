@@ -1,0 +1,74 @@
+<div class="card bg-base-100 shadow-lg p-6">
+  <div class="flex flex-col items-center">
+    <!-- Avatar with edit button overlay -->
+    <div class="relative inline-block">
+      <div class="avatar">
+        <div
+          class="w-48 h-48 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden"
+        >
+          @if(memberDetails()?.imageUrl) {
+          <img [src]="memberDetails()?.imageUrl" alt="Profile photo" />
+          } @else {
+          <ngx-avatar
+            [name]="memberDetails()?.displayName"
+            size="192"
+            [round]="true"
+          />
+          }
+        </div>
+      </div>
+
+      <!-- Fancy Camera Button on Avatar Edge -->
+      <button
+        type="button"
+        (click)="onUploadPhotoClick()"
+        class="absolute bottom-0 right-0 btn btn-circle btn-primary shadow-lg hover:btn-primary hover:shadow-xl transition-all"
+        title="Upload new photo"
+      >
+        <lucide-icon [name]="cameraIcon" class="size-6" />
+      </button>
+    </div>
+
+    <h2 class="text-2xl font-semibold mt-4">
+      {{ memberDetails()?.displayName }}
+    </h2>
+    <p class="text-sm text-base-content/60">
+      {{ memberDetails()?.dateOfBirth | date }} • {{ memberDetails()?.city }},
+      {{ memberDetails()?.country }}
+    </p>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col gap-3 mt-6 w-full">
+      <a
+        [routerLink]="['/profile/member-details', memberDetails()?.id]"
+        class="btn btn-primary w-full gap-2"
+      >
+        <lucide-icon [name]="editIcon" class="size-5" />
+        Edit Profile
+      </a>
+      <button
+        type="button"
+        class="btn btn-outline btn-error w-full gap-2"
+        (click)="onLogoutClick()"
+      >
+        <lucide-icon [name]="logoutIcon" class="size-5" />
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- Photo Thumbnails -->
+  @if(memberDetails()?.photos && memberDetails()!.photos.length > 0) {
+  <div class="mt-6">
+    <div class="grid grid-cols-4 gap-2">
+      @for(p of memberDetails()?.photos; track p.url) {
+      <img
+        [src]="p.url"
+        class="w-full h-20 object-cover rounded cursor-pointer hover:opacity-75 transition-opacity"
+        alt="Photo"
+      />
+      }
+    </div>
+  </div>
+  }
+</div>
