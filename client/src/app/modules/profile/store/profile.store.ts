@@ -4,18 +4,19 @@ import { Router } from '@angular/router';
 import { tapResponse } from '@ngrx/operators';
 import { signalStore, withMethods, withProps } from '@ngrx/signals';
 import { Member } from '../../../shared/models/member.model';
-import { MemberService } from '../../../shared/services/member.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthStore } from '../../../shared/store/auth.store';
 import { GlobalStore } from '../../../shared/store/global.store';
+import { BatchUploadResponse } from '../models/batch-upload-response.models';
 import { CreateMemberDetailsRequest } from '../models/create-member.models';
+import { ProfileService } from '../services/profile.service';
 
 export const ProfileStore = signalStore(
   { providedIn: 'root' },
   withProps(() => ({
     authStore: inject(AuthStore),
     globalStore: inject(GlobalStore),
-    memberService: inject(MemberService),
+    profileService: inject(ProfileService),
     toastService: inject(ToastService),
     router: inject(Router),
   })),
@@ -24,7 +25,7 @@ export const ProfileStore = signalStore(
       CreateMemberDetailsRequest,
       Member
     >((payload) =>
-      store.memberService.createMemberDetails(payload).pipe(
+      store.profileService.createMemberDetails(payload).pipe(
         tapResponse({
           next: (response) => {
             store.toastService.show(
@@ -48,7 +49,7 @@ export const ProfileStore = signalStore(
       CreateMemberDetailsRequest,
       Member
     >((payload) =>
-      store.memberService.updateMemberDetails(payload).pipe(
+      store.profileService.updateMemberDetails(payload).pipe(
         tapResponse({
           next: (response) => {
             store.toastService.show(
@@ -68,9 +69,96 @@ export const ProfileStore = signalStore(
       )
     );
 
+    const uploadBatchPhotos = store.globalStore.withFormSubmission<
+      File[],
+      BatchUploadResponse
+    >((files) =>
+      store.profileService.uploadBatchPhotos(files).pipe(
+        tapResponse({
+          next: (response) => {
+            store.toastService.show(
+              `${response.totalUploaded} photos uploaded successfully.`,
+              'success'
+            );
+            store.authStore.setPhotos(response.photos);
+          },
+          error: (error: HttpErrorResponse) => {
+            store.toastService.show(
+              error.error.detail || 'Something went wrong',
+              'error'
+            );
+          },
+        })
+      )
+    );
+
+    const uploadProfilePhoto = store.globalStore.withFormSubmission<File, void>(
+      (file) =>
+        store.profileService.uploadProfilePhoto(file).pipe(
+          tapResponse({
+            next: () => {
+              store.authStore.getCurrentUser();
+              store.toastService.show(
+                `Profile photo uploaded successfully.`,
+                'success'
+              );
+            },
+            error: (error: HttpErrorResponse) => {
+              store.toastService.show(
+                error.error.detail || 'Something went wrong',
+                'error'
+              );
+            },
+          })
+        )
+    );
+
+    const deletePhoto = store.globalStore.withFormSubmission<string, void>(
+      (photoId) =>
+        store.profileService.deletePhoto(photoId).pipe(
+          tapResponse({
+            next: () => {
+              store.authStore.getCurrentUser();
+              store.toastService.show(`Photo deleted successfully.`, 'success');
+            },
+            error: (error: HttpErrorResponse) => {
+              store.toastService.show(
+                error.error.detail || 'Something went wrong',
+                'error'
+              );
+            },
+          })
+        )
+    );
+
+    const setMainPhoto = store.globalStore.withFormSubmission<string, void>(
+      (photoId) =>
+        store.profileService.setMainPhoto(photoId).pipe(
+          tapResponse({
+            next: () => {
+              store.toastService.show(
+                `Main photo updated successfully.`,
+                'success'
+              );
+              store.authStore.getCurrentUser();
+            },
+            error: (error: HttpErrorResponse) => {
+              store.toastService.show(
+                error.error.detail || 'Something went wrong',
+                'error'
+              );
+            },
+          })
+        )
+    );
+
     return {
       createMemberDetails,
       updateMemberDetails,
+      uploadBatchPhotos,
+      uploadProfilePhoto,
+      deletePhoto,
+      setMainPhoto,
     };
   })
 );

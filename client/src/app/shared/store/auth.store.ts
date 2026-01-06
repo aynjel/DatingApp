@@ -15,7 +15,7 @@ import { AuthService } from '../../modules/auth/services/auth.service';
 import { TokenResponse } from '../models/common-models';
 import { RegisterUserRequest } from '../models/dto/request/register-user.request';
 import { AuthUserResponse } from '../models/dto/response/auth-user.response';
-import { Member } from '../models/member.model';
+import { Member, Photo } from '../models/member.model';
 import { User } from '../models/user.model';
 import { MemberService } from '../services/member.service';
 import { ToastService } from '../services/toast.service';
@@ -54,6 +54,18 @@ export const AuthStore = signalStore(
 
     const setMemberDetails = (memberDetails: Member | undefined) => {
       patchState(store, { memberDetails });
+    };
+
+    const setPhotos = (photos: Photo[]) => {
+      const currentDetails = store.memberDetails();
+      if (currentDetails) {
+        patchState(store, {
+          memberDetails: {
+            ...currentDetails,
+            photos,
+          },
+        });
+      }
     };
 
     const setIsLoggedIn = (isLoggedIn: boolean) => {
@@ -142,6 +154,7 @@ export const AuthStore = signalStore(
       getCurrentUser,
 
       setMemberDetails,
+      setPhotos,
     };
   })
 );

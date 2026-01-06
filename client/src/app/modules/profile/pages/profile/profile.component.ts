@@ -1,15 +1,9 @@
-import {
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { Component, computed, inject, viewChild } from '@angular/core';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import { LucideAngularModule } from 'lucide-angular';
 import { Photo } from '../../../../shared/models/member.model';
-import { AuthStore } from '../../../../shared/store/auth.store';
+import { ModalService } from '../../../../shared/services/modal.service';
+import { PhotoManagementModalComponent } from '../../components/photo-management-modal/photo-management-modal.component';
 import { PhotoUploadModalComponent } from '../../components/photo-upload-modal/photo-upload-modal.component';
 import { ProfileAboutComponent } from '../../components/profile-about/profile-about.component';
 import {
@@ -18,26 +12,29 @@ import {
 } from '../../components/profile-details/profile-details.component';
 import { ProfileHeaderComponent } from '../../components/profile-header/profile-header.component';
 import { ProfilePhotosComponent } from '../../components/profile-photos/profile-photos.component';
+import { ProfileStore } from '../../store/profile.store';
 
 @Component({
   selector: 'app-profile',
   imports: [
     LucideAngularModule,
     SwalComponent,
-    PhotoUploadModalComponent,
     ProfileHeaderComponent,
     ProfileAboutComponent,
-    ProfilePhotosComponent,
     ProfileDetailsComponent,
+    ProfilePhotosComponent,
   ],
   templateUrl: './profile.component.html',
 })
-export class ProfileComponent implements OnInit {
-  private authStore = inject(AuthStore);
+export class ProfileComponent {
+  private profileStore = inject(ProfileStore);
+  private modalService = inject(ModalService);
+
   protected logoutAlert = viewChild<SwalComponent>('logoutAlert');
 
-  protected photoUploadModalOpen = signal(false);
-  protected memberDetails = computed(() => this.authStore.memberDetails());
+  protected memberDetails = computed(() =>
+    this.profileStore.authStore.memberDetails()
+  );
 
   protected profileDetails = computed<DetailInfo[]>(() => {
     const details = this.memberDetails();
@@ -67,27 +64,56 @@ export class ProfileComponent implements OnInit {
     ];
   });
 
-  ngOnInit(): void {
-    if (!this.authStore.memberDetails()) {
-      this.authStore.getCurrentUser();
-    }
-  }
+  private confirmDeleteSwal =
+    viewChild.required<SwalComponent>('confirmDeleteSwal');
 
   onLogout() {
-    this.authStore.logout();
+    this.profileStore.authStore.logout();
   }
 
   openPhotoUploadModal(): void {
-    this.photoUploadModalOpen.set(true);
+    this.modalService.open(PhotoUploadModalComponent, {
+      existingPhotos: this.memberDetails()?.photos || [],
+      photoSelected: (file: File) => {
+        this.profileStore.uploadProfilePhoto({
+          data: file,
+          onSuccess: () => {
+            this.modalService.close();
+          },
+        });
+      },
+      existingPhotoSelected: (photo: Photo) => {
+        this.profileStore.setMainPhoto({
+          data: photo.id,
+          onSuccess: () => {
+            this.modalService.close();
+          },
+        });
+      },
+    });
   }
 
-  onPhotoSelected(file: File): void {
-    console.log('New photo selected:', file);
-    // TODO: Implement photo upload logic here
+  openPhotoManagementModal(): void {
+    this.modalService.open(PhotoManagementModalComponent, {
+      photos: this.memberDetails()?.photos || [],
+      deletePhotoClicked: (photoId: string) =>
+        this.handleConfirmDelete(photoId),
+    });
   }
 
-  onExistingPhotoSelected(photo: Photo): void {
-    console.log('Existing photo selected:', photo);
-    // TODO: Implement existing photo selection logic here
+  private handleConfirmDelete(photoId: string): void {
+    this.modalService.close();
+    this.confirmDeleteSwal()
+      .fire()
+      .then((result) => {
+        console.log(result);
+        if (result.isConfirmed) {
+          this.profileStore.deletePhoto({
+            data: photoId,
+          });
+        } else {
+          this.openPhotoManagementModal();
+        }
+      });
   }
 }

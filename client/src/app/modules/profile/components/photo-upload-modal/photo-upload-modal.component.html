@@ -1,179 +1,141 @@
-@if (isOpen()) {
-<div class="fixed inset-0 z-50 flex items-center justify-center">
-  <!-- Backdrop -->
-  <div
-    class="absolute inset-0 bg-black/50 backdrop-blur-sm"
-    (click)="closeModal()"
-  ></div>
-
-  <!-- Modal -->
-  <div
-    class="relative bg-base-100 rounded-lg shadow-xl w-full max-w-lg mx-4 p-6 z-10 max-h-[90vh] overflow-y-auto"
+<!-- Tabs -->
+<div class="tabs tabs-border mb-4">
+  <button
+    role="tab"
+    type="button"
+    (click)="activeTab.set('upload')"
+    [class.tab-active]="activeTab() === 'upload'"
+    class="tab"
   >
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-2xl font-semibold">Profile Photo</h2>
-      <button
-        type="button"
-        (click)="closeModal()"
-        class="btn btn-sm btn-circle btn-ghost"
-      >
-        <lucide-icon [name]="closeIcon" class="size-5" />
-      </button>
-    </div>
+    Upload New
+  </button>
+  @if(existingPhotos.length > 0) {
+  <button
+    role="tab"
+    type="button"
+    (click)="activeTab.set('select')"
+    [class.tab-active]="activeTab() === 'select'"
+    class="tab"
+  >
+    Select Existing
+  </button>
+  }
+</div>
 
-    <!-- Tabs -->
-    <div class="tabs tabs-border mb-4">
-      <button
-        role="tab"
-        type="button"
-        (click)="activeTab.set('upload')"
-        [class.tab-active]="activeTab() === 'upload'"
-        class="tab"
-      >
-        Upload New
-      </button>
-      @if(existingPhotos().length > 0) {
-      <button
-        role="tab"
-        type="button"
-        (click)="activeTab.set('select')"
-        [class.tab-active]="activeTab() === 'select'"
-        class="tab"
-      >
-        Select Existing
-      </button>
-      }
-    </div>
+<!-- Content -->
+<div class="space-y-4">
+  <!-- Upload Tab -->
+  @if (activeTab() === 'upload') {
+  <div class="space-y-4">
+    <!-- File Input (Hidden) -->
+    <input
+      type="file"
+      id="fileInput"
+      accept="image/*"
+      class="hidden"
+      (change)="onFileSelected($event)"
+    />
 
-    <!-- Content -->
+    <!-- Preview or Upload Area -->
+    @if (previewUrl()) {
     <div class="space-y-4">
-      <!-- Upload Tab -->
-      @if (activeTab() === 'upload') {
-      <div class="space-y-4">
-        <!-- File Input (Hidden) -->
-        <input
-          type="file"
-          id="fileInput"
-          accept="image/*"
-          class="hidden"
-          (change)="onFileSelected($event)"
-        />
-
-        <!-- Preview or Upload Area -->
-        @if (previewUrl()) {
-        <div class="space-y-4">
-          <div class="flex justify-center">
-            <div class="relative w-full max-w-sm">
-              <img
-                [src]="previewUrl()"
-                alt="Preview"
-                class="w-full h-auto rounded-lg shadow-md"
-              />
-            </div>
-          </div>
-          <div class="text-sm text-base-content/60 text-center">
-            Selected: {{ selectedFile()?.name }}
-          </div>
-        </div>
-        } @else {
-        <div
-          (click)="triggerFileInput()"
-          class="border-2 border-dashed border-base-300 rounded-lg p-12 text-center cursor-pointer hover:border-primary hover:bg-base-200/50 transition-colors"
-        >
-          <div class="flex flex-col items-center gap-3">
-            <lucide-icon
-              [name]="uploadIcon"
-              class="size-12 text-base-content/40"
-            />
-            <div>
-              <p class="text-lg font-medium">Click to select a photo</p>
-              <p class="text-sm text-base-content/60 mt-1">
-                PNG, JPG, or GIF (Max 5MB)
-              </p>
-            </div>
-          </div>
-        </div>
-        }
-
-        <!-- Upload Actions -->
-        <div class="flex gap-3 justify-end pt-4">
-          <button type="button" (click)="closeModal()" class="btn btn-outline">
-            Cancel
-          </button>
-          @if (previewUrl()) {
-          <button
-            type="button"
-            (click)="triggerFileInput()"
-            class="btn btn-outline btn-primary"
-          >
-            Change Photo
-          </button>
-          }
-          <button
-            type="button"
-            (click)="onUpload()"
-            [disabled]="!selectedFile()"
-            class="btn btn-primary"
-          >
-            <lucide-icon [name]="uploadIcon" class="size-4" />
-            Upload
-          </button>
+      <div class="flex justify-center">
+        <div class="relative w-full max-w-sm">
+          <img
+            [src]="previewUrl()"
+            alt="Preview"
+            class="w-full h-auto rounded-lg shadow-md"
+          />
         </div>
       </div>
-      }
-
-      <!-- Select Tab -->
-      @if (activeTab() === 'select' && existingPhotos().length > 0) {
-      <div class="space-y-4">
-        <!-- Photos Grid -->
-        <div class="grid grid-cols-3 gap-3">
-          @for(photo of existingPhotos(); track photo.url) {
-          <div
-            (click)="onSelectExistingPhoto(photo)"
-            class="relative cursor-pointer overflow-hidden rounded-lg"
-            [class.ring-2]="selectedExistingPhoto() === photo"
-            [class.ring-primary]="selectedExistingPhoto() === photo"
-          >
-            <img
-              [src]="photo.url"
-              alt="Photo"
-              class="w-full h-24 object-cover hover:opacity-75 transition-opacity"
-            />
-            @if(selectedExistingPhoto() === photo) {
-            <div
-              class="absolute inset-0 flex items-center justify-center bg-black/40"
-            >
-              <lucide-icon [name]="checkIcon" class="size-8 text-white" />
-            </div>
-            }
-            <!-- @if(photo.isMain) {
-            <div class="absolute top-1 right-1 badge badge-primary badge-sm">
-              Main
-            </div>
-            } -->
-          </div>
-          }
+      <div class="text-sm text-base-content/60 text-center">
+        Selected: {{ selectedFile()?.name }}
+      </div>
+    </div>
+    } @else {
+    <div
+      (click)="triggerFileInput()"
+      class="border-2 border-dashed border-base-300 rounded-lg p-12 text-center cursor-pointer hover:border-primary hover:bg-base-200/50 transition-colors"
+    >
+      <div class="flex flex-col items-center gap-3">
+        <lucide-icon [name]="uploadIcon" class="size-12 text-base-content/40" />
+        <div>
+          <p class="text-lg font-medium">Click to select a photo</p>
+          <p class="text-sm text-base-content/60 mt-1">
+            PNG, JPG, or GIF (Max 5MB)
+          </p>
         </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
 
-        <!-- Select Actions -->
-        <div class="flex gap-3 justify-end pt-4">
-          <button type="button" (click)="closeModal()" class="btn btn-outline">
-            Cancel
-          </button>
-          <button
-            type="button"
-            (click)="onConfirmExistingPhoto()"
-            [disabled]="!selectedExistingPhoto()"
-            class="btn btn-primary"
-          >
-            <lucide-icon [name]="checkIcon" class="size-4" />
-            Select
-          </button>
+  <!-- Select Tab -->
+  @if (activeTab() === 'select' && existingPhotos.length > 0) {
+  <div class="space-y-4">
+    <!-- Photos Grid -->
+    <div class="grid grid-cols-3 gap-3">
+      @for(photo of existingPhotos; track photo.url) {
+      <div
+        (click)="onSelectExistingPhoto(photo)"
+        class="relative cursor-pointer overflow-hidden rounded-lg"
+      >
+        <img
+          [src]="photo.url"
+          alt="Photo"
+          class="w-full h-32 object-cover rounded-lg group-hover:opacity-75 transition-opacity"
+          [class.opacity-50]="photo.isMain"
+          [class.border-4]="photo.isMain"
+          [class.border-primary]="photo.isMain"
+        />
+        @if(selectedExistingPhoto() === photo) {
+        <div
+          class="absolute inset-0 flex items-center justify-center bg-black/40"
+        >
+          <lucide-icon [name]="checkIcon" class="size-8 text-white" />
         </div>
+        } @if(photo.isMain) {
+        <div class="absolute top-1 right-1 badge badge-primary badge-sm">
+          Main
+        </div>
+        }
       </div>
       }
     </div>
   </div>
+  }
 </div>
-}
+
+<!-- Actions -->
+<div class="modal-action">
+  @if (activeTab() === 'upload') { @if (previewUrl()) {
+  <button
+    type="button"
+    (click)="triggerFileInput()"
+    class="btn btn-outline btn-primary"
+  >
+    Change Photo
+  </button>
+  }
+  <button
+    type="button"
+    (click)="onUpload()"
+    [disabled]="!selectedFile()"
+    class="btn btn-primary"
+  >
+    <lucide-icon [name]="uploadIcon" class="size-4" />
+    Upload
+  </button>
+  } @else if (activeTab() === 'select' && existingPhotos.length > 0) {
+  <button
+    type="button"
+    (click)="onConfirmExistingPhoto()"
+    [disabled]="!selectedExistingPhoto()"
+    class="btn btn-primary"
+  >
+    <lucide-icon [name]="checkIcon" class="size-4" />
+    Select
+  </button>
+  }
+</div>

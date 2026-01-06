@@ -16,7 +16,10 @@
         }"
       />
 
-      <app-profile-photos [photos]="memberDetails()?.photos ?? []" />
+      <app-profile-photos
+        [photos]="memberDetails()?.photos ?? []"
+        (openManagementClicked)="openPhotoManagementModal()"
+      />
 
       <app-profile-details [details]="profileDetails()" />
     </div>
@@ -34,10 +37,13 @@
   (confirm)="onLogout()"
 />
 
-<!-- Photo Upload Modal -->
-<app-photo-upload-modal
-  [(isOpen)]="photoUploadModalOpen"
-  [existingPhotos]="memberDetails()?.photos || []"
-  (photoSelected)="onPhotoSelected($event)"
-  (existingPhotoSelected)="onExistingPhotoSelected($event)"
-/>
+<swal
+  #confirmDeleteSwal
+  title="Are you sure you want to delete this photo?"
+  text="This action cannot be undone."
+  icon="warning"
+  [showCancelButton]="true"
+  confirmButtonText="Yes, delete it!"
+  [focusCancel]="true"
+>
+</swal>

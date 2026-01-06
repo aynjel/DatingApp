@@ -1,25 +1,17 @@
-<dialog #modalRef class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box">
-    <div class="flex justify-between items-center mb-4">
-      @if(title()){
-      <h3 class="font-bold text-lg">{{ title() }}</h3>
-      }
-      <form method="dialog">
-        <button
-          class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-          (click)="close()"
-        >
-          ✕
-        </button>
-      </form>
-    </div>
+@if (modalService.activeModal(); as modal) {
+<dialog #modalElement class="modal">
+  <div class="modal-box relative">
+    <button
+      (click)="close()"
+      class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+    >
+      ✕
+    </button>
 
-    <div class="py-4">
-      <ng-content></ng-content>
-    </div>
-
-    <div class="modal-action">
-      <ng-content select="[actions]"></ng-content>
+    <div class="pt-4">
+      <ng-container
+        *ngComponentOutlet="modal.component; inputs: modal.inputs"
+      />
     </div>
   </div>
 
@@ -27,3 +19,4 @@
     <button (click)="close()">close</button>
   </form>
 </dialog>
+}

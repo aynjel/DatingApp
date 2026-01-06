@@ -1,27 +1,36 @@
-import { Component, ElementRef, input, output, viewChild } from '@angular/core';
+import { NgComponentOutlet } from '@angular/common';
+import {
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  viewChild,
+} from '@angular/core';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-modal',
-  imports: [],
+  imports: [NgComponentOutlet],
   templateUrl: './modal.component.html',
-  styleUrl: './modal.component.scss',
 })
 export class ModalComponent {
-  title = input<string>('');
-  onClose = output<void>();
+  modalService = inject(ModalService);
 
-  modalRef = viewChild<ElementRef<HTMLDialogElement>>('modalRef');
+  modalRef = viewChild<ElementRef<HTMLDialogElement>>('modalElement');
 
-  open() {
-    if (this.modalRef) {
-      this.modalRef()?.nativeElement.showModal();
-    }
+  constructor() {
+    // Sync the signal state with the native <dialog> API
+    effect(() => {
+      const el = this.modalRef()?.nativeElement;
+      if (this.modalService.activeModal()) {
+        el?.showModal(); // Native API for top-layer rendering
+      } else {
+        el?.close();
+      }
+    });
   }
 
   close() {
-    if (this.modalRef) {
-      this.modalRef()?.nativeElement.close();
-      this.onClose.emit();
-    }
+    this.modalService.close();
   }
 }

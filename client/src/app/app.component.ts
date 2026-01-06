@@ -1,12 +1,13 @@
 import { Component, computed, effect, inject, Signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { ToastComponent } from '@component/toast/toast.component';
+import { ModalComponent } from './shared/components/modal/modal.component';
 import { NavComponent } from './shared/components/nav/nav.component';
 import { AuthStore } from './shared/store/auth.store';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavComponent, ToastComponent],
+  imports: [RouterOutlet, NavComponent, ToastComponent, ModalComponent],
   template: `
     <!-- @if(authStore.isLoggedIn() && isMemberDetailsSetup()) { -->
     <app-nav />
@@ -18,6 +19,7 @@ import { AuthStore } from './shared/store/auth.store';
       <router-outlet />
     </div>
     <app-toast />
+    <app-modal />
   `,
 })
 export class AppComponent {

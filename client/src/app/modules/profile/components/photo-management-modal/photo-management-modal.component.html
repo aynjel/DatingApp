@@ -1,0 +1,37 @@
+@if (photos.length === 0) {
+<div class="flex items-center justify-center h-32 text-gray-500">
+  <p>No photos to manage</p>
+</div>
+} @else {
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+  @for (photo of photos; track photo.id) {
+  <div class="relative group">
+    <div class="relative overflow-hidden rounded-lg">
+      <img
+        [src]="photo.url"
+        class="w-full h-32 object-cover rounded-lg group-hover:opacity-75 transition-opacity"
+        [class.opacity-50]="photo.isMain"
+        [class.border-4]="photo.isMain"
+        [class.border-primary]="photo.isMain"
+        alt="Photo"
+      />
+      @if (photo.isMain) {
+      <div class="absolute top-2 right-2 badge badge-primary badge-sm">
+        Main
+      </div>
+      }
+    </div>
+    @if(!photo.isMain) {
+    <button
+      (click)="openDeleteConfirm(photo.id)"
+      class="absolute bottom-2 right-2 bg-error text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+      title="Delete photo"
+      aria-label="Delete photo"
+    >
+      <lucide-angular [name]="trashIcon" [size]="18"></lucide-angular>
+    </button>
+    }
+  </div>
+  }
+</div>
+}

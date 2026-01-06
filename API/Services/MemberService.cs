@@ -94,13 +94,19 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
     {
         var member = await memberRepository.GetMemberByIdAsync(memberId) ?? throw new NotFoundException($"Member with ID {memberId} not found");
 
+        // Set all photos to non-main
+        foreach (var p in member.Photos)
+        {
+            p.IsMain = false;
+        }
+        // Set the new photo as main
         photo.IsMain = true;
         member.ImageUrl = photo.Url;
         member.User.ImageUrl = photo.Url;
 
         member.Photos.Add(photo);
         memberRepository.Update(member);
-        
+
         return await memberRepository.SaveAllAsync();
     }
 

@@ -1,18 +1,6 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  input,
-  model,
-  Output,
-  signal,
-} from '@angular/core';
-import {
-  CheckIcon,
-  LucideAngularModule,
-  UploadIcon,
-  XIcon,
-} from 'lucide-angular';
+import { Component, Input, signal } from '@angular/core';
+import { CheckIcon, LucideAngularModule, UploadIcon } from 'lucide-angular';
 import { Photo } from '../../../../shared/models/member.model';
 
 @Component({
@@ -21,14 +9,12 @@ import { Photo } from '../../../../shared/models/member.model';
   templateUrl: './photo-upload-modal.component.html',
 })
 export class PhotoUploadModalComponent {
-  isOpen = model<boolean>(false);
-  existingPhotos = input<Photo[]>([]);
+  @Input() existingPhotos: Photo[] = [];
 
-  @Output() photoSelected = new EventEmitter<File>();
-  @Output() existingPhotoSelected = new EventEmitter<Photo>();
+  @Input() photoSelected: (file: File) => void = () => {};
+  @Input() existingPhotoSelected: (photo: Photo) => void = () => {};
 
   readonly uploadIcon = UploadIcon;
-  readonly closeIcon = XIcon;
   readonly checkIcon = CheckIcon;
 
   selectedFile = signal<File | null>(null);
@@ -67,24 +53,25 @@ export class PhotoUploadModalComponent {
 
   onUpload(): void {
     if (this.selectedFile()) {
-      this.photoSelected.emit(this.selectedFile()!);
+      this.photoSelected(this.selectedFile()!);
       this.closeModal();
     }
   }
 
   onSelectExistingPhoto(photo: Photo): void {
-    this.selectedExistingPhoto.set(photo);
+    if (!photo.isMain) {
+      this.selectedExistingPhoto.set(photo);
+    }
   }
 
   onConfirmExistingPhoto(): void {
     if (this.selectedExistingPhoto()) {
-      this.existingPhotoSelected.emit(this.selectedExistingPhoto()!);
+      this.existingPhotoSelected(this.selectedExistingPhoto()!);
       this.closeModal();
     }
   }
 
   closeModal(): void {
-    this.isOpen.set(false);
     this.selectedFile.set(null);
     this.previewUrl.set(null);
     this.selectedExistingPhoto.set(null);
@@ -92,6 +79,7 @@ export class PhotoUploadModalComponent {
   }
 
   triggerFileInput(): void {
-    document.getElementById('fileInput')?.click();
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    fileInput.click();
   }
 }
