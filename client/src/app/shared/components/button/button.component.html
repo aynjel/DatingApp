@@ -1,0 +1,9 @@
+<button
+  [type]="type()"
+  class="btn btn-{{ color() }} w-full"
+  [disabled]="isLoading()"
+>
+  @if(isLoading()) {
+  <span class="loading loading-spinner loading-xs"></span>
+  } @else { {{ label() }} }
+</button>

@@ -1,60 +1,22 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <div class="flex flex-col gap-3">
-    <div>
-      <input
-        type="email"
-        formControlName="email"
-        class="input input-bordered w-full"
-        [readOnly]="isLoading()"
-        [class.input-error]="
-          loginForm.get('email')?.invalid && loginForm.get('email')?.touched
-        "
-        [class.input-success]="
-          loginForm.get('email')?.valid && loginForm.get('email')?.touched
-        "
-        placeholder="Email"
-      />
-      @if(loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-      <span class="text-error text-xs">
-        @for(error of loginForm.get('email')?.errors | keyvalue; track error) {
-        @switch (error.key) { @case ('required') { Email is required. } @case
-        ('email') { Invalid email format. } } }
-      </span>
-      }
-    </div>
-
-    <div>
-      <input
-        type="password"
-        formControlName="password"
-        [readOnly]="isLoading()"
-        class="input input-bordered w-full"
-        [class.input-error]="
-          loginForm.get('password')?.invalid &&
-          loginForm.get('password')?.touched
-        "
-        [class.input-success]="
-          loginForm.get('password')?.valid && loginForm.get('password')?.touched
-        "
-        placeholder="Password"
-      />
-      @if(loginForm.get('password')?.invalid &&
-      loginForm.get('password')?.touched) {
-      <span class="text-error text-xs">
-        @for(error of loginForm.get('password')?.errors | keyvalue; track error)
-        { @switch (error.key) { @case ('required') { Password is required. }
-        @case ('minlength') { Password must be at least 6 characters. } } }
-      </span>
-      }
-    </div>
-    <button
+    <app-text-input
+      formControlName="email"
+      label="Email"
+      type="email"
+      [isReadOnly]="isLoading()"
+    />
+    <app-text-input
+      formControlName="password"
+      label="Password"
+      type="password"
+      [isReadOnly]="isLoading()"
+    />
+    <app-button
+      label="Log In"
+      [isLoading]="isLoading()"
       type="submit"
-      class="btn btn-primary w-full"
-      [disabled]="isLoading()"
-    >
-      @if(isLoading()) {
-      <span class="loading loading-spinner loading-xs"></span>
-      } @else { Sign In }
-    </button>
+      color="secondary"
+    />
   </div>
 </form>

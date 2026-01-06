@@ -1,4 +1,3 @@
-import { KeyValuePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import {
   AbstractControl,
@@ -8,15 +7,16 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { ButtonComponent } from '@component/button/button.component';
+import { TextInputComponent } from '../../../../shared/components/text-input/text-input.component';
 import { RegisterUserRequest } from '../../../../shared/models/dto/request/register-user.request';
 import { AuthStore } from '../../../../shared/store/auth.store';
 import { GlobalStore } from '../../../../shared/store/global.store';
 
 @Component({
   selector: 'app-register-form',
-  imports: [ReactiveFormsModule, KeyValuePipe],
+  imports: [ReactiveFormsModule, TextInputComponent, ButtonComponent],
   templateUrl: './register-form.component.html',
-  styleUrl: './register-form.component.scss',
 })
 export class RegisterFormComponent {
   private globalStore = inject(GlobalStore);

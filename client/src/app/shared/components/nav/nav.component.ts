@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   ElementRef,
   HostListener,
   inject,
@@ -37,9 +38,12 @@ import { AuthStore } from '../../store/auth.store';
   templateUrl: './nav.component.html',
 })
 export class NavComponent {
-  protected authStore = inject(AuthStore);
+  private authStore = inject(AuthStore);
   protected sidebarOpen = signal(false);
   @ViewChild('sidebar') sidebarElement?: ElementRef<HTMLElement>;
+
+  isLoggedIn = computed(() => this.authStore.isLoggedIn());
+  user = computed(() => this.authStore.currentUser());
 
   readonly menuIcon = MenuIcon;
   readonly usersIcon = UsersRoundIcon;
@@ -82,6 +86,11 @@ export class NavComponent {
 
   closeSidebar() {
     this.sidebarOpen.set(false);
+  }
+
+  onLogout() {
+    this.authStore.logout();
+    this.closeSidebar();
   }
 
   @HostListener('document:keydown.escape', ['$event'])
