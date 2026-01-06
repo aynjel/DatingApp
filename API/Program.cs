@@ -127,20 +127,7 @@ if (!builder.Environment.IsDevelopment())
 }
 
 builder.Services.AddHealthChecks()
-    .AddCheck("database", () =>
-    {
-        using var scope = builder.Services.BuildServiceProvider().CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-        try
-        {
-            context.Database.CanConnect();
-            return HealthCheckResult.Healthy("Database connection is healthy");
-        }
-        catch (Exception ex)
-        {
-            return HealthCheckResult.Unhealthy("Database connection failed", ex);
-        }
-    })
+    .AddDbContextCheck<DataContext>("database", tags: ["db"])
     .AddCheck("self", () => HealthCheckResult.Healthy("Application is running"));
 
 #region DEPENDENCY INJECTION FOR REPOSITORIES & SERVICES
