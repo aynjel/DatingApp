@@ -14,9 +14,11 @@
     />
     <app-button
       label="Log In"
-      [isLoading]="isLoading()"
       type="submit"
+      additionalClasses="w-full"
       color="secondary"
+      [isDisabled]="loginForm.invalid"
+      [isLoading]="isLoading()"
     />
   </div>
 </form>

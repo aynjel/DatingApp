@@ -12,9 +12,11 @@ import { RegisterFormComponent } from '../../components/register-form/register-f
     >
       <div class="card w-full max-w-md shadow-2xl bg-base-100">
         <div class="card-body">
-          <h2 class="card-title text-3xl justify-center mb-2">Sign Up</h2>
+          <h2 class="card-title text-3xl justify-center mb-2">
+            Create an Account
+          </h2>
           <p class="text-center text-base-content/70 mb-6">
-            Create your account to get started
+            Join our community and start your journey today!
           </p>
 
           <app-register-form #registerFormRef />

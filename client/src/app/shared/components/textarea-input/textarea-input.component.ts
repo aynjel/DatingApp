@@ -7,15 +7,14 @@ import {
 } from '@angular/forms';
 
 @Component({
-  selector: 'app-text-input',
+  selector: 'app-textarea-input',
   imports: [ReactiveFormsModule],
-  templateUrl: './text-input.component.html',
+  templateUrl: './textarea-input.component.html',
 })
-export class TextInputComponent implements ControlValueAccessor {
-  label = input<string>('');
-  type = input<string>('text');
+export class TextareaInputComponent implements ControlValueAccessor {
+  label = input.required<string>();
+
   isReadOnly = input<boolean>(false);
-  maxDate = input<string | null>(null);
 
   constructor(@Self() public ngControl: NgControl) {
     this.ngControl.valueAccessor = this;

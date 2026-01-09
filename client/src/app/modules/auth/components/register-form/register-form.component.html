@@ -1,10 +1,21 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-  <div class="flex flex-col gap-3">
-    <app-text-input
-      formControlName="displayName"
-      label="Name"
-      [isReadOnly]="isLoading()"
-    />
+<ul class="steps w-full mb-6">
+  <li class="step step-success">
+    <span class="step-icon">
+      <lucide-icon [name]="credentialsIcon" class="size-5" />
+    </span>
+    Credentials
+  </li>
+  <li class="step" [class.step-success]="currentStep() === 2">
+    <span class="step-icon">
+      <lucide-icon [name]="detailsIcon" class="size-5" />
+    </span>
+    Details
+  </li>
+</ul>
+
+@if(currentStep() === 1) {
+<form [formGroup]="userForm">
+  <div class="flex flex-col gap-y-3">
     <app-text-input
       formControlName="email"
       label="Email"
@@ -23,11 +34,86 @@
       type="password"
       [isReadOnly]="isLoading()"
     />
+    <button
+      type="button"
+      class="btn btn-secondary w-full"
+      (click)="onNextStep()"
+      [disabled]="userForm.invalid || isLoading()"
+    >
+      <lucide-icon [name]="nextIcon" class="size-5" />
+      Next
+    </button>
+  </div>
+</form>
+} @if(currentStep() === 2) {
+<form [formGroup]="memberDetailsForm" (ngSubmit)="onSubmit()">
+  <div class="flex flex-col gap-y-3">
+    <!-- Choose buttons for man and woman -->
+    <div class="flex items-center justify-between">
+      @for(option of genderOptions; track option) {
+      <button
+        type="button"
+        class="btn flex-1 mx-1 capitalize"
+        [class.btn-secondary]="genderField().value === option"
+        [class.btn-outline]="genderField().value !== option"
+        (click)="genderField().setValue(option)"
+      >
+        <lucide-icon
+          [name]="option === 'male' ? boyIcon : girlIcon"
+          class="size-5 mr-2"
+        />
+        {{ option }}
+      </button>
+      }
+    </div>
+    @if(genderField().getError('required')) {
+    <div class="validation-hint text-error text-xs">
+      Please select a gender.
+    </div>
+    }
+    <app-text-input
+      formControlName="displayName"
+      label="Display Name"
+      type="text"
+      [isReadOnly]="isLoading()"
+    />
+    <app-text-input
+      formControlName="dateOfBirth"
+      label="Date of Birth"
+      type="date"
+      [isReadOnly]="isLoading()"
+      [maxDate]="getMaxDate()"
+    />
+    <app-textarea-input
+      formControlName="description"
+      label="Description"
+      [isReadOnly]="isLoading()"
+    />
+    <app-interest-input
+      label="Interests"
+      [isReadOnly]="isLoading()"
+      (onAddInterest)="onInterestAdded($event)"
+    />
+    <app-text-input
+      formControlName="city"
+      label="City"
+      type="text"
+      [isReadOnly]="isLoading()"
+    />
+    <app-text-input
+      formControlName="country"
+      label="Country"
+      type="text"
+      [isReadOnly]="isLoading()"
+    />
     <app-button
-      label="Sign Up"
-      [isLoading]="isLoading()"
+      label="Register"
       type="submit"
+      additionalClasses="w-full"
       color="secondary"
+      [isDisabled]="memberDetailsForm.invalid"
+      [isLoading]="isLoading()"
     />
   </div>
 </form>
+}

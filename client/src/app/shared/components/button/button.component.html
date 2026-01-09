@@ -1,9 +1,19 @@
+@let responsiveClasses = "btn-xs sm:btn-sm md:btn-md"; @let isClickable =
+(type().toLowerCase() === 'button' || type().toLowerCase() === 'link') &&
+!isDisabled();
+
 <button
   [type]="type()"
-  class="btn btn-{{ color() }} w-full"
-  [disabled]="isLoading()"
+  class="btn btn-{{ color() }} {{
+    isResponsive() ? responsiveClasses : 'btn-' + size()
+  }} {{ additionalClasses() }}"
+  [disabled]="isDisabled() || isLoading()"
+  (click)="isClickable ? onClick.emit() : null"
 >
   @if(isLoading()) {
   <span class="loading loading-spinner loading-xs"></span>
-  } @else { {{ label() }} }
+  } @else {
+  <ng-content select="[icon]"></ng-content>
+  {{ label() }}
+  }
 </button>

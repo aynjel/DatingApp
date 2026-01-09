@@ -33,21 +33,26 @@
         <lucide-icon [name]="bellIcon" class="size-6" />
       </button>
       } @else {
-      <!-- Not logged in: Show login and register buttons -->
-      <a
-        routerLink="/auth/login"
-        class="btn btn-ghost btn-sm text-white hover:bg-white/10 gap-2"
+      <app-button
+        label="Login"
+        color="neutral"
+        size="sm"
+        [routerLink]="'/auth/login'"
       >
-        <lucide-icon [name]="loginIcon" class="size-5" />
-        Login
-      </a>
-      <a
-        routerLink="/auth/register"
-        class="btn btn-primary btn-sm text-white hover:opacity-90 gap-2"
+        <ng-container icon>
+          <lucide-icon [name]="loginIcon" class="size-4" />
+        </ng-container>
+      </app-button>
+      <app-button
+        label="Register"
+        color="secondary"
+        size="sm"
+        [routerLink]="'/auth/register'"
       >
-        <lucide-icon [name]="registerIcon" class="size-5" />
-        Register
-      </a>
+        <ng-container icon>
+          <lucide-icon [name]="registerIcon" class="size-4" />
+        </ng-container>
+      </app-button>
       }
     </div>
   </div>

@@ -25,6 +25,7 @@ import {
 } from 'lucide-angular';
 import { AvatarComponent } from 'ngx-avatar-2';
 import { AuthStore } from '../../store/auth.store';
+import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'app-nav',
@@ -34,6 +35,7 @@ import { AuthStore } from '../../store/auth.store';
     SwalComponent,
     AvatarComponent,
     RouterLinkActive,
+    ButtonComponent,
   ],
   templateUrl: './nav.component.html',
 })

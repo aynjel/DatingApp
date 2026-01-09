@@ -1,0 +1,64 @@
+<div class="flex flex-wrap gap-2 mb-2">
+  @for(interest of selectedInterests(); track interest) {
+  <div class="badge badge-outline">
+    <span>{{ interest }}</span>
+    <button
+      type="button"
+      (click)="removeInterest(interest)"
+      class="btn btn-xs btn-circle btn-ghost p-0 h-4 w-4 min-h-0"
+    >
+      <lucide-icon [name]="removeIcon" class="size-3" />
+    </button>
+  </div>
+  }
+</div>
+<div class="flex gap-2">
+  <div class="flex-1">
+    <label class="floating-label text-left">
+      <span>{{ label() }}</span>
+      <input
+        [(ngModel)]="interestInput"
+        class="input w-full"
+        type="text"
+        placeholder="Interest"
+        [disabled]="
+          isReadOnly() || selectedInterests().length >= maxInterests()
+        "
+        [class.cursor-not-allowed]="
+          isReadOnly() || selectedInterests().length >= maxInterests()
+        "
+        [class.input-error]="interestError()"
+        [class.input-success]="
+          !interestError() && interestInput().trim() !== ''
+        "
+        #valueInput
+        (keydown.enter)="addInterest()"
+      />
+      @if(interestError()) {
+      <div class="text-error text-xs mt-1 block">{{ interestError() }}</div>
+      } @if(selectedInterests().length >= maxInterests()) {
+      <div class="text-error text-xs mt-1 block">
+        Reached maximum of {{ maxInterests() }} interests.
+      </div>
+      }
+    </label>
+  </div>
+  <button
+    type="button"
+    class="btn btn-neutral"
+    (click)="addInterest()"
+    [class.cursor-not-allowed]="
+      isReadOnly() ||
+      selectedInterests().length >= maxInterests() ||
+      interestInput().trim() === ''
+    "
+    [disabled]="
+      isReadOnly() ||
+      selectedInterests().length >= maxInterests() ||
+      interestInput().trim() === ''
+    "
+  >
+    <lucide-icon [name]="addIcon" class="size-4" />
+    Add
+  </button>
+</div>
