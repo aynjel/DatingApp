@@ -7,7 +7,7 @@
     [class.tab-active]="activeTab() === 'upload'"
     class="tab"
   >
-    Upload New
+    Upload New Profile
   </button>
   @if(existingPhotos.length > 0) {
   <button
@@ -27,6 +27,15 @@
   <!-- Upload Tab -->
   @if (activeTab() === 'upload') {
   <div class="space-y-4">
+    @if(existingPhotos.length === 10) {
+    <div class="alert alert-warning">
+      <lucide-angular [name]="alertIcon" [size]="20"></lucide-angular>
+      <span
+        >You have reached the maximum of 10 photos. Please delete some photos
+        before uploading new ones.</span
+      >
+    </div>
+    }
     <!-- File Input (Hidden) -->
     <input
       type="file"
@@ -54,8 +63,11 @@
     </div>
     } @else {
     <div
-      (click)="triggerFileInput()"
-      class="border-2 border-dashed border-base-300 rounded-lg p-12 text-center cursor-pointer hover:border-primary hover:bg-base-200/50 transition-colors"
+      (click)="existingPhotos.length !== 10 ? triggerFileInput() : null"
+      [class.cursor-pointer]="existingPhotos.length === 10"
+      [class.cursor-not-allowed]="existingPhotos.length === 10"
+      [class.opacity-50]="existingPhotos.length === 10"
+      class="border-2 border-dashed border-base-300 rounded-lg p-12 text-center hover:border-primary hover:bg-base-200/50 transition-colors"
     >
       <div class="flex flex-col items-center gap-3">
         <lucide-icon [name]="uploadIcon" class="size-12 text-base-content/40" />

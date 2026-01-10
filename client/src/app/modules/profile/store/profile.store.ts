@@ -3,11 +3,11 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { tapResponse } from '@ngrx/operators';
 import { signalStore, withMethods, withProps } from '@ngrx/signals';
+import { BatchPhotoUploadResponseDto } from '../../../shared/models/dto/response/photo.response';
 import { Member } from '../../../shared/models/member.model';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthStore } from '../../../shared/store/auth.store';
 import { GlobalStore } from '../../../shared/store/global.store';
-import { BatchUploadResponse } from '../models/batch-upload-response.models';
 import { CreateMemberDetailsRequest } from '../models/create-member.models';
 import { ProfileService } from '../services/profile.service';
 
@@ -71,7 +71,7 @@ export const ProfileStore = signalStore(
 
     const uploadBatchPhotos = store.globalStore.withFormSubmission<
       File[],
-      BatchUploadResponse
+      BatchPhotoUploadResponseDto
     >((files) =>
       store.profileService.uploadBatchPhotos(files).pipe(
         tapResponse({

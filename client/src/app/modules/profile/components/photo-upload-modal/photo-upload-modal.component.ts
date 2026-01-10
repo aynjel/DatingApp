@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, signal } from '@angular/core';
-import { CheckIcon, LucideAngularModule, UploadIcon } from 'lucide-angular';
+import {
+  AlertCircle,
+  CheckIcon,
+  LucideAngularModule,
+  UploadIcon,
+} from 'lucide-angular';
 import { Photo } from '../../../../shared/models/member.model';
 
 @Component({
@@ -16,6 +21,7 @@ export class PhotoUploadModalComponent {
 
   readonly uploadIcon = UploadIcon;
   readonly checkIcon = CheckIcon;
+  readonly alertIcon = AlertCircle;
 
   selectedFile = signal<File | null>(null);
   previewUrl = signal<string | null>(null);

@@ -98,6 +98,14 @@ export class ProfileComponent {
       photos: this.memberDetails()?.photos || [],
       deletePhotoClicked: (photoId: string) =>
         this.handleConfirmDelete(photoId),
+      uploadPhotosClicked: (files: File[]) => {
+        this.profileStore.uploadBatchPhotos({
+          data: files,
+          onSuccess: () => {
+            this.modalService.close();
+          },
+        });
+      },
     });
   }
 
@@ -106,7 +114,6 @@ export class ProfileComponent {
     this.confirmDeleteSwal()
       .fire()
       .then((result) => {
-        console.log(result);
         if (result.isConfirmed) {
           this.profileStore.deletePhoto({
             data: photoId,

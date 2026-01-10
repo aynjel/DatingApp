@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { BatchPhotoUploadResponseDto } from '../../../shared/models/dto/response/photo.response';
 import { Member } from '../../../shared/models/member.model';
 import { MemberService } from '../../../shared/services/member.service';
-import { BatchUploadResponse } from '../models/batch-upload-response.models';
 import { CreateMemberDetailsRequest } from '../models/create-member.models';
 
 @Injectable({
@@ -47,10 +47,12 @@ export class ProfileService {
     );
   }
 
-  public uploadBatchPhotos(files: File[]): Observable<BatchUploadResponse> {
+  public uploadBatchPhotos(
+    files: File[]
+  ): Observable<BatchPhotoUploadResponseDto> {
     const formData = new FormData();
     files.forEach((file) => formData.append('files', file));
-    return this.http.post<BatchUploadResponse>(
+    return this.http.post<BatchPhotoUploadResponseDto>(
       `${this.memberService.baseUrl}/add-photos`,
       formData
     );

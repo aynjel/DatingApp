@@ -1,5 +1,16 @@
-<div class="card bg-base-100 shadow-lg p-6">
-  <div class="flex flex-col items-center">
+<div class="card bg-base-100 shadow-lg p-6 overflow-visible">
+  <div class="flex flex-col items-center relative">
+    <!-- Fancy Floating Edit Button with glow effect - positioned outside card -->
+    <div class="absolute -top-3 -right-3">
+      <a
+        [routerLink]="['/profile/member-details', memberDetails()?.id]"
+        class="relative btn btn-circle btn-primary"
+        title="Edit Profile"
+      >
+        <lucide-icon [name]="editIcon" class="size-4" />
+      </a>
+    </div>
+
     <!-- Avatar with edit button overlay -->
     <div class="relative inline-block">
       <div class="avatar">
@@ -36,25 +47,6 @@
       {{ memberDetails()?.dateOfBirth | date }} • {{ memberDetails()?.city }},
       {{ memberDetails()?.country }}
     </p>
-
-    <!-- Action Buttons -->
-    <div class="flex flex-col gap-3 mt-6 w-full">
-      <a
-        [routerLink]="['/profile/member-details', memberDetails()?.id]"
-        class="btn btn-primary w-full gap-2"
-      >
-        <lucide-icon [name]="editIcon" class="size-5" />
-        Edit Profile
-      </a>
-      <button
-        type="button"
-        class="btn btn-outline btn-error w-full gap-2"
-        (click)="onLogoutClick()"
-      >
-        <lucide-icon [name]="logoutIcon" class="size-5" />
-        Logout
-      </button>
-    </div>
   </div>
 
   <!-- Photo Thumbnails -->

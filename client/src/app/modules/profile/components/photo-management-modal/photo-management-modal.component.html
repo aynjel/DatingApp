@@ -1,4 +1,25 @@
-@if (photos.length === 0) {
+<div class="tabs tabs-border mb-4">
+  <button
+    role="tab"
+    type="button"
+    (click)="activeTab.set('manage')"
+    [class.tab-active]="activeTab() === 'manage'"
+    class="tab"
+  >
+    Manage Photos
+  </button>
+  <button
+    role="tab"
+    type="button"
+    (click)="activeTab.set('upload')"
+    [class.tab-active]="activeTab() === 'upload'"
+    class="tab"
+  >
+    Upload Photos
+  </button>
+</div>
+
+@if(activeTab() === 'manage') { @if (photos.length === 0) {
 <div class="flex items-center justify-center h-32 text-gray-500">
   <p>No photos to manage</p>
 </div>
@@ -31,6 +52,142 @@
       <lucide-angular [name]="trashIcon" [size]="18"></lucide-angular>
     </button>
     }
+  </div>
+  }
+</div>
+} } @else if(activeTab() === 'upload') {
+<div class="space-y-4">
+  <!-- File Input (Hidden) -->
+  <input
+    type="file"
+    id="photoFileInput"
+    accept="image/*"
+    multiple
+    class="hidden"
+    (change)="onFileSelected($event)"
+    [disabled]="!canSelectMore || isUploading()"
+  />
+
+  <!-- Info Alert -->
+  @if (availableSlots <= 0) {
+  <div class="alert alert-warning">
+    <lucide-angular [name]="alertIcon" [size]="20"></lucide-angular>
+    <span
+      >You have reached the maximum of 10 photos. Please delete some photos
+      before uploading new ones.</span
+    >
+  </div>
+  } @else {
+  <div class="alert alert-info">
+    <lucide-angular [name]="alertIcon" [size]="20"></lucide-angular>
+    <span
+      >You can upload up to {{ availableSlots }} more photo(s). Maximum 10
+      photos allowed per profile.</span
+    >
+  </div>
+  }
+
+  <!-- Upload Area or Preview Grid -->
+  @if (selectedFiles().length === 0) {
+  <div
+    (click)="triggerFileInput()"
+    [class.cursor-pointer]="canSelectMore && !isUploading()"
+    [class.cursor-not-allowed]="!canSelectMore || isUploading()"
+    [class.opacity-50]="!canSelectMore || isUploading()"
+    class="border-2 border-dashed border-base-300 rounded-lg p-12 text-center hover:border-primary hover:bg-base-200/50 transition-colors"
+  >
+    <div class="flex flex-col items-center gap-3">
+      <lucide-angular
+        [name]="uploadIcon"
+        class="size-12 text-base-content/40"
+      ></lucide-angular>
+      <div>
+        <p class="text-lg font-medium">Click to select photos</p>
+        <p class="text-sm text-base-content/60 mt-1">
+          PNG, JPG, GIF, or WEBP (Max 5MB per photo)
+        </p>
+      </div>
+    </div>
+  </div>
+  } @else {
+  <!-- Preview Grid -->
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    @for (previewFile of selectedFiles(); track $index) {
+    <div class="relative group">
+      <div class="relative overflow-hidden rounded-lg border-2 border-base-300">
+        <img
+          [src]="previewFile.previewUrl"
+          [alt]="previewFile.file.name"
+          class="w-full h-32 object-cover rounded-lg"
+        />
+        <div
+          class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"
+        ></div>
+      </div>
+      @if (!isUploading()) {
+      <button
+        (click)="removeFile($index)"
+        class="absolute top-2 right-2 bg-error text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+        title="Remove photo"
+        aria-label="Remove photo"
+      >
+        <lucide-angular [name]="xIcon" [size]="16"></lucide-angular>
+      </button>
+      }
+      <div class="mt-1 text-xs text-base-content/60 truncate">
+        {{ previewFile.file.name }}
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Add More Button -->
+  @if (canSelectMore && !isUploading()) {
+  <button
+    type="button"
+    (click)="triggerFileInput()"
+    class="btn btn-outline btn-primary w-full"
+  >
+    <lucide-angular [name]="uploadIcon" [size]="16"></lucide-angular>
+    Add More Photos ({{ availableSlots - selectedFiles().length }} remaining)
+  </button>
+  } }
+
+  <!-- Upload Progress -->
+  @if (isUploading()) {
+  <div class="space-y-2">
+    <div class="flex justify-between text-sm">
+      <span class="text-base-content/70">Uploading photos...</span>
+      <span class="font-medium">{{ uploadProgress() }}%</span>
+    </div>
+    <progress
+      class="progress progress-primary w-full"
+      [value]="uploadProgress()"
+      max="100"
+    ></progress>
+  </div>
+  }
+
+  <!-- Upload Button -->
+  @if (selectedFiles().length > 0 && !isUploading()) {
+  <div class="flex gap-2 justify-end">
+    <button
+      type="button"
+      (click)="resetUploadState()"
+      class="btn btn-outline"
+      [disabled]="isUploading()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      (click)="uploadPhotos()"
+      class="btn btn-primary"
+      [disabled]="isUploading()"
+    >
+      <lucide-angular [name]="uploadIcon" [size]="16"></lucide-angular>
+      Upload {{ selectedFiles().length }} Photo(s)
+    </button>
   </div>
   }
 </div>

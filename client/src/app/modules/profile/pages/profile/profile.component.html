@@ -1,11 +1,12 @@
-<div class="container mx-auto p-4">
+<div class="container mx-auto p-4 overflow-visible">
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <!-- Left column -->
-    <app-profile-header
-      [memberDetails]="memberDetails()"
-      (uploadPhotoClicked)="openPhotoUploadModal()"
-      (logoutClicked)="logoutAlert.fire()"
-    />
+    <div class="relative overflow-visible">
+      <app-profile-header
+        [memberDetails]="memberDetails()"
+        (uploadPhotoClicked)="openPhotoUploadModal()"
+      />
+    </div>
 
     <!-- Right column -->
     <div class="md:col-span-2 space-y-4">
@@ -25,17 +26,6 @@
     </div>
   </div>
 </div>
-
-<!-- Logout Alert -->
-<swal
-  #logoutAlert
-  title="Confirm logout?"
-  text="When confirmed you will be logged out"
-  icon="question"
-  [showCancelButton]="true"
-  [focusCancel]="true"
-  (confirm)="onLogout()"
-/>
 
 <swal
   #confirmDeleteSwal

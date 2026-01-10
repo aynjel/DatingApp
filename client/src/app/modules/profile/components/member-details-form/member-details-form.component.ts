@@ -41,6 +41,7 @@ export class MemberDetailsFormComponent {
   protected isLoading = computed(() => this.globalStore.isSubmitting());
 
   public readonly memberDetailsForm = this.formBuilder.group({
+    displayName: [this.currentUser()?.displayName || '', [Validators.required]],
     dateOfBirth: [
       this.memberDetails()?.dateOfBirth || '',
       [Validators.required],

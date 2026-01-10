@@ -18,7 +18,6 @@ import { Member } from '../../../../shared/models/member.model';
 export class ProfileHeaderComponent {
   memberDetails = input<Member>();
   uploadPhotoClicked = output<void>();
-  logoutClicked = output<void>();
 
   readonly editIcon = PencilIcon;
   readonly cameraIcon = CameraIcon;
@@ -26,9 +25,5 @@ export class ProfileHeaderComponent {
 
   onUploadPhotoClick(): void {
     this.uploadPhotoClicked.emit();
-  }
-
-  onLogoutClick(): void {
-    this.logoutClicked.emit();
   }
 }

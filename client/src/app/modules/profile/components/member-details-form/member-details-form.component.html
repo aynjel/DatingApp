@@ -3,17 +3,38 @@
   (ngSubmit)="onCreateMemberDetailsSubmit()"
   class="flex flex-col gap-6"
 >
-  <!-- Display Name -->
+  <!-- Email -->
   <div>
     <label class="input w-full">
       <lucide-icon [name]="lockIcon" class="size-4 mr-2 text-gray-400" />
       <input
-        type="text"
-        [value]="currentUser()?.displayName"
+        type="email"
+        [value]="currentUser()?.email"
         disabled
         class="cursor-not-allowed"
       />
     </label>
+  </div>
+
+  <!-- Display Name -->
+  <div>
+    <label class="label">
+      <span class="label-text font-semibold">Display Name</span>
+    </label>
+    <input
+      type="text"
+      formControlName="displayName"
+      class="input input-bordered w-full"
+      [class.input-error]="
+        memberDetailsForm.get('displayName')?.invalid &&
+        memberDetailsForm.get('displayName')?.touched
+      "
+      [class.input-success]="
+        memberDetailsForm.get('displayName')?.valid &&
+        memberDetailsForm.get('displayName')?.touched
+      "
+      placeholder="Enter your display name"
+    />
   </div>
 
   <!-- Date of Birth and Gender -->
