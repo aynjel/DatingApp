@@ -6,6 +6,7 @@
       type="button"
       (click)="removeInterest(interest)"
       class="btn btn-xs btn-circle btn-ghost p-0 h-4 w-4 min-h-0"
+      [disabled]="isReadOnly()"
     >
       <lucide-icon [name]="removeIcon" class="size-3" />
     </button>
@@ -17,28 +18,35 @@
     <label class="floating-label text-left">
       <span>{{ label() }}</span>
       <input
-        [(ngModel)]="interestInput"
+        [value]="interestInput()"
+        (input)="onInterestInput($event)"
         class="input w-full"
         type="text"
         placeholder="Interest"
-        [disabled]="
-          isReadOnly() || selectedInterests().length >= maxInterests()
-        "
         [class.cursor-not-allowed]="
           isReadOnly() || selectedInterests().length >= maxInterests()
         "
         [class.input-error]="interestError()"
         [class.input-success]="
-          !interestError() && interestInput().trim() !== ''
+          !interestError() &&
+          interestInput().trim().length > 0 &&
+          selectedInterests().length < maxInterests()
         "
-        #valueInput
-        (keydown.enter)="addInterest()"
+        [disabled]="
+          isReadOnly() || selectedInterests().length >= maxInterests()
+        "
+        (keydown.enter)="$event.preventDefault(); addInterest()"
       />
       @if(interestError()) {
       <div class="text-error text-xs mt-1 block">{{ interestError() }}</div>
       } @if(selectedInterests().length >= maxInterests()) {
       <div class="text-error text-xs mt-1 block">
         Reached maximum of {{ maxInterests() }} interests.
+      </div>
+      } @if(control.hasError('required') && control.touched &&
+      selectedInterests().length === 0) {
+      <div class="validation-hint text-error text-xs">
+        At least one interest is required
       </div>
       }
     </label>
@@ -47,15 +55,15 @@
     type="button"
     class="btn btn-neutral"
     (click)="addInterest()"
-    [class.cursor-not-allowed]="
-      isReadOnly() ||
-      selectedInterests().length >= maxInterests() ||
-      interestInput().trim() === ''
-    "
     [disabled]="
       isReadOnly() ||
       selectedInterests().length >= maxInterests() ||
-      interestInput().trim() === ''
+      !interestInput().trim()
+    "
+    [class.cursor-not-allowed]="
+      isReadOnly() ||
+      selectedInterests().length >= maxInterests() ||
+      !interestInput().trim()
     "
   >
     <lucide-icon [name]="addIcon" class="size-4" />

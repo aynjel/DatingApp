@@ -1,17 +1,21 @@
-import { Component, input, output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, input, Self, signal } from '@angular/core';
+import {
+  ControlValueAccessor,
+  FormControl,
+  NgControl,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { LucideAngularModule, MinusIcon, PlusIcon } from 'lucide-angular';
 
 @Component({
   selector: 'app-interest-input',
-  imports: [FormsModule, LucideAngularModule],
+  standalone: true,
+  imports: [ReactiveFormsModule, LucideAngularModule],
   templateUrl: './interest-input.component.html',
 })
-export class InterestInputComponent {
+export class InterestInputComponent implements ControlValueAccessor {
   label = input.required<string>();
   isReadOnly = input<boolean>(false);
-
-  onAddInterest = output<string[]>();
 
   selectedInterests = signal<string[]>([]);
 
@@ -23,8 +27,20 @@ export class InterestInputComponent {
   readonly addIcon = PlusIcon;
   readonly removeIcon = MinusIcon;
 
+  private onChange: (value: string[]) => void = () => {};
+  private onTouched: () => void = () => {};
+
+  constructor(@Self() public ngControl: NgControl) {
+    this.ngControl.valueAccessor = this;
+  }
+
   addInterest(): void {
-    const trimmedValue = this.interestInput().trim();
+    const value = this.interestInput().trim();
+
+    if (!value) {
+      this.interestError.set('Please enter an interest.');
+      return;
+    }
 
     const currentInterests = this.selectedInterests();
 
@@ -38,7 +54,7 @@ export class InterestInputComponent {
 
     // Check for duplicates (case-insensitive)
     const isDuplicate = currentInterests.some(
-      (interest) => interest.toLowerCase() === trimmedValue.toLowerCase()
+      (interest) => interest.toLowerCase() === value.toLowerCase()
     );
 
     if (isDuplicate) {
@@ -47,16 +63,50 @@ export class InterestInputComponent {
     }
 
     // Add the interest
-    this.selectedInterests.update((interests) => [...interests, trimmedValue]);
+    const updatedInterests = [...currentInterests, value];
+    this.selectedInterests.set(updatedInterests);
     this.interestInput.set(''); // Clear the input
     this.interestError.set(null); // Clear any previous error
-    this.onAddInterest.emit(this.selectedInterests());
+
+    // Notify form control of the change
+    this.onChange(updatedInterests);
+    this.onTouched();
+  }
+
+  onInterestInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.interestInput.set(value);
+    this.interestError.set(null);
   }
 
   removeInterest(interest: string): void {
-    this.selectedInterests.update((interests) =>
-      interests.filter((i) => i !== interest)
+    const updatedInterests = this.selectedInterests().filter(
+      (i) => i !== interest
     );
-    this.onAddInterest.emit(this.selectedInterests());
+    this.selectedInterests.set(updatedInterests);
+
+    // Notify form control of the change
+    this.onChange(updatedInterests);
+    this.onTouched();
+  }
+
+  get control(): FormControl<string[]> {
+    return this.ngControl.control as FormControl<string[]>;
+  }
+
+  writeValue(value: string[] | null | undefined): void {
+    if (Array.isArray(value)) {
+      this.selectedInterests.set([...value]);
+    } else {
+      this.selectedInterests.set([]);
+    }
+  }
+
+  registerOnChange(fn: (value: string[]) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
   }
 }

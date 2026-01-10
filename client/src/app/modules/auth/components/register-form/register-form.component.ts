@@ -78,7 +78,7 @@ export class RegisterFormComponent {
           Validators.maxLength(500),
         ],
       ],
-      interests: [[], [Validators.required]],
+      interests: [[], [this.interestsRequiredValidator()]],
       city: [
         '',
         [
@@ -104,25 +104,35 @@ export class RegisterFormComponent {
       ...this.memberDetailsForm.controls,
     });
     console.log('Submitting registration form', mergedForm.value);
-    return;
+
     if (this.userForm.invalid || this.memberDetailsForm.invalid) {
       this.userForm.markAllAsTouched();
       this.memberDetailsForm.markAllAsTouched();
       return;
     }
 
-    const value = this.userForm.getRawValue();
+    const userValue = this.userForm.getRawValue();
+    const memberValue = this.memberDetailsForm.getRawValue();
+
     const payload: RegisterUserRequest = {
-      displayName: 'value.displayName',
-      email: value.email,
-      password: value.password,
-      confirmPassword: value.confirmPassword,
+      displayName: memberValue.displayName,
+      email: userValue.email,
+      password: userValue.password,
+      confirmPassword: userValue.confirmPassword,
+      // Add other member details as needed
+      // dateOfBirth: memberValue.dateOfBirth,
+      // gender: memberValue.gender,
+      // description: memberValue.description,
+      // interests: memberValue.interests,
+      // city: memberValue.city,
+      // country: memberValue.country,
     };
 
     this.authStore.signUp({
       data: payload,
       onSuccess: () => {
         this.userForm.reset();
+        this.memberDetailsForm.reset();
       },
     });
   }
@@ -179,7 +189,16 @@ export class RegisterFormComponent {
     return this.memberDetailsForm.get('gender') as AbstractControl;
   }
 
-  onInterestAdded(interests: string[]): void {
-    this.memberDetailsForm.get('interests')?.setValue(interests);
+  private interestsRequiredValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (
+        !control.value ||
+        !Array.isArray(control.value) ||
+        control.value.length === 0
+      ) {
+        return { required: true };
+      }
+      return null;
+    };
   }
 }

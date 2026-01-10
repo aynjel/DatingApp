@@ -90,9 +90,9 @@
       [isReadOnly]="isLoading()"
     />
     <app-interest-input
+      formControlName="interests"
       label="Interests"
       [isReadOnly]="isLoading()"
-      (onAddInterest)="onInterestAdded($event)"
     />
     <app-text-input
       formControlName="city"
