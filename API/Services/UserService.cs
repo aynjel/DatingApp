@@ -31,25 +31,35 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
 
     public async Task<UserAccountResponseDto> CreateUserAsync(CreateUserRequestDto registerDto)
     {
-        var isEmailExists = await userRepository.IsEmailExistsAsync(registerDto.Email);
-        if (isEmailExists)
-        {
-            logger.LogWarning("Attempt to register with existing email: {Email}", registerDto.Email);
-            throw new ConflictException("Email already in use");
-        }
+        bool isEmailExists = await userRepository.IsEmailExistsAsync(registerDto.Email);
+        if (isEmailExists) throw new ConflictException("Email already in use");
 
         CreatePasswordHash(registerDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-        var user = new User
+        User user = new()
         {
             DisplayName = registerDto.DisplayName,
             Email = registerDto.Email,
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt,
+            Member = new()
+            {
+                DateOfBirth = DateOnly.FromDateTime(registerDto.DateOfBirth),
+                Created = DateTime.UtcNow,
+                LastActive = DateTime.UtcNow,
+                Gender = registerDto.Gender,
+                City = registerDto.City,
+                Country = registerDto.Country,
+                Description = registerDto.Description,
+                Interests = [.. registerDto.Interests],
+                DisplayName = registerDto.DisplayName,
+            }
         };
+
+        // Single SaveChanges call - both User and Member are saved in one transaction
         await userRepository.AddAsync(user);
-        var accessToken = jwtService.GenerateToken(user.Id);
-        var refreshToken = await jwtService.GenerateAndSaveTokenAsync(user.Id, accessToken);
+        string accessToken = jwtService.GenerateToken(user.Id);
+        string refreshToken = await jwtService.GenerateAndSaveTokenAsync(user.Id, accessToken);
         return user.ToDto(new TokenResponseDto(accessToken, refreshToken));
     }
 

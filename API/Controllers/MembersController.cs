@@ -65,9 +65,6 @@ public class MembersController(IMemberService memberService, IUserService userSe
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<MemberResponseDto>> CreateMember([FromBody] MemberDetailsRequestDto memberDetails)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var userId = User.GetUserId();
 
         var user = await userService.GetByIdAsync(userId);
@@ -84,9 +81,6 @@ public class MembersController(IMemberService memberService, IUserService userSe
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<MemberResponseDto>> UpdateMember([FromBody] MemberDetailsRequestDto memberDetails)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var userId = User.GetUserId();
 
         var user = await userService.GetByIdAsync(userId);

@@ -13,6 +13,13 @@ public class DataContext(DbContextOptions options) : DbContext(options)
     {
         base.OnModelCreating(modelBuilder);
 
+        // Configure one-to-one relationship between User and Member
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Member)
+            .WithOne(m => m.User)
+            .HasForeignKey<Member>(m => m.Id)
+            .OnDelete(DeleteBehavior.Cascade);
+
         // Configure Interests to be stored as JSON
         modelBuilder.Entity<Member>()
             .Property(m => m.Interests)
