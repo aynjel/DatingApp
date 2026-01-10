@@ -1,6 +1,11 @@
-import { User } from '../../user.model';
-
-export interface RegisterUserRequest extends Omit<User, 'userId' | 'role'> {
+export interface RegisterUserRequest {
+  displayName: string;
+  email: string;
   password: string;
-  confirmPassword: string;
+  gender: string;
+  dateOfBirth: Date;
+  description: string;
+  interests: string[];
+  city: string;
+  country: string;
 }

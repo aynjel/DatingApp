@@ -43,8 +43,8 @@
       <div class="text-error text-xs mt-1 block">
         Reached maximum of {{ maxInterests() }} interests.
       </div>
-      } @if(control.hasError('required') && control.touched &&
-      selectedInterests().length === 0) {
+      } @if( !interestError() && selectedInterests().length === 0 &&
+      interestInput().trim().length === 0 ) {
       <div class="validation-hint text-error text-xs">
         At least one interest is required
       </div>
