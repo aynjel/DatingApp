@@ -2,6 +2,7 @@ using API.Entities;
 using API.Extensions;
 using API.Helpers;
 using API.Interfaces.Services;
+using API.Model.DTO.Params;
 using API.Model.DTO.Request;
 using API.Model.DTO.Response;
 using Microsoft.AspNetCore.Authorization;

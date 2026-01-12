@@ -1,5 +1,6 @@
 using API.Entities;
 using API.Helpers;
+using API.Model.DTO.Params;
 using API.Model.DTO.Request;
 using API.Model.DTO.Response;
 

@@ -1,5 +1,6 @@
 using API.Entities;
 using API.Helpers;
+using API.Model.DTO.Params;
 
 namespace API.Interfaces.Repository;
 

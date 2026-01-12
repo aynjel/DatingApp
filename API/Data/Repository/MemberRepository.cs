@@ -1,6 +1,7 @@
 using API.Entities;
 using API.Helpers;
 using API.Interfaces.Repository;
+using API.Model.DTO.Params;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data.Repository;

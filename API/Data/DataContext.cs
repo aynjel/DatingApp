@@ -8,10 +8,21 @@ public class DataContext(DbContextOptions options) : DbContext(options)
     public DbSet<User> Users { get; set; }
     public DbSet<Member> Members { get; set; }
     public DbSet<Photo> Photos { get; set; }
+    public DbSet<Message> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Sender)
+            .WithMany(u => u.MessagesSent)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Recipient)
+            .WithMany(u => u.MessagesReceived)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Configure one-to-one relationship between User and Member
         modelBuilder.Entity<User>()

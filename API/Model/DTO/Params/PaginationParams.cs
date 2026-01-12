@@ -1,4 +1,4 @@
-namespace API.Helpers;
+namespace API.Model.DTO.Params;
 
 public class PaginationParams
 {
