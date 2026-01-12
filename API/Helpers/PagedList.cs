@@ -1,23 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace API.Helpers;
 
-public class PagedList<T>
+public class PagedList<T>(List<T> items, int count, int pageNumber, int pageSize)
 {
-    public List<T> Items { get; set; }
-    public int PageNumber { get; set; }
-    public int PageSize { get; set; }
-    public int TotalCount { get; set; }
-    public int TotalPages { get; set; }
+    public List<T> Items { get; set; } = items;
+    public int PageNumber { get; set; } = pageNumber;
+    public int PageSize { get; set; } = pageSize;
+    public int TotalCount { get; set; } = count;
+    public int TotalPages { get; set; } = (int)Math.Ceiling(count / (double)pageSize);
     public bool HasPrevious => PageNumber > 1;
     public bool HasNext => PageNumber < TotalPages;
-
-    public PagedList(List<T> items, int count, int pageNumber, int pageSize)
-    {
-        Items = items;
-        TotalCount = count;
-        PageNumber = pageNumber;
-        PageSize = pageSize;
-        TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-    }
 
     public static PagedList<T> Create(IQueryable<T> source, int pageNumber, int pageSize)
     {
@@ -32,11 +25,11 @@ public class PagedList<T>
 
     public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize)
     {
-        var count = await Task.Run(() => source.Count());
-        var items = await Task.Run(() => source
+        var count = await source.CountAsync();
+        var items = await source
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .ToList());
+            .ToListAsync();
 
         return new PagedList<T>(items, count, pageNumber, pageSize);
     }

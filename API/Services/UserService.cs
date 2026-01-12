@@ -89,18 +89,9 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         return await jwtService.RefreshTokenAsync(refreshTokenDto);
     }
 
-    public async Task<UserDetailsResponseDto> GetCurrentUserAsync(string jwt)
+    public async Task<UserDetailsResponseDto> GetCurrentUserAsync(string userId)
     {
-        var userId = jwtService.GetUserIdFromJwt(jwt);
-        var user = await userRepository.GetByIdAsync(userId);
-        if (user is null)
-        {
-            logger.LogWarning("Current user with ID {UserId} not found", userId);
-            throw new NotFoundException($"User with id '{userId}' not found");
-        }
-
-        user.Member?.LastActive = DateTime.UtcNow;
-
+        var user = await userRepository.GetByIdAsync(userId) ?? throw new NotFoundException($"User with id '{userId}' not found");
         return user.ToDto();
     }
 

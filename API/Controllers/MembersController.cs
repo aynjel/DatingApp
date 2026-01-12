@@ -17,15 +17,9 @@ public class MembersController(IMemberService memberService, IUserService userSe
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyList<MemberResponseDto>>> GetMembers([FromQuery] GetMembersParamsRequestDto getMembersParamsDto)
+    public async Task<ActionResult<IReadOnlyList<MemberResponseDto>>> GetMembers([FromQuery] MemberParams membersParams)
     {
-        var paginationParams = new PaginationParams
-        {
-            PageNumber = getMembersParamsDto.PageNumber > 0 ? getMembersParamsDto.PageNumber : 1,
-            PageSize = getMembersParamsDto.PageSize > 0 ? getMembersParamsDto.PageSize : 10
-        };
-
-        var pagedMembers = await memberService.GetMembersAsync(getMembersParamsDto.SearchTerm, paginationParams);
+        PagedList<MemberResponseDto> pagedMembers = await memberService.GetMembersAsync(membersParams);
         
         Response.AddPaginationHeader(new PaginationHeader(
             pagedMembers.PageNumber,

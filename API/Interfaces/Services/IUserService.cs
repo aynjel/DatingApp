@@ -10,5 +10,5 @@ public interface IUserService
     Task<UserAccountResponseDto> CreateUserAsync(CreateUserRequestDto registerDto);
     Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto);
     Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto refreshTokenDto);
-    Task<UserDetailsResponseDto> GetCurrentUserAsync(string jwt);
+    Task<UserDetailsResponseDto> GetCurrentUserAsync(string userId);
 }

@@ -21,29 +21,35 @@ public class MemberRepository(DataContext context) : IMemberRepository
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task<PagedList<Member>> GetMembersAsync(string searchTerm, PaginationParams paginationParams)
+    public async Task<PagedList<Member>> GetMembersAsync(MemberParams memberParams)
     {
         var query = context.Members
             .Include(m => m.Photos)
             .AsNoTracking()
             .AsQueryable();
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
+        query = query.Where(m => m.Id != memberParams.CurrentMemberId);
+
+        if (memberParams.Gender is not null)
         {
-            var lowerSearchTerm = searchTerm.ToLower();
-            query = query.Where(m => 
-                m.DisplayName.ToLower().Contains(lowerSearchTerm) ||
-                m.City.ToLower().Contains(lowerSearchTerm) ||
-                m.Country.ToLower().Contains(lowerSearchTerm)
-            );
+            query = query.Where(x => x.Gender == memberParams.Gender);
         }
 
-        query = query.OrderByDescending(m => m.Created);
+        var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-memberParams.MaxAge - 1));
+        var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-memberParams.MinAge));
+
+        query = query.Where(m => m.DateOfBirth >= minDob && m.DateOfBirth <= maxDob);
+
+        query = memberParams.OrderBy switch
+        {
+            "created" => query.OrderByDescending(m => m.Created),
+            _ => query.OrderByDescending(m => m.LastActive)
+        };
 
         return await PagedList<Member>.CreateAsync(
             query, 
-            paginationParams.PageNumber, 
-            paginationParams.PageSize
+            memberParams.PageNumber, 
+            memberParams.PageSize
         );
     }
 

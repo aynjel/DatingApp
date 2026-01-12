@@ -1,3 +1,4 @@
+using API.Extensions;
 using API.Interfaces.Services;
 using API.Model.DTO.Request;
 using API.Model.DTO.Response;
@@ -47,8 +48,8 @@ public class AccountController(IUserService userService) : BaseController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<UserDetailsResponseDto>> GetCurrentUser()
     {
-        var jwt = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-        var user = await userService.GetCurrentUserAsync(jwt);
+        var userId = User.GetUserId();
+        var user = await userService.GetCurrentUserAsync(userId);
         if (user is null) return Unauthorized("User not found.");
         return Ok(user);
     }
