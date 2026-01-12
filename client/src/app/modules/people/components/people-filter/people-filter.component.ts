@@ -1,63 +1,28 @@
-import { Component, effect, input, output, signal } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  FilterIcon,
-  LucideAngularModule,
-  SearchIcon,
-  XIcon,
-} from 'lucide-angular';
-
-export interface PeopleFilterParams {
-  searchTerm: string;
-  gender?: string;
-  minAge?: number;
-  maxAge?: number;
-  city?: string;
-  country?: string;
-}
+import { FilterIcon, LucideAngularModule } from 'lucide-angular';
+import { MemberParams } from '../../../../shared/models/member.model';
+import { Pagination } from '../../../../shared/models/pagination.models';
+import { PaginationComponent } from './../../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-people-filter',
-  imports: [FormsModule, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule, PaginationComponent],
   templateUrl: './people-filter.component.html',
 })
 export class PeopleFilterComponent {
-  readonly searchIcon = SearchIcon;
   readonly filterIcon = FilterIcon;
-  readonly xIcon = XIcon;
 
-  searchTerm = input<string>('');
+  pagination = input.required<Pagination>();
   showFilters = signal(false);
 
-  filterChanged = output<PeopleFilterParams>();
-
-  searchInput = signal('');
+  filterChanged = output<MemberParams>();
   genderFilter = signal<string>('');
-  minAgeFilter = signal<number | undefined>(undefined);
-  maxAgeFilter = signal<number | undefined>(undefined);
-  cityFilter = signal('');
-  countryFilter = signal('');
+  minAgeFilter = signal<number>(18);
+  maxAgeFilter = signal<number>(99);
+  orderBy = signal<'lastActive' | 'created'>('lastActive');
 
-  constructor() {
-    // Initialize searchInput from searchTerm input
-    effect(() => {
-      const term = this.searchTerm();
-      if (term) {
-        this.searchInput.set(term);
-      }
-    });
-  }
-
-  onSearchInput(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchInput.set(value);
-    // Don't emit on input - wait for submit button
-  }
-
-  onClearSearch(): void {
-    this.searchInput.set('');
-    // Don't emit - user needs to click submit
-  }
+  onPageChanged = output<{ pageNumber: number; pageSize: number }>();
 
   toggleFilters(): void {
     this.showFilters.update((value) => !value);
@@ -70,25 +35,20 @@ export class PeopleFilterComponent {
 
   onClearFilters(): void {
     this.genderFilter.set('');
-    this.minAgeFilter.set(undefined);
-    this.maxAgeFilter.set(undefined);
-    this.cityFilter.set('');
-    this.countryFilter.set('');
-    // Clear search as well
-    this.searchInput.set('');
+    this.minAgeFilter.set(18);
+    this.maxAgeFilter.set(99);
+    this.orderBy.set('lastActive');
     // Emit empty filters immediately when clearing
     this.emitFilterChange();
   }
 
   private emitFilterChange(): void {
-    const filters: PeopleFilterParams = {
-      searchTerm: this.searchInput().trim(),
-      gender: this.genderFilter() || undefined,
-      minAge: this.minAgeFilter(),
-      maxAge: this.maxAgeFilter(),
-      city: this.cityFilter().trim() || undefined,
-      country: this.countryFilter().trim() || undefined,
-    };
+    const filters = new MemberParams();
+
+    filters.gender = this.genderFilter();
+    filters.minAge = this.minAgeFilter();
+    filters.maxAge = this.maxAgeFilter();
+    filters.orderBy = this.orderBy();
 
     this.filterChanged.emit(filters);
   }
@@ -98,8 +58,7 @@ export class PeopleFilterComponent {
       !!this.genderFilter() ||
       !!this.minAgeFilter() ||
       !!this.maxAgeFilter() ||
-      !!this.cityFilter() ||
-      !!this.countryFilter()
+      !!this.orderBy()
     );
   }
 
@@ -108,20 +67,31 @@ export class PeopleFilterComponent {
     if (this.genderFilter()) count++;
     if (this.minAgeFilter()) count++;
     if (this.maxAgeFilter()) count++;
-    if (this.cityFilter()) count++;
-    if (this.countryFilter()) count++;
+    if (this.orderBy()) count++;
     return count;
   }
 
   onMinAgeChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.minAgeFilter.set(value ? +value : undefined);
-    // Don't emit - wait for submit button
+    let newMin = value ? +value : 18;
+    // Ensure min doesn't exceed max - clamp to max if it does
+    if (newMin > this.maxAgeFilter()) {
+      newMin = this.maxAgeFilter();
+    }
+    this.minAgeFilter.set(newMin);
   }
 
   onMaxAgeChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.maxAgeFilter.set(value ? +value : undefined);
-    // Don't emit - wait for submit button
+    let newMax = value ? +value : 99;
+    // Ensure max doesn't go below min - clamp to min if it does
+    if (newMax < this.minAgeFilter()) {
+      newMax = this.minAgeFilter();
+    }
+    this.maxAgeFilter.set(newMax);
+  }
+
+  onPageChange(event: { pageNumber: number; pageSize: number }): void {
+    this.onPageChanged.emit(event);
   }
 }

@@ -1,26 +1,35 @@
-<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
-  <div class="text-sm text-base-content/70">
-    Page {{ currentPage() }} of {{ totalPages() }}
+<div class="flex items-center w-full gap-3">
+  <span>Items per page:</span>
+  <select
+    class="select select-bordered select-sm w-auto"
+    (change)="onPageChange(undefined, $event.target)"
+  >
+    @for(size of pageSizeOptions(); track $index){
+    <option [value]="size" [selected]="size === pageSize()">
+      {{ size }}
+    </option>
+    }
+  </select>
+
+  <div class="text-sm">
+    {{ (pageNumber() - 1) * pageSize() + 1 }} - {{ lastItemIndex() }} of
+    {{ totalCount() }}
   </div>
 
-  <div class="join grid grid-cols-2">
+  <div class="btn-group ml-auto">
     <button
-      class="join-item btn btn-outline"
-      [class.btn-disabled]="!canGoPrevious()"
-      [disabled]="!canGoPrevious()"
-      (click)="goToPrevious()"
+      class="btn btn-sm"
+      [disabled]="pageNumber() === 1"
+      (click)="onPageChange(pageNumber() - 1)"
     >
-      <lucide-icon [name]="chevronLeftIcon" class="size-4" />
-      Previous
+      <lucide-icon [name]="chevronLeftIcon" size="16"></lucide-icon>
     </button>
     <button
-      class="join-item btn btn-outline"
-      [class.btn-disabled]="!canGoNext()"
-      [disabled]="!canGoNext()"
-      (click)="goToNext()"
+      class="btn btn-sm"
+      [disabled]="pageNumber() >= totalPages()"
+      (click)="onPageChange(pageNumber() + 1)"
     >
-      <lucide-icon [name]="chevronRightIcon" class="size-4" />
-      Next
+      <lucide-icon [name]="chevronRightIcon" size="16"></lucide-icon>
     </button>
   </div>
 </div>

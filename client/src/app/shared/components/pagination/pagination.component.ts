@@ -1,10 +1,9 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, model, output } from '@angular/core';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   LucideAngularModule,
 } from 'lucide-angular';
-import { PaginationHeaderResponse } from '../../models/common-models';
 
 @Component({
   selector: 'app-pagination',
@@ -12,27 +11,33 @@ import { PaginationHeaderResponse } from '../../models/common-models';
   templateUrl: './pagination.component.html',
 })
 export class PaginationComponent {
-  pagination = input.required<PaginationHeaderResponse>();
-  onPageNumberChange = output<number>();
+  pageNumber = model<number>(1);
+  pageSize = model<number>(10);
+  totalCount = input<number>(0);
+  totalPages = input<number>(0);
+  pageSizeOptions = input<number[]>([5, 10, 25, 50, 100]);
 
-  currentPage = computed(() => this.pagination().currentPage);
-  totalPages = computed(() => this.pagination().totalPages);
+  pageChanged = output<{
+    pageNumber: number;
+    pageSize: number;
+  }>();
 
-  canGoPrevious = computed(() => this.currentPage() > 1);
-  canGoNext = computed(() => this.currentPage() < this.totalPages());
+  lastItemIndex = computed(() =>
+    Math.min(this.pageNumber() * this.pageSize(), this.totalCount())
+  );
 
   readonly chevronLeftIcon = ChevronLeftIcon;
   readonly chevronRightIcon = ChevronRightIcon;
 
-  goToPrevious(): void {
-    if (this.canGoPrevious()) {
-      this.onPageNumberChange.emit(this.currentPage() - 1);
+  onPageChange(pageNumber?: number, pageSize?: EventTarget | null): void {
+    if (pageNumber) this.pageNumber.set(pageNumber);
+    if (pageSize) {
+      const size = (pageSize as HTMLSelectElement).value;
+      this.pageSize.set(Number(size));
     }
-  }
-
-  goToNext(): void {
-    if (this.canGoNext()) {
-      this.onPageNumberChange.emit(this.currentPage() + 1);
-    }
+    this.pageChanged.emit({
+      pageNumber: this.pageNumber(),
+      pageSize: this.pageSize(),
+    });
   }
 }

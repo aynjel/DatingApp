@@ -8,24 +8,24 @@ import {
   withProps,
   withState,
 } from '@ngrx/signals';
-import { PaginationHeaderResponse } from '../../../shared/models/common-models';
-import { GetMemberRequest } from '../../../shared/models/dto/request/get-member.request';
-import { Member } from '../../../shared/models/member.model';
+import { Member, MemberParams } from '../../../shared/models/member.model';
+import { Pagination } from '../../../shared/models/pagination.models';
 import { MemberService } from '../../../shared/services/member.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { GlobalStore } from '../../../shared/store/global.store';
 
 type PeopleStoreType = {
   members: Member[];
-  pagination: PaginationHeaderResponse;
+  pagination: Pagination;
   searchTerm: string;
 };
 
+const memberParams = new MemberParams();
 const initialState: PeopleStoreType = {
   members: [],
   pagination: {
-    currentPage: 1,
-    itemsPerPage: 10,
+    currentPage: memberParams.pageNumber,
+    itemsPerPage: memberParams.pageSize,
     totalItems: 0,
     totalPages: 0,
   },
@@ -42,9 +42,9 @@ export const PeopleStore = signalStore(
   })),
   withMethods((store) => {
     const getMembers = store.globalStore.withApiState<
-      GetMemberRequest | undefined,
+      MemberParams,
       HttpResponse<Member[]>
-    >((params?: GetMemberRequest) =>
+    >((params: MemberParams) =>
       store.memberService.getMembers(params).pipe(
         tapResponse({
           next: (response) => {
@@ -52,8 +52,7 @@ export const PeopleStore = signalStore(
               members: response.body || [],
               pagination: JSON.parse(
                 response.headers.get('Pagination') as string
-              ) as PaginationHeaderResponse,
-              searchTerm: params?.searchTerm || '',
+              ) as Pagination,
             });
           },
           error: (error: HttpErrorResponse) => {

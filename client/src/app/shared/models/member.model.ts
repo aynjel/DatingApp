@@ -21,3 +21,12 @@ export interface Photo {
   memberId: string;
   isMain: boolean;
 }
+
+export class MemberParams {
+  gender?: string;
+  minAge = 18;
+  maxAge = 99;
+  pageNumber = 1;
+  pageSize = 10;
+  orderBy = 'lastActive';
+}

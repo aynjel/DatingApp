@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { AlertComponent } from '@component/alert/alert.component';
 import { LucideAngularModule, SparklesIcon } from 'lucide-angular';
+import { MemberParams } from '../../../../shared/models/member.model';
 import { PeopleStore } from '../../../people/store/people.store';
 import { MatchCardStackComponent } from '../../components/match-card-stack/match-card-stack.component';
 
@@ -53,12 +54,13 @@ export class MatchesComponent implements OnInit {
 
   loadMembers(): void {
     this.isInitialLoad.set(true);
+    const memberParams = new MemberParams();
     this.peopleStore.getMembers({
-      pagination: {
-        pageNumber: 1,
-        pageSize: 20,
-      },
-      searchTerm: '',
+      maxAge: memberParams.maxAge,
+      minAge: memberParams.minAge,
+      pageNumber: memberParams.pageNumber,
+      pageSize: memberParams.pageSize,
+      orderBy: memberParams.orderBy,
     });
     // Mark as loaded once members are available
     const checkMembers = () => {
@@ -109,13 +111,13 @@ export class MatchesComponent implements OnInit {
   loadMoreMembers(): void {
     const pagination = this.peopleStore.pagination();
     if (pagination.currentPage < pagination.totalPages) {
-      this.peopleStore.getMembers({
-        pagination: {
-          pageNumber: pagination.currentPage + 1,
-          pageSize: 20,
-        },
-        searchTerm: '',
-      });
+      const memberParams = new MemberParams();
+      // this.peopleStore.getMembers({
+      //   maxAge: memberParams.maxAge,
+      //   minAge: memberParams.minAge,
+      //   pageNumber: pagination.currentPage + 1,
+      //   pageSize: memberParams.pageSize,
+      // });
     }
   }
 

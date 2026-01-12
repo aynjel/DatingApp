@@ -8,7 +8,6 @@ import {
   withProps,
   withState,
 } from '@ngrx/signals';
-import { PaginationParams } from '../../../shared/models/common-models';
 import { Conversation, Message } from '../../../shared/models/message.model';
 import { ToastService } from '../../../shared/services/toast.service';
 import { GlobalStore } from '../../../shared/store/global.store';
@@ -36,7 +35,7 @@ export const MessageStore = signalStore(
   })),
   withMethods((store) => {
     const getConversations = store.globalStore.withApiState<
-      PaginationParams,
+      undefined,
       Conversation[]
     >(() =>
       store.messageService.getConversations().pipe(
@@ -51,20 +50,18 @@ export const MessageStore = signalStore(
       )
     );
 
-    const getMessages = store.globalStore.withApiState<
-      PaginationParams,
-      Message[]
-    >(() =>
-      store.messageService.getMessages().pipe(
-        tapResponse({
-          next: (response) => {
-            patchState(store, { messages: response });
-          },
-          error: (error: HttpErrorResponse) => {
-            store.toastService.show('Failed to get messages', 'error');
-          },
-        })
-      )
+    const getMessages = store.globalStore.withApiState<undefined, Message[]>(
+      () =>
+        store.messageService.getMessages().pipe(
+          tapResponse({
+            next: (response) => {
+              patchState(store, { messages: response });
+            },
+            error: (error: HttpErrorResponse) => {
+              store.toastService.show('Failed to get messages', 'error');
+            },
+          })
+        )
     );
 
     const sendMessage = store.globalStore.withFormSubmission<Message, Message>(

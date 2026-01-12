@@ -3,7 +3,6 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { APIEndpoints } from '../../../shared/constants/api-endpoints.const';
-import { PaginationParams } from '../../../shared/models/common-models';
 import { Conversation, Message } from '../../../shared/models/message.model';
 
 @Injectable({
@@ -13,27 +12,27 @@ export class MessageService {
   private http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl + APIEndpoints.MESSAGES;
 
-  getMessages(params?: PaginationParams): Observable<Message[]> {
+  getMessages(params?: undefined): Observable<Message[]> {
     let queryParams = new HttpParams();
-    if (params) {
-      queryParams = queryParams.append(
-        'pageNumber',
-        params.pageNumber.toString()
-      );
-      queryParams = queryParams.append('pageSize', params.pageSize.toString());
-    }
+    // if (params) {
+    //   queryParams = queryParams.append(
+    //     'pageNumber',
+    //     params.pageNumber.toString()
+    //   );
+    //   queryParams = queryParams.append('pageSize', params.pageSize.toString());
+    // }
     return this.http.get<Message[]>(this.baseUrl, { params: queryParams });
   }
 
-  getConversations(params?: PaginationParams): Observable<Conversation[]> {
+  getConversations(params?: undefined): Observable<Conversation[]> {
     let queryParams = new HttpParams();
-    if (params) {
-      queryParams = queryParams.append(
-        'pageNumber',
-        params.pageNumber.toString()
-      );
-      queryParams = queryParams.append('pageSize', params.pageSize.toString());
-    }
+    // if (params) {
+    //   queryParams = queryParams.append(
+    //     'pageNumber',
+    //     params.pageNumber.toString()
+    //   );
+    //   queryParams = queryParams.append('pageSize', params.pageSize.toString());
+    // }
     return this.http.get<Conversation[]>(this.baseUrl, { params: queryParams });
   }
 
