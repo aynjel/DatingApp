@@ -28,6 +28,7 @@ import { AvatarModule } from 'ngx-avatar-2';
 import { routes } from './app.routes';
 import { errorInterceptor } from './shared/interceptors/error.interceptor';
 import { jwtInterceptor } from './shared/interceptors/jwt.interceptor';
+import { loadingInterceptor } from './shared/interceptors/loading.interceptor';
 import { AuthStore } from './shared/store/auth.store';
 
 const initializeApp = () => {
@@ -62,7 +63,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideHttpClient(
       withFetch(),
-      withInterceptors([jwtInterceptor, errorInterceptor])
+      withInterceptors([jwtInterceptor, errorInterceptor, loadingInterceptor])
     ),
     provideSweetAlert2({
       fireOnInit: false,
