@@ -54,7 +54,7 @@
         </h2>
         @if (member().dateOfBirth) {
         <span class="text-xl font-semibold drop-shadow-lg">
-          {{ calculateAge(member().dateOfBirth) }}
+          {{ member().dateOfBirth | calculateAge }}
         </span>
         }
       </div>

@@ -3,10 +3,16 @@ import { Component, input } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { AvatarComponent } from 'ngx-avatar-2';
 import { Member } from '../../../../shared/models/member.model';
+import { CalculateAgePipe } from '../../../../shared/pipes/calculate-age.pipe';
 
 @Component({
   selector: 'app-match-card',
-  imports: [CommonModule, LucideAngularModule, AvatarComponent],
+  imports: [
+    CommonModule,
+    LucideAngularModule,
+    AvatarComponent,
+    CalculateAgePipe,
+  ],
   templateUrl: './match-card.component.html',
   styleUrls: ['./match-card.component.scss'],
 })
@@ -15,20 +21,6 @@ export class MatchCardComponent {
   isCurrent = input<boolean>(false);
   swipeDirection = input<'left' | 'right' | null>(null);
   stackIndex = input<number>(0);
-
-  calculateAge(dateOfBirth: string): number {
-    const birthDate = new Date(dateOfBirth);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-    return age;
-  }
 
   getStackTransform(): string {
     if (this.isCurrent()) {
