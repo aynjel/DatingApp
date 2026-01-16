@@ -43,7 +43,7 @@ export const MessageStore = signalStore(
   })),
   withMethods((store) => {
     const getMessages = store.globalStore.withApiState<
-      GetMessageParams | undefined,
+      GetMessageParams,
       HttpResponse<Message[]>
     >((params) =>
       store.messageService.getMessages(params).pipe(

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InboxComponent } from './inbox.component';
+import { OutboxComponent } from './outbox.component';
 
-describe('InboxComponent', () => {
-  let component: InboxComponent;
-  let fixture: ComponentFixture<InboxComponent>;
+describe('OutboxComponent', () => {
+  let component: OutboxComponent;
+  let fixture: ComponentFixture<OutboxComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InboxComponent]
+      imports: [OutboxComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(InboxComponent);
+    fixture = TestBed.createComponent(OutboxComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

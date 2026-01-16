@@ -1,6 +1,8 @@
 <div class="flex flex-col h-full">
-  <div class="p-4 border-b border-base-300">
-    <h2 class="text-2xl font-bold">Messages</h2>
+  <div class="px-4 py-5 border-b border-base-300">
+    <h2 class="text-2xl font-bold">
+      Conversations ({{ conversations().length }})
+    </h2>
   </div>
 
   <div class="flex-1 overflow-y-auto">
@@ -18,15 +20,16 @@
               <div
                 class="w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1"
               >
-                @if (conversation.otherUserImageUrl) {
+                @if (conversation.senderImageUrl && conversation.senderImageUrl
+                !== '') {
                 <img
-                  [src]="conversation.otherUserImageUrl"
-                  [alt]="conversation.otherUserDisplayName + ' photo'"
+                  [src]="conversation.senderImageUrl"
+                  [alt]="conversation.senderDisplayName + ' photo'"
                   class="w-full h-full object-cover rounded-full"
                 />
                 } @else {
                 <ngx-avatar
-                  [name]="conversation.otherUserDisplayName"
+                  [name]="conversation.senderDisplayName"
                   size="48"
                   [round]="true"
                 />
@@ -43,7 +46,7 @@
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between mb-1">
               <h3 class="font-semibold text-base truncate">
-                {{ conversation.otherUserDisplayName }}
+                {{ conversation.senderDisplayName }}
               </h3>
               @if (conversation.lastMessageDate) {
               <span class="text-xs text-base-content/60 ml-2">

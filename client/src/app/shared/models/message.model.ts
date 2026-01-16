@@ -20,9 +20,9 @@ export interface CreateMessageRequest {
 
 // For message list queries (matches GetMessageParams)
 export interface GetMessageParams {
-  pageNumber?: number;
-  pageSize?: number;
-  container?: MessageContainer;
+  pageNumber: number;
+  pageSize: number;
+  container: MessageContainer;
 }
 
 export type MessageContainer = 'Inbox' | 'Outbox' | 'Unread';

@@ -1,5 +1,12 @@
 import { DatePipe } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import {
+  Component,
+  effect,
+  ElementRef,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 import { ArrowLeftIcon, LucideAngularModule, SendIcon } from 'lucide-angular';
 import { AvatarComponent } from 'ngx-avatar-2';
 import { Message } from '../../../../shared/models/message.model';
@@ -28,6 +35,19 @@ export class ThreadComponent {
 
   messageSent = output<string>();
   goBack = output<void>();
+
+  messagesContainer =
+    viewChild<ElementRef<HTMLDivElement>>('messagesContainer');
+
+  constructor() {
+    // Auto-scroll to bottom when messages change
+    effect(() => {
+      const messages = this.messages();
+      if (messages && messages.length > 0) {
+        setTimeout(() => this.scrollToBottom(), 100);
+      }
+    });
+  }
 
   onGoBack(): void {
     this.goBack.emit();
@@ -60,6 +80,13 @@ export class ThreadComponent {
     } else {
       const months = Math.floor(diffInDays / 30);
       return `Active ${months} month${months > 1 ? 's' : ''} ago`;
+    }
+  }
+
+  private scrollToBottom(): void {
+    const container = this.messagesContainer()?.nativeElement;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
     }
   }
 }

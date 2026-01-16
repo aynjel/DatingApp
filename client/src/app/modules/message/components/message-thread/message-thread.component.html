@@ -10,7 +10,7 @@
           <div
             class="w-10 h-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1"
           >
-            @if (otherUserImageUrl()) {
+            @if (otherUserImageUrl() && otherUserImageUrl() !== '') {
             <img
               [src]="otherUserImageUrl()!"
               [alt]="otherUserDisplayName() + ' photo'"
@@ -45,7 +45,10 @@
   </div>
 
   <!-- Messages -->
-  <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-base-200">
+  <div
+    #messagesContainer
+    class="flex-1 overflow-y-auto p-4 space-y-3 bg-base-200"
+  >
     @for (message of messages(); track message.id) {
     <div
       class="flex"
@@ -60,7 +63,7 @@
         @if (!isMessageFromCurrentUser(message)) {
         <div class="avatar flex-shrink-0">
           <div class="w-8 h-8 rounded-full">
-            @if (message.senderImageUrl) {
+            @if (message.senderImageUrl && message.senderImageUrl !== '') {
             <img
               [src]="message.senderImageUrl"
               [alt]="message.senderDisplayName + ' photo'"

@@ -17,27 +17,17 @@ export class MessageService {
   private readonly baseUrl = environment.apiUrl + APIEndpoints.MESSAGES;
 
   // GET /messages - Get messages for user with pagination
-  getMessages(params?: GetMessageParams): Observable<HttpResponse<Message[]>> {
-    let queryParams = new HttpParams();
-    if (params) {
-      if (params.pageNumber) {
-        queryParams = queryParams.append(
-          'pageNumber',
-          params.pageNumber.toString()
-        );
-      }
-      if (params.pageSize) {
-        queryParams = queryParams.append(
-          'pageSize',
-          params.pageSize.toString()
-        );
-      }
-      if (params.container) {
-        queryParams = queryParams.append('container', params.container);
-      }
-    }
+  getMessages(
+    queryParams: GetMessageParams
+  ): Observable<HttpResponse<Message[]>> {
+    let params = new HttpParams();
+
+    params = params.append('pageNumber', queryParams.pageNumber);
+    params = params.append('pageSize', queryParams.pageSize);
+    params = params.append('container', queryParams.container);
+
     return this.http.get<Message[]>(this.baseUrl, {
-      params: queryParams,
+      params,
       observe: 'response',
     });
   }
