@@ -161,8 +161,8 @@ else
 
 app.UseHttpsRedirection();
 
-//app.UseDefaultFiles();
-//app.UseStaticFiles();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.UseRouting();
 
@@ -262,7 +262,7 @@ app.MapScalarApiReference(options =>
 });
 
 // Catches all unmatched routes and returns index.html for Angular routing
-//app.MapFallbackToController("Index", "Fallback");
+app.MapFallbackToController("Index", "Fallback");
 
 #region DATABASE INITIALIZATION & SEEDING
 using (var scope = app.Services.CreateScope())
