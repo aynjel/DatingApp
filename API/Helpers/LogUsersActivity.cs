@@ -18,7 +18,8 @@ public class LogUsersActivity : IAsyncActionFilter
             if (user is not null && user.Member is not null)
             {
                 user.Member.LastActive = DateTime.UtcNow;
-                await userRepository.UpdateAsync(user);
+                userRepository.Update(user);
+                await userRepository.SaveAllAsync();
             }
         }
     }

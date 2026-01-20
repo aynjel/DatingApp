@@ -24,7 +24,7 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
         }
 
         user.ImageUrl = "https://ui-avatars.com/api/?name=" + user.DisplayName;
-        await userRepository.UpdateAsync(user);
+        userRepository.Update(user);
         var member = new Member
         {
             Id = userId,

@@ -38,21 +38,18 @@ public class UserRepository(DataContext context) : IUserRepository
             .ToListAsync();
     }
 
-    public async Task AddAsync(User user)
+    public void Add(User user)
     {
         context.Users.Add(user);
-        await context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(User user)
+    public void Update(User user)
     {
         context.Users.Update(user);
-        await context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(User user)
+    public Task<bool> SaveAllAsync()
     {
-        context.Users.Remove(user);
-        await context.SaveChangesAsync();
+        return Task.FromResult(context.SaveChanges() > 0);
     }
 }

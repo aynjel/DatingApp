@@ -9,7 +9,7 @@ public interface IUserRepository
     Task<User> GetAsync(Expression<Func<User, bool>> expression);
     Task<bool> IsEmailExistsAsync(string email);
     Task<IReadOnlyList<User>> GetAllAsync();
-    Task AddAsync(User user);
-    Task UpdateAsync(User user);
-    Task DeleteAsync(User user);
+    void Add(User user);
+    void Update(User user);
+    Task<bool> SaveAllAsync();
 }

@@ -134,11 +134,13 @@ builder.Services.AddHealthChecks()
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<ILikesRepository, LikesRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IGenerateJWTService, GenerateJWTService>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<ILikesService, LikesService>();
 builder.Services.AddScoped<LogUsersActivity>();
 
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
@@ -257,7 +259,7 @@ app.MapScalarApiReference(options =>
 {
     options
         .WithTitle("DatingApp API Documentation")
-        .WithTheme(ScalarTheme.Purple)
+        .WithTheme(ScalarTheme.DeepSpace)
         .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
 });
 
@@ -303,15 +305,6 @@ using (var scope = app.Services.CreateScope())
                 logger.LogInformation("Running production database migrations...");
                 await context.Database.MigrateAsync();
                 logger.LogInformation("Production migrations completed successfully");
-
-                // Seed only if database is empty
-                var hasUsers = await context.Users.AnyAsync();
-                if (!hasUsers)
-                {
-                    logger.LogInformation("Database is empty. Seeding initial data...");
-                    await Seed.SeedUsers(context);
-                    logger.LogInformation("Initial data seeding completed");
-                }
             }
             else
             {

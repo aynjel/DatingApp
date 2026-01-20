@@ -56,11 +56,17 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
             }
         };
 
-        // Single SaveChanges call - both User and Member are saved in one transaction
-        await userRepository.AddAsync(user);
-        string accessToken = jwtService.GenerateToken(user.Id);
-        string refreshToken = await jwtService.GenerateAndSaveTokenAsync(user.Id, accessToken);
-        return user.ToDto(new TokenResponseDto(accessToken, refreshToken));
+        userRepository.Add(user);
+        
+        if(await userRepository.SaveAllAsync())
+        {
+            string accessToken = jwtService.GenerateToken(user.Id);
+            string refreshToken = await jwtService.GenerateAndSaveTokenAsync(user.Id, accessToken);
+            return user.ToDto(new TokenResponseDto(accessToken, refreshToken));
+        }
+
+        logger.LogError("Failed to create user with email: {Email}", registerDto.Email);
+        throw new Exception("Failed to create user");
     }
 
     public async Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
