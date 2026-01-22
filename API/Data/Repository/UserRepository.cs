@@ -29,13 +29,19 @@ public class UserRepository(DataContext context) : IUserRepository
         return await context.Users.AnyAsync(u => u.Email == email);
     }
 
-    public async Task<IReadOnlyList<User>> GetAllAsync()
+    public async Task<IReadOnlyList<User>> GetAllAsync(Expression<Func<User, bool>> expression = null)
     {
-        return await context.Users
+        IQueryable<User> query = context.Users
             .Include(u => u.Member)
                 .ThenInclude(m => m.Photos)
-            .AsNoTracking()
-            .ToListAsync();
+            .AsNoTracking();
+
+        if (expression is not null)
+        {
+            query = query.Where(expression);
+        }
+
+        return await query.ToListAsync();
     }
 
     public void Add(User user)

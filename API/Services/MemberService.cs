@@ -77,9 +77,9 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
         return member.ToDto();
     }
 
-    public async Task<PagedList<MemberResponseDto>> GetMembersAsync(MemberParams memberParams)
+    public async Task<PagedList<MemberResponseDto>> GetMembersAsync(MemberParams memberParams, string currentUserId)
     {
-        var pagedMembers = await memberRepository.GetMembersAsync(memberParams);
+        var pagedMembers = await memberRepository.GetMembersAsync(memberParams, currentUserId);
         var members = pagedMembers.Items.Select(m => m.ToDto()).ToList();
         
         return new PagedList<MemberResponseDto>(

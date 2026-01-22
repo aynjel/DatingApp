@@ -20,7 +20,8 @@ public class MembersController(IMemberService memberService, IUserService userSe
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<MemberResponseDto>>> GetMembers([FromQuery] MemberParams membersParams)
     {
-        PagedList<MemberResponseDto> pagedMembers = await memberService.GetMembersAsync(membersParams);
+        var currentUserId = User.GetUserId();
+        PagedList<MemberResponseDto> pagedMembers = await memberService.GetMembersAsync(membersParams, currentUserId);
         
         Response.AddPaginationHeader(new PaginationHeader(
             pagedMembers.PageNumber,

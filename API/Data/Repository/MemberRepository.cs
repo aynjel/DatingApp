@@ -22,14 +22,14 @@ public class MemberRepository(DataContext context) : IMemberRepository
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task<PagedList<Member>> GetMembersAsync(MemberParams memberParams)
+    public async Task<PagedList<Member>> GetMembersAsync(MemberParams memberParams, string currentUserId)
     {
         var query = context.Members
             .Include(m => m.Photos)
             .AsNoTracking()
             .AsQueryable();
 
-        query = query.Where(m => m.Id != memberParams.CurrentMemberId);
+        query = query.Where(m => m.Id != currentUserId);
 
         if (memberParams.Gender is not null)
         {
