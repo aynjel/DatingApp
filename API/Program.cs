@@ -140,6 +140,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IGenerateJWTService, GenerateJWTService>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<ILikesService, LikesService>();
 builder.Services.AddScoped<LogUsersActivity>();
 

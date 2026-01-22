@@ -10,12 +10,12 @@ namespace API.Data.Repository;
 
 public class MessageRepository(DataContext context) : IMessageRepository
 {
-    public async Task AddMessageAsync(Message message)
+    public void Add(Message message)
     {
-        await context.Messages.AddAsync(message);
+        context.Messages.Add(message);
     }
 
-    public async Task DeleteMessageAsync(Message message)
+    public void Delete(Message message)
     {
         context.Messages.Remove(message);
     }
@@ -25,7 +25,7 @@ public class MessageRepository(DataContext context) : IMessageRepository
         return await context.Messages.FindAsync(messageId);
     }
 
-    public async Task<PagedList<MessageResponseDto>> GetMessagesForUserAsync(GetMessageParams messageParams)
+    public async Task<PagedList<MessageResponseDto>> GetMessagesForUserAsync(GetMessageParams messageParams, string currentUserId)
     {
         var query = context.Messages
             .OrderByDescending(message => message.MessageSent)
@@ -33,9 +33,9 @@ public class MessageRepository(DataContext context) : IMessageRepository
 
         query = messageParams.Container.ToLower() switch
         {
-            "inbox" => query.Where(m => m.RecipientId == messageParams.MemberId && !m.IsRecipientDeleted),
-            "outbox" => query.Where(m => m.SenderId == messageParams.MemberId && !m.IsSenderDeleted),
-            _ => query.Where(m => m.RecipientId == messageParams.MemberId && !m.IsRecipientDeleted && m.DateRead == null)
+            "inbox" => query.Where(m => m.RecipientId == currentUserId && !m.IsRecipientDeleted),
+            "outbox" => query.Where(m => m.SenderId == currentUserId && !m.IsSenderDeleted),
+            _ => query.Where(m => m.RecipientId == currentUserId && !m.IsRecipientDeleted && m.DateRead == null)
         };
 
         var messagesQuery = query.Select(MessageExtensions.ToDtoExpression());
