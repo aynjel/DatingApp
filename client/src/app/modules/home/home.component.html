@@ -8,83 +8,81 @@
     <div class="hero-content text-center py-20 px-4">
       <div class="max-w-4xl">
         @if (authStore.isLoggedIn()) {
-        <!-- Logged In User View -->
-        <div class="space-y-6">
-          <h1
-            class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
-          >
-            Welcome back, {{ authStore.currentUser()?.displayName || "there" }}!
-            <lucide-icon
-              [name]="heartIcon"
-              [size]="48"
-              class="inline-block text-primary animate-pulse"
-            />
-          </h1>
-          <p class="text-xl md:text-2xl text-base-content/80 py-4">
-            Ready to find your perfect match? Start exploring now!
-          </p>
-          <div class="flex flex-wrap gap-4 justify-center mt-8">
-            <a routerLink="/portal/users" class="btn btn-primary btn-lg gap-2">
-              <lucide-icon
-                [name]="usersIcon"
-                [size]="20"
-                class="inline-block text-white animate-pulse"
-              />
-              Browse Matches
-            </a>
-            <a
-              routerLink="/portal/messages"
-              class="btn btn-secondary btn-lg gap-2"
+          <!-- Logged In User View -->
+          <div class="space-y-6">
+            <h1
+              class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
             >
+              Welcome back,
+              {{ authStore.currentUser()?.displayName || "there" }}!
               <lucide-icon
-                [name]="messageCircleIcon"
-                [size]="20"
+                [name]="heartIcon"
+                [size]="48"
                 class="inline-block text-primary animate-pulse"
               />
-              View Messages
-            </a>
-            <a routerLink="/profile/me" class="btn btn-outline btn-lg gap-2">
-              <lucide-icon
-                [name]="sparklesIcon"
-                [size]="20"
-                class="inline-block text-primary animate-pulse"
-              />
-              Edit Profile
-            </a>
+            </h1>
+            <p class="text-xl md:text-2xl text-base-content/80 py-4">
+              Ready to find your perfect match? Start exploring now!
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center mt-8">
+              <a routerLink="/people" class="btn btn-primary btn-lg gap-2">
+                <lucide-icon
+                  [name]="usersIcon"
+                  [size]="20"
+                  class="inline-block text-white animate-pulse"
+                />
+                Browse Matches
+              </a>
+              <a routerLink="/messages" class="btn btn-secondary btn-lg gap-2">
+                <lucide-icon
+                  [name]="messageCircleIcon"
+                  [size]="20"
+                  class="inline-block text-primary animate-pulse"
+                />
+                View Messages
+              </a>
+              <a routerLink="/profile" class="btn btn-outline btn-lg gap-2">
+                <lucide-icon
+                  [name]="sparklesIcon"
+                  [size]="20"
+                  class="inline-block text-primary animate-pulse"
+                />
+                Edit Profile
+              </a>
+            </div>
           </div>
-        </div>
         } @else {
-        <!-- Guest User View -->
-        <div class="space-y-6">
-          <div class="flex justify-center mb-6">
-            <lucide-icon
-              [name]="heartIcon"
-              [size]="80"
-              class="text-primary animate-pulse"
-            />
-          </div>
-          <h1
-            class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
-          >
-            Find Your Perfect Match
-          </h1>
-          <p class="text-xl md:text-2xl text-base-content/80 py-4">
-            Connect with amazing people and discover meaningful relationships
-          </p>
-          <div class="flex flex-wrap gap-4 justify-center mt-8">
-            <a routerLink="/home" class="btn btn-primary btn-lg gap-2">
-              Get Started
+          <!-- Guest User View -->
+          <div class="space-y-6">
+            <div class="flex justify-center mb-6">
               <lucide-icon
-                [name]="arrowRightIcon"
-                [size]="20"
-                class="inline-block text-primary animate-pulse"
+                [name]="heartIcon"
+                [size]="80"
+                class="text-primary animate-pulse"
               />
-            </a>
-            <a routerLink="/home" class="btn btn-outline btn-lg">
-              Learn More
-            </a>
+            </div>
+            <h1
+              class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+            >
+              Find Your Perfect Match
+            </h1>
+            <p class="text-xl md:text-2xl text-base-content/80 py-4">
+              Connect with amazing people and discover meaningful relationships
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center mt-8">
+              <a routerLink="/home" class="btn btn-primary btn-lg gap-2">
+                Get Started
+                <lucide-icon
+                  [name]="arrowRightIcon"
+                  [size]="20"
+                  class="inline-block text-primary animate-pulse"
+                />
+              </a>
+              <a routerLink="/home" class="btn btn-outline btn-lg">
+                Learn More
+              </a>
+            </div>
           </div>
-        </div>
         }
       </div>
     </div>
@@ -229,109 +227,109 @@
 
   <!-- CTA Section for Guests -->
   @if (!authStore.isLoggedIn()) {
-  <section
-    class="py-20 px-4 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10"
-  >
-    <div class="container mx-auto">
-      <div class="card bg-base-100 shadow-2xl max-w-4xl mx-auto">
-        <div class="card-body text-center py-12">
-          <h2 class="card-title text-4xl justify-center mb-4">
-            Ready to Start Your Journey?
-          </h2>
-          <p class="text-xl text-base-content/70 mb-8">
-            Join thousands of happy couples who found love on DatingApp
-          </p>
-          <div class="flex flex-wrap gap-4 justify-center">
-            <a routerLink="/home" class="btn btn-primary btn-lg gap-2">
-              Create Free Account
-              <lucide-icon
-                [name]="arrowRightIcon"
-                [size]="20"
-                class="inline-block text-primary animate-pulse"
-              />
-            </a>
-            <a routerLink="/home" class="btn btn-outline btn-lg"> Sign In </a>
-          </div>
-          <div class="divider my-6">Or</div>
-          <div
-            class="flex flex-wrap gap-6 justify-center text-sm text-base-content/60"
-          >
-            <div class="flex items-center gap-2">
-              <lucide-icon
-                [name]="checkCircle2Icon"
-                [size]="20"
-                class="inline-block text-success animate-pulse"
-              />
-              <span>Free to join</span>
+    <section
+      class="py-20 px-4 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10"
+    >
+      <div class="container mx-auto">
+        <div class="card bg-base-100 shadow-2xl max-w-4xl mx-auto">
+          <div class="card-body text-center py-12">
+            <h2 class="card-title text-4xl justify-center mb-4">
+              Ready to Start Your Journey?
+            </h2>
+            <p class="text-xl text-base-content/70 mb-8">
+              Join thousands of happy couples who found love on DatingApp
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center">
+              <a routerLink="/home" class="btn btn-primary btn-lg gap-2">
+                Create Free Account
+                <lucide-icon
+                  [name]="arrowRightIcon"
+                  [size]="20"
+                  class="inline-block text-primary animate-pulse"
+                />
+              </a>
+              <a routerLink="/home" class="btn btn-outline btn-lg"> Sign In </a>
             </div>
-            <div class="flex items-center gap-2">
-              <lucide-icon
-                [name]="checkCircle2Icon"
-                [size]="20"
-                class="inline-block text-success animate-pulse"
-              />
-              <span>Verified profiles</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <lucide-icon
-                [name]="checkCircle2Icon"
-                [size]="20"
-                class="inline-block text-success animate-pulse"
-              />
-              <span>Secure & private</span>
+            <div class="divider my-6">Or</div>
+            <div
+              class="flex flex-wrap gap-6 justify-center text-sm text-base-content/60"
+            >
+              <div class="flex items-center gap-2">
+                <lucide-icon
+                  [name]="checkCircle2Icon"
+                  [size]="20"
+                  class="inline-block text-success animate-pulse"
+                />
+                <span>Free to join</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <lucide-icon
+                  [name]="checkCircle2Icon"
+                  [size]="20"
+                  class="inline-block text-success animate-pulse"
+                />
+                <span>Verified profiles</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <lucide-icon
+                  [name]="checkCircle2Icon"
+                  [size]="20"
+                  class="inline-block text-success animate-pulse"
+                />
+                <span>Secure & private</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
   }
 
   <!-- Stats Section for Logged In Users -->
   @if (authStore.isLoggedIn()) {
-  <section class="py-20 px-4 bg-base-200">
-    <div class="container mx-auto">
-      <div class="stats stats-vertical lg:stats-horizontal shadow w-full">
-        <div class="stat">
-          <div class="stat-figure text-primary">
-            <lucide-icon
-              [name]="usersIcon"
-              [size]="32"
-              class="inline-block text-primary animate-pulse"
-            />
+    <section class="py-20 px-4 bg-base-200">
+      <div class="container mx-auto">
+        <div class="stats stats-vertical lg:stats-horizontal shadow w-full">
+          <div class="stat">
+            <div class="stat-figure text-primary">
+              <lucide-icon
+                [name]="usersIcon"
+                [size]="32"
+                class="inline-block text-primary animate-pulse"
+              />
+            </div>
+            <div class="stat-title">Potential Matches</div>
+            <div class="stat-value text-primary">1,234</div>
+            <div class="stat-desc">People near you</div>
           </div>
-          <div class="stat-title">Potential Matches</div>
-          <div class="stat-value text-primary">1,234</div>
-          <div class="stat-desc">People near you</div>
-        </div>
 
-        <div class="stat">
-          <div class="stat-figure text-secondary">
-            <lucide-icon
-              [name]="messageCircleIcon"
-              [size]="32"
-              class="inline-block text-secondary animate-pulse"
-            />
+          <div class="stat">
+            <div class="stat-figure text-secondary">
+              <lucide-icon
+                [name]="messageCircleIcon"
+                [size]="32"
+                class="inline-block text-secondary animate-pulse"
+              />
+            </div>
+            <div class="stat-title">Messages</div>
+            <div class="stat-value text-secondary">42</div>
+            <div class="stat-desc">Unread messages</div>
           </div>
-          <div class="stat-title">Messages</div>
-          <div class="stat-value text-secondary">42</div>
-          <div class="stat-desc">Unread messages</div>
-        </div>
 
-        <div class="stat">
-          <div class="stat-figure text-accent">
-            <lucide-icon
-              [name]="heartIcon"
-              [size]="32"
-              class="inline-block text-accent animate-pulse"
-            />
+          <div class="stat">
+            <div class="stat-figure text-accent">
+              <lucide-icon
+                [name]="heartIcon"
+                [size]="32"
+                class="inline-block text-accent animate-pulse"
+              />
+            </div>
+            <div class="stat-title">Likes</div>
+            <div class="stat-value text-accent">89</div>
+            <div class="stat-desc">People who liked you</div>
           </div>
-          <div class="stat-title">Likes</div>
-          <div class="stat-value text-accent">89</div>
-          <div class="stat-desc">People who liked you</div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
   }
 </div>

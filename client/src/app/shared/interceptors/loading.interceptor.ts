@@ -64,6 +64,6 @@ export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
         console.log('[Cache] Caching GET response for:', req.urlWithParams);
         cache.set(req.urlWithParams, event);
       }
-    })
+    }),
   );
 };

@@ -54,8 +54,8 @@ export const MessageStore = signalStore(
           error: (error: HttpErrorResponse) => {
             store.toastService.show('Failed to get messages', 'error');
           },
-        })
-      )
+        }),
+      ),
     );
 
     const getMessageThread = store.globalStore.withApiState<string, Message[]>(
@@ -68,8 +68,8 @@ export const MessageStore = signalStore(
             error: (error: HttpErrorResponse) => {
               store.toastService.show('Failed to get message thread', 'error');
             },
-          })
-        )
+          }),
+        ),
     );
 
     const sendMessage = store.globalStore.withFormSubmission<
@@ -90,8 +90,8 @@ export const MessageStore = signalStore(
           error: (error: HttpErrorResponse) => {
             store.toastService.show('Failed to send message', 'error');
           },
-        })
-      )
+        }),
+      ),
     );
 
     const deleteMessage = store.globalStore.withFormSubmission<string, void>(
@@ -106,17 +106,17 @@ export const MessageStore = signalStore(
               });
               store.toastService.show(
                 'Message deleted successfully',
-                'success'
+                'success',
               );
             },
             error: (error: HttpErrorResponse) => {
               store.toastService.show('Failed to delete message', 'error');
             },
-          })
-        )
+          }),
+        ),
     );
 
-    const selectConversation = (conversationId: string) => {
+    const selectConversation = (conversationId: string | null) => {
       patchState(store, { selectedConversationId: conversationId });
     };
 
@@ -133,5 +133,5 @@ export const MessageStore = signalStore(
       selectConversation,
       buildConversationsFromMessages,
     };
-  })
+  }),
 );

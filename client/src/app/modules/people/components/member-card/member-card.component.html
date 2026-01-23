@@ -1,40 +1,44 @@
 <div class="card border">
   <figure class="relative h-64 overflow-hidden bg-base-200">
     @if (member().imageUrl) {
-    <img
-      [src]="member().imageUrl"
-      [alt]="member().displayName + ' photo'"
-      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-    />
+      <img
+        [src]="member().imageUrl"
+        [alt]="member().displayName + ' photo'"
+        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+      />
     } @else {
-    <div class="w-full h-full flex items-center justify-center">
-      <ngx-avatar [name]="member().displayName" size="120" [round]="true" />
-    </div>
+      <div class="w-full h-full flex items-center justify-center">
+        <ngx-avatar [name]="member().displayName" size="120" [round]="true" />
+      </div>
     }
     <!-- Online Status Badge -->
     @if (member().lastActive) {
-    <div class="absolute top-2 right-2">
-      <div class="badge badge-success badge-sm">Active</div>
-    </div>
+      <div class="absolute top-2 right-2">
+        <div class="badge badge-success badge-sm">Active</div>
+      </div>
     }
   </figure>
   <div class="card-body p-4">
     <h2 class="card-title text-lg mb-2 line-clamp-1">
       {{ member().displayName }}, {{ member().dateOfBirth | calculateAge }}
     </h2>
+    <p class="text-sm text-gray-600 line-clamp-2">
+      {{ member().description | slice: 0 : 60
+      }}{{ member().description.length > 60 ? "..." : "" }}
+    </p>
     <div class="card-actions justify-end mt-4 gap-2">
       <a
-        [routerLink]="['/people/details', member().id]"
-        class="btn btn-primary btn-sm flex-1"
-      >
-        View Profile
+        [routerLink]="['/messages/inbox', member().id]"
+        class="btn btn-primary btn-sm btn-square"
+        ><lucide-icon [name]="messageSquareIcon" class="size-4" />
       </a>
       <button
-        class="btn btn-ghost btn-sm btn-square"
-        title="Like"
-        (click)="$event.stopPropagation()"
+        class="btn btn-sm btn-square"
+        [class.btn-ghost]="!hasLiked()"
+        [class.btn-error]="hasLiked()"
+        (click)="toggleLike($event)"
       >
-        <lucide-icon [name]="heartIcon" class="size-4" />
+        <lucide-icon [name]="heartIcon" class="size-4" color="white" />
       </button>
     </div>
   </div>

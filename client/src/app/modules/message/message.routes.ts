@@ -18,10 +18,16 @@ export const routes: Routes = [
         title: 'Inbox',
       },
       {
+        path: 'inbox/:recipientId',
+        loadComponent: () =>
+          import('./pages/inbox/inbox.component').then((m) => m.InboxComponent),
+        title: 'Inbox',
+      },
+      {
         path: 'outbox',
         loadComponent: () =>
           import('./pages/outbox/outbox.component').then(
-            (m) => m.OutboxComponent
+            (m) => m.OutboxComponent,
           ),
         title: 'Outbox',
       },

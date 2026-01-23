@@ -38,6 +38,7 @@ export class ListsComponent implements OnInit {
       pageSize: this.pageSize(),
       orderBy: filters.orderBy,
     });
+    this.peopleStore.getLikeIds();
   }
 
   onFilterChange(filters: MemberParams): void {

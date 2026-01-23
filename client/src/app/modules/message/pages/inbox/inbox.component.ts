@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Conversation } from '../../../../shared/models/message.model';
 import { AuthStore } from '../../../../shared/store/auth.store';
 import { ConversationListComponent } from '../../components/conversation-list/conversation-list.component';
@@ -11,9 +12,11 @@ import { MessageStore } from '../../store/message.store';
   imports: [CommonModule, ConversationListComponent, ThreadComponent],
   templateUrl: './inbox.component.html',
 })
-export class InboxComponent {
+export class InboxComponent implements OnInit {
   authStore = inject(AuthStore);
   messageStore = inject(MessageStore);
+  route = inject(ActivatedRoute);
+  router = inject(Router);
 
   currentUserId = computed(() => this.authStore.currentUser()?.userId || '');
 
@@ -23,12 +26,18 @@ export class InboxComponent {
   conversations = computed(() => this.messageStore.conversations());
 
   currentThreadMessages = computed(() =>
-    this.messageStore.currentThreadMessages()
+    this.messageStore.currentThreadMessages(),
   );
 
-  constructor() {
-    effect(() => {
-      console.log(this.currentThreadMessages());
+  ngOnInit(): void {
+    // React to recipientId in the route to open a specific thread
+    this.route.paramMap.subscribe((params) => {
+      const recipientId = params.get('recipientId');
+      if (recipientId) {
+        this.loadConversation(recipientId);
+      } else {
+        this.selectedConversationId.set(null);
+      }
     });
   }
 
@@ -36,8 +45,8 @@ export class InboxComponent {
    * Handle conversation selection
    */
   onConversationSelected(conversationId: string): void {
-    this.selectedConversationId.set(conversationId);
-    this.messageStore.getMessageThread(conversationId);
+    this.router.navigate(['/messages/inbox', conversationId]);
+    this.loadConversation(conversationId);
   }
 
   /**
@@ -63,6 +72,8 @@ export class InboxComponent {
    */
   onGoBack(): void {
     this.selectedConversationId.set(null);
+    this.messageStore.selectConversation(null);
+    this.router.navigate(['/messages/inbox']);
   }
 
   /**
@@ -72,5 +83,13 @@ export class InboxComponent {
     const id = this.selectedConversationId();
     if (!id) return undefined;
     return this.conversations().find((c) => c.id === id);
+  }
+
+  private loadConversation(conversationId: string): void {
+    if (this.selectedConversationId() === conversationId) return;
+
+    this.selectedConversationId.set(conversationId);
+    this.messageStore.selectConversation(conversationId);
+    this.messageStore.getMessageThread(conversationId);
   }
 }
