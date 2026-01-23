@@ -7,6 +7,7 @@ import {
   output,
   viewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ArrowLeftIcon, LucideAngularModule, SendIcon } from 'lucide-angular';
 import { AvatarComponent } from 'ngx-avatar-2';
 import { Message } from '../../../../shared/models/message.model';
@@ -19,6 +20,7 @@ import { MessageInputComponent } from '../message-input/message-input.component'
     LucideAngularModule,
     AvatarComponent,
     MessageInputComponent,
+    RouterLink,
   ],
   templateUrl: './message-thread.component.html',
 })
@@ -28,6 +30,7 @@ export class ThreadComponent {
 
   messages = input.required<Message[]>();
   currentUserId = input.required<string>();
+  otherUserId = input.required<string>();
   otherUserDisplayName = input.required<string>();
   otherUserImageUrl = input<string | undefined>(undefined);
   isOnline = input<boolean>(false);
@@ -49,7 +52,8 @@ export class ThreadComponent {
     });
   }
 
-  onGoBack(): void {
+  onGoBack(event: Event): void {
+    event.stopPropagation();
     this.goBack.emit();
   }
 

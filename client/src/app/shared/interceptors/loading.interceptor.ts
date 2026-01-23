@@ -11,9 +11,10 @@ const cache = new Map<string, HttpEvent<any>>();
 const cacheInvalidationPatterns: Record<string, string[]> = {
   messages: ['/messages'], // POST/DELETE to messages invalidates all message caches
   'message-thread': ['/messages/thread'], // POST to thread invalidates thread caches
+  likes: ['/Likes'], // POST to likes invalidates all likes caches
 };
 
-/**
+/**s
  * Invalidate cache entries that match the given patterns
  */
 function invalidateCache(patterns: string[]): void {
@@ -34,6 +35,9 @@ function invalidateCache(patterns: string[]): void {
 function getCacheInvalidationPatterns(url: string): string[] {
   if (url.includes('/messages')) {
     return cacheInvalidationPatterns['messages'];
+  }
+  if (url.includes('/Likes')) {
+    return cacheInvalidationPatterns['likes'];
   }
   return [];
 }

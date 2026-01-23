@@ -24,21 +24,52 @@ export class ListsComponent implements OnInit {
   pageSize = signal(10);
   currentFilters = signal<MemberParams>(new MemberParams());
 
+  selectedTab = signal<string>('');
+
+  readonly Tabs: Array<{ label: string; value: string }> = [
+    { label: 'All Members', value: '' },
+    {
+      label: 'Liked',
+      value: 'liked',
+    },
+    {
+      label: 'Liked By',
+      value: 'likedBy',
+    },
+    {
+      label: 'Mutual Likes',
+      value: 'mutualLikes',
+    },
+  ];
+
   ngOnInit(): void {
     this.fetchMembers();
   }
 
   private fetchMembers(): void {
-    const filters = this.currentFilters();
-    this.peopleStore.getMembers({
-      gender: filters.gender,
-      minAge: filters.minAge,
-      maxAge: filters.maxAge,
-      pageNumber: this.pageNumber(),
-      pageSize: this.pageSize(),
-      orderBy: filters.orderBy,
-    });
+    if (!this.selectedTab()) {
+      const filters = this.currentFilters();
+      this.peopleStore.getMembers({
+        gender: filters.gender,
+        minAge: filters.minAge,
+        maxAge: filters.maxAge,
+        pageNumber: this.pageNumber(),
+        pageSize: this.pageSize(),
+        orderBy: filters.orderBy,
+      });
+    } else {
+      this.peopleStore.getMemberLikes({
+        pageNumber: this.pageNumber(),
+        pageSize: this.pageSize(),
+        predicate: this.selectedTab(),
+      });
+    }
     this.peopleStore.getLikeIds();
+  }
+
+  onSelectTab(tabValue: string): void {
+    this.selectedTab.set(tabValue);
+    this.fetchMembers();
   }
 
   onFilterChange(filters: MemberParams): void {

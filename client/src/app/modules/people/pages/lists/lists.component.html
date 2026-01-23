@@ -12,7 +12,19 @@
     <!-- Header -->
     <h2 class="text-3xl md:text-4xl font-bold">Discover People</h2>
 
-    <!-- Search and Filter Component -->
+    <div role="tablist" class="tabs tabs-border">
+      @for (tab of Tabs; track tab.value) {
+        <a
+          role="tab"
+          class="tab"
+          [class.tab-active]="selectedTab() === tab.value"
+          (click)="onSelectTab(tab.value)"
+          >{{ tab.label }}</a
+        >
+      }
+    </div>
+
+    <!-- Filter Component -->
     <app-people-filter
       [pagination]="pagination()"
       (filterChanged)="onFilterChange($event)"

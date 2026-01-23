@@ -85,7 +85,7 @@ export const AuthStore = signalStore(
           next: (response) => {
             store.toastService.show(
               `Welcome ${response.displayName}!`,
-              'success'
+              'success',
             );
             setIsLoggedIn(true);
             setToken(response.token);
@@ -94,8 +94,8 @@ export const AuthStore = signalStore(
           error: (error: HttpErrorResponse) => {
             console.error('Login error:', error);
           },
-        })
-      )
+        }),
+      ),
     );
 
     const signUp = store.globalStore.withFormSubmission<
@@ -107,7 +107,7 @@ export const AuthStore = signalStore(
           next: (response) => {
             store.toastService.show(
               `Welcome ${response.displayName}!`,
-              'success'
+              'success',
             );
             setIsLoggedIn(true);
             setToken(response.token);
@@ -116,8 +116,8 @@ export const AuthStore = signalStore(
           error: (error: HttpErrorResponse) => {
             console.error('Registration error:', error);
           },
-        })
-      )
+        }),
+      ),
     );
 
     const logout = () => {
@@ -126,7 +126,12 @@ export const AuthStore = signalStore(
       setToken(undefined);
       setCurrentUser(undefined);
       store.toastService.show('Logged out successfully.', 'success');
-      store.router.navigate(['/home']);
+
+      setTimeout(() => {
+        store.router.navigate(['/']).then(() => {
+          window.location.reload();
+        });
+      }, 1000);
     };
 
     const getCurrentUser = store.globalStore.withApiState<void, User>(() =>
@@ -143,8 +148,8 @@ export const AuthStore = signalStore(
               logout();
             }, 1000);
           },
-        })
-      )
+        }),
+      ),
     );
 
     return {
@@ -156,5 +161,5 @@ export const AuthStore = signalStore(
       setMemberDetails,
       setPhotos,
     };
-  })
+  }),
 );

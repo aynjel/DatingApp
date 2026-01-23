@@ -52,6 +52,7 @@
           <app-message-thread
             [messages]="currentThreadMessages()"
             [currentUserId]="currentUserId()"
+            [otherUserId]="getSelectedConversation()?.senderId || ''"
             [otherUserDisplayName]="
               getSelectedConversation()?.senderDisplayName ?? 'Conversation'
             "

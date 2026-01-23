@@ -78,7 +78,6 @@ export const PeopleStore = signalStore(
               ? filteredIds
               : [...store.likedMemberIds(), memberId],
           });
-          // store.toastService.show('Like toggled successfully', 'success');
         },
         error: (error: HttpErrorResponse) => {
           store.toastService.show(
@@ -105,10 +104,32 @@ export const PeopleStore = signalStore(
       ),
     );
 
+    const getMemberLikes = store.globalStore.withApiState<
+      { predicate?: string; pageNumber: number; pageSize: number },
+      Member[]
+    >((params) =>
+      store.likesService
+        .getLikes(params.predicate, params.pageNumber, params.pageSize)
+        .pipe(
+          tapResponse({
+            next: (members: Member[]) => {
+              patchState(store, { members });
+            },
+            error: (error: HttpErrorResponse) => {
+              store.toastService.show(
+                error.error.message || 'Something went wrong',
+                'error',
+              );
+            },
+          }),
+        ),
+    );
+
     return {
       getMembers,
       toggleLike,
       getLikeIds,
+      getMemberLikes,
     };
   }),
 );
