@@ -3,6 +3,7 @@ using API.Extensions;
 using API.Helpers;
 using API.Interfaces.Services;
 using API.Model.DTO.Params;
+using API.Model.DTO.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,7 +36,7 @@ public class LikesController(ILikesService likesService) : BaseController
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<PagedList<Member>>> GetMemberLikes([FromQuery] LikesParams likesParams)
+    public async Task<ActionResult<IReadOnlyList<MemberResponseDto>>> GetMemberLikes([FromQuery] LikesParams likesParams)
     {
         var memberId = User.GetMemberId();
         var pagedMembers = await likesService.GetMemberLikesAsync(likesParams, memberId);

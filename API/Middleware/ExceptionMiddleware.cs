@@ -19,7 +19,7 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         catch (Exception ex)
         {
             logger.LogError(ex, "Unhandled exception");
-            await WriteJsonResponseAsync(context, StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+            await WriteJsonResponseAsync(context, StatusCodes.Status500InternalServerError, ex.Message ?? "An unexpected error occurred.");
         }
     }
 

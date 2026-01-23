@@ -69,11 +69,6 @@ public class LikesRepository(DataContext context) : ILikesRepository
                 .Select(like => like.TargetMember);
         }
 
-        // Include photos for each member
-        membersQuery = membersQuery
-            .Include(m => m.Photos)
-            .AsNoTracking();
-
         return await PagedList<Member>.CreateAsync(
             membersQuery,
             likesParams.PageNumber,
