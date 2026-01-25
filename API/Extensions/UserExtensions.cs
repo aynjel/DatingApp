@@ -22,7 +22,6 @@ public static class UserExtensions
             UserId = user.Id,
             DisplayName = user.DisplayName,
             Email = user.Email,
-            ImageUrl = user.ImageUrl,
             MemberDetails = user.Member?.ToDto()
         };
     }

@@ -11,7 +11,7 @@ public interface IMemberService
     Task<PagedList<MemberResponseDto>> GetMembersAsync(MemberParams memberParams, string currentUserId);
     Task<MemberResponseDto> GetMemberByIdAsync(string id);
     Task<IReadOnlyList<PhotoResponseDto>> GetPhotosByMemberIdAsync(string memberId);
-    Task<MemberResponseDto> CreateMemberDetails(string userId, MemberDetailsRequestDto memberDetails);
+    Task<User> CreateMemberDetails(string userId, MemberDetailsRequestDto memberDetails);
     Task<MemberResponseDto> UpdateMemberDetails(string userId, MemberDetailsRequestDto memberDetails);
     Task<bool> AddPhotoAsync(string memberId, Photo photo);
     Task<IReadOnlyList<Photo>> AddPhotosAsync(string memberId, List<Photo> photos);

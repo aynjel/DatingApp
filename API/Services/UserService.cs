@@ -5,12 +5,12 @@ using API.Interfaces.Repository;
 using API.Interfaces.Services;
 using API.Model.DTO.Request;
 using API.Model.DTO.Response;
-using System.Security.Cryptography;
-using System.Text;
+using Microsoft.AspNetCore.Identity;
+using System.Linq.Expressions;
 
 namespace API.Services;
 
-public class UserService(IUserRepository userRepository, IGenerateJWTService jwtService, ILogger<UserService> logger) : IUserService
+public class UserService(IUserRepository userRepository, IMemberRepository memberRepository, ITokenService jwtService, ILogger<UserService> logger) : IUserService
 {
     public async Task<IReadOnlyList<UserDetailsResponseDto>> GetAllAsync()
     {
@@ -29,65 +29,78 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         return user.ToDto();
     }
 
+    public async Task<User> GetByEmailAsync(string email)
+    {
+        var user = await userRepository.GetAsync(u => u.Email == email);
+        if (user is null)
+        {
+            logger.LogWarning("User with email {Email} not found", email);
+            throw new NotFoundException($"User with email '{email}' not found");
+        }
+        return user;
+    }
+
     public async Task<UserAccountResponseDto> CreateUserAsync(CreateUserRequestDto registerDto)
     {
         bool isEmailExists = await userRepository.IsEmailExistsAsync(registerDto.Email);
         if (isEmailExists) throw new ConflictException("Email already in use");
 
-        CreatePasswordHash(registerDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-        User user = new()
+        var user = new User()
         {
             DisplayName = registerDto.DisplayName,
-            Email = registerDto.Email,
-            PasswordHash = passwordHash,
-            PasswordSalt = passwordSalt,
-            Member = new()
-            {
-                DateOfBirth = DateOnly.FromDateTime(registerDto.DateOfBirth),
-                Created = DateTime.UtcNow,
-                LastActive = DateTime.UtcNow,
-                Gender = registerDto.Gender,
-                City = registerDto.City,
-                Country = registerDto.Country,
-                Description = registerDto.Description,
-                Interests = [.. registerDto.Interests],
-                DisplayName = registerDto.DisplayName,
-            }
+            Email = registerDto.Email.ToLower(),
+            UserName = registerDto.Email.ToLower(),
         };
 
-        userRepository.Add(user);
-        
-        if(await userRepository.SaveAllAsync())
+        var result = await userRepository.AddAsync(user, registerDto.Password);
+        if (result.Succeeded) 
         {
-            string accessToken = jwtService.GenerateToken(user.Id);
-            string refreshToken = await jwtService.GenerateAndSaveTokenAsync(user.Id, accessToken);
-            return user.ToDto(new TokenResponseDto(accessToken, refreshToken));
-        }
+            var member = new Member
+            {
+                Id = user.Id,
+                DateOfBirth = registerDto.DateOfBirth,
+                Description = registerDto.Description,
+                City = registerDto.City,
+                Country = registerDto.Country,
+                Gender = registerDto.Gender,
+                Interests = registerDto.Interests,
+                Created = DateTime.UtcNow,
+                LastActive = DateTime.UtcNow,
+                DisplayName = registerDto.DisplayName,
+            };
+            memberRepository.Add(member);
+            if (await memberRepository.SaveAllAsync())
+            {
+                var tokenResponse = await GenerateTokenResponseAsync(user);
+                return user.ToDto(tokenResponse);
+            }
 
-        logger.LogError("Failed to create user with email: {Email}", registerDto.Email);
-        throw new Exception("Failed to create user");
+            throw new Exception("Failed to create member profile for the user");
+        }
+        
+        var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+        logger.LogError("User creation failed: {Errors}", errors);
+        throw new Exception("User creation failed: " + errors);
     }
 
     public async Task<UserAccountResponseDto> AuthenticateUserAsync(LoginRequestDto loginDto)
     {
         var user = await userRepository.GetAsync(u => u.Email == loginDto.Email);
-
         if (user is null)
         {
             logger.LogWarning("Authentication attempt for non-existing email: {Email}", loginDto.Email);
-            throw new UnauthorizedException("Invalid credentials");
+            throw new UnauthorizedException("Account does not exist");
         }
 
-        if (!VerifyPasswordHash(loginDto.Password, user.PasswordHash, user.PasswordSalt))
+        var result = await userRepository.CheckPasswordAsync(user, loginDto.Password);
+        if (!result)
         {
-            logger.LogWarning("Authentication failed for user with email: {Email}", loginDto.Email);
+            logger.LogWarning("Invalid password attempt for email: {Email}", loginDto.Email);
             throw new UnauthorizedException("Invalid credentials");
         }
 
-        var accessToken = jwtService.GenerateToken(user.Id);
-        var refreshToken = await jwtService.GenerateAndSaveTokenAsync(user.Id, accessToken);
-        return user.ToDto(new TokenResponseDto(accessToken, refreshToken));
+        var tokenResponse = await GenerateTokenResponseAsync(user);
+        return user.ToDto(tokenResponse);
     }
 
     public async Task<TokenResponseDto> RefreshTokenAsync(RefreshTokenRequestDto refreshTokenDto)
@@ -101,21 +114,10 @@ public class UserService(IUserRepository userRepository, IGenerateJWTService jwt
         return user.ToDto();
     }
 
-    #region Private Methods
-
-    private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+    private async Task<TokenResponseDto> GenerateTokenResponseAsync(User user)
     {
-        using var hmac = new HMACSHA512();
-        passwordSalt = hmac.Key;
-        passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+        var accessToken = await jwtService.GenerateTokenAsync(user);
+        var refreshToken = jwtService.GenerateRefreshToken();
+        return new TokenResponseDto(accessToken, refreshToken);
     }
-
-    private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-    {
-        using var hmac = new HMACSHA512(storedSalt);
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-        return computedHash.SequenceEqual(storedHash);
-    }
-
-    #endregion
 }

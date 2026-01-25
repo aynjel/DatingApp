@@ -1,8 +1,9 @@
 using API.Data;
-using API.Data.Repository;
+using API.Entities;
 using API.Interfaces.Services;
 using API.Model.DTO.Request;
 using API.Model.DTO.Response;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,8 +13,37 @@ using System.Text;
 
 namespace API.Services;
 
-public class GenerateJWTService(DataContext context, IConfiguration config) : IGenerateJWTService
+public class TokenService(DataContext context, IConfiguration config, UserManager<User> userManager) : ITokenService
 {
+    public async Task<string> GenerateTokenAsync(User user)
+    {
+        var tokenKey = config["JwtConfig:Key"] ?? throw new Exception("Token key not undefined");
+        if (tokenKey.Length < 64) throw new Exception("Token key must be at least 64 characters long");
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new(ClaimTypes.NameIdentifier, user.Email),
+        };
+
+        var roles = await userManager.GetRolesAsync(user);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+        var tokenDescriptor = new SecurityTokenDescriptor()
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddDays(7),
+            SigningCredentials = creds,
+            Issuer = config["JwtConfig:Issuer"],
+            Audience = config["JwtConfig:Audience"],
+        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
+    }
+
     public string GenerateToken(string userId)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtConfig:Key"]));
@@ -48,7 +78,6 @@ public class GenerateJWTService(DataContext context, IConfiguration config) : IG
     {
         var refreshToken = GenerateRefreshToken();
         var userEntity = await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-        userEntity.AccessToken = accessToken;
         userEntity.RefreshToken = refreshToken;
         userEntity.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         await context.SaveChangesAsync();

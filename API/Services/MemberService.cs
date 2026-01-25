@@ -12,19 +12,13 @@ namespace API.Services;
 
 public class MemberService(IMemberRepository memberRepository, IUserRepository userRepository, IPhotoService photoService, ILogger<MemberService> logger) : IMemberService
 {
-    public async Task<MemberResponseDto> CreateMemberDetails(string userId, MemberDetailsRequestDto memberDetails)
+    public async Task<User> CreateMemberDetails(string userId, MemberDetailsRequestDto memberDetails)
     {
-        var user = await userRepository.GetByIdAsync(userId) 
-            ?? throw new NotFoundException($"User with ID {userId} not found");
+        var user = await userRepository.GetByIdAsync(userId) ?? throw new NotFoundException($"User ID {userId} not found");
             
         var existingMember = await memberRepository.GetMemberByIdAsync(userId);
-        if (existingMember is not null)
-        {
-            throw new ConflictException($"Member details already exist for user {userId}. Use update endpoint instead.");
-        }
+        if (existingMember is not null) throw new ConflictException($"Member already exist for user {userId}");
 
-        user.ImageUrl = "https://ui-avatars.com/api/?name=" + user.DisplayName;
-        userRepository.Update(user);
         var member = new Member
         {
             Id = userId,
@@ -37,11 +31,13 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
             Created = DateTime.UtcNow,
             LastActive = DateTime.UtcNow,
             DisplayName = user.DisplayName,
-            ImageUrl = user.ImageUrl,
         };
 
-        await memberRepository.AddAsync(member);
-        return member.ToDto();
+        memberRepository.Add(member);
+
+        if (await memberRepository.SaveAllAsync()) return user;
+
+        throw new BadRequestException("Failed to create member details");
     }
 
     public async Task<MemberResponseDto> UpdateMemberDetails(string userId, MemberDetailsRequestDto memberDetails)
@@ -108,7 +104,6 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
         
         photo.IsMain = true;
         member.ImageUrl = photo.Url;
-        member.User.ImageUrl = photo.Url;
 
         member.Photos.Add(photo);
         memberRepository.Update(member);
@@ -133,14 +128,12 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
             {
                 photo.IsMain = true;
                 member.ImageUrl = photo.Url;
-                member.User.ImageUrl = photo.Url;
                 isFirstBatch = false;
             }
             else if (hasNoImageUrl && photo == photos.First())
             {
                 photo.IsMain = true;
                 member.ImageUrl = photo.Url;
-                member.User.ImageUrl = photo.Url;
                 hasNoImageUrl = false;
             }
             else
@@ -175,7 +168,6 @@ public class MemberService(IMemberRepository memberRepository, IUserRepository u
 
         photo.IsMain = true;
         member.ImageUrl = photo.Url;
-        member.User.ImageUrl = photo.Url;
 
         memberRepository.Update(member);
         return await memberRepository.SaveAllAsync();
