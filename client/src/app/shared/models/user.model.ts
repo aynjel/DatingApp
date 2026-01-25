@@ -4,7 +4,6 @@ export type User = {
   userId: string;
   displayName: string;
   email: string;
-  imageUrl?: string;
   memberDetails?: Member;
 };
 
@@ -17,10 +16,12 @@ export interface Toast {
 
 export interface JWTTokenModel {
   nameid: string[];
-  role: string[] | string;
+  role: UserRoles[] | UserRoles;
   nbf: number;
   exp: number;
   iat: number;
   iss: string;
   aud: string;
 }
+
+export type UserRoles = 'Member' | 'Admin' | 'Moderator';

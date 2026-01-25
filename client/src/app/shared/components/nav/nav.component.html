@@ -94,9 +94,9 @@
         (click)="closeSidebar()"
         class="flex items-center gap-3 hover:bg-white/10 p-2 rounded-lg transition-colors"
       >
-        @if (user()?.imageUrl) {
+        @if (user()?.memberDetails?.imageUrl) {
           <img
-            [src]="user()?.imageUrl"
+            [src]="user()?.memberDetails?.imageUrl"
             alt="User Avatar"
             class="w-10 h-10 rounded-full object-cover"
           />

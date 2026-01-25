@@ -1,12 +1,13 @@
 import { withReset, withStorageSync } from '@angular-architects/ngrx-toolkit';
 import { HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginUserRequest } from '@model/dto/request/login-user.request';
 import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
   signalStore,
+  withComputed,
   withMethods,
   withProps,
   withState,
@@ -16,7 +17,7 @@ import { TokenResponse } from '../models/common-models';
 import { RegisterUserRequest } from '../models/dto/request/register-user.request';
 import { AuthUserResponse } from '../models/dto/response/auth-user.response';
 import { Member, Photo } from '../models/member.model';
-import { JWTTokenModel, User } from '../models/user.model';
+import { JWTTokenModel, User, UserRoles } from '../models/user.model';
 import { MemberService } from '../services/member.service';
 import { ToastService } from '../services/toast.service';
 import { GlobalStore } from './global.store';
@@ -26,7 +27,7 @@ type AuthStoreType = {
   memberDetails: Member | undefined;
   isLoggedIn: boolean;
   token: TokenResponse | undefined;
-  roles: string[];
+  roles: UserRoles[];
 };
 
 const initialState: AuthStoreType = {
@@ -48,6 +49,9 @@ export const AuthStore = signalStore(
     memberService: inject(MemberService),
     toastService: inject(ToastService),
     router: inject(Router),
+  })),
+  withComputed((store) => ({
+    hasAdminAccess: computed(() => store.roles().includes('Admin')),
   })),
   withMethods((store) => {
     const setCurrentUser = (user: User | undefined) => {

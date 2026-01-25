@@ -1,0 +1,23 @@
+<div role="tablist" class="tabs tabs-lift">
+  @for (tab of TABS; track tab) {
+    <a
+      role="tab"
+      class="tab"
+      [class.tab-active]="tab.value === activeTabs()"
+      (click)="setActiveTab(tab.value)"
+      [hidden]="tab.value === 'roles' && !hasAdminAccess()"
+      >{{ tab.label }}</a
+    >
+  }
+</div>
+
+<div class="mt-4">
+  @switch (activeTabs()) {
+    @case ("roles") {
+      <app-user-management />
+    }
+    @case ("photos") {
+      <app-photo-management />
+    }
+  }
+</div>

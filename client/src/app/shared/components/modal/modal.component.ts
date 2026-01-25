@@ -31,6 +31,7 @@ export class ModalComponent {
   }
 
   close() {
-    this.modalService.close();
+    const modal = this.modalService.activeModal();
+    this.modalService.close(modal?.inputs);
   }
 }

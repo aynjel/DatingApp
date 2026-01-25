@@ -1,0 +1,71 @@
+<div class="container mx-auto p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold">User Management</h1>
+    <button class="btn btn-primary">Add User</button>
+  </div>
+
+  <!-- Search and Filter -->
+  <div class="mb-6 flex gap-4">
+    <input
+      type="text"
+      placeholder="Search users..."
+      class="input input-bordered flex-1"
+    />
+    <select class="select select-bordered">
+      <option disabled selected>Filter by role</option>
+      <option>Admin</option>
+      <option>User</option>
+      <option>Moderator</option>
+    </select>
+  </div>
+
+  <!-- Users Table -->
+  <div class="overflow-x-auto">
+    <table class="table table-zebra w-full">
+      <thead>
+        <tr class="bg-base-200">
+          <th>Name</th>
+          <th>Email</th>
+          <th>Roles</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users(); track user) {
+          <tr>
+            <td class="font-medium">{{ user.displayName }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              @for (role of user.roles; track role) {
+                <span class="badge badge-info mr-1">{{ role }}</span>
+              }
+            </td>
+            <td class="flex gap-2">
+              <button
+                class="btn btn-sm btn-ghost"
+                (click)="openRoleModal(user)"
+              >
+                Edit
+              </button>
+              <button class="btn btn-sm btn-error btn-outline">Delete</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center py-4">No users found.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex justify-center mt-8 gap-2">
+    <button class="btn btn-sm">Previous</button>
+    <button class="btn btn-sm btn-active">1</button>
+    <button class="btn btn-sm">2</button>
+    <button class="btn btn-sm">3</button>
+    <button class="btn btn-sm">Next</button>
+  </div>
+</div>

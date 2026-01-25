@@ -1,22 +1,22 @@
 @if (modalService.activeModal(); as modal) {
-<dialog #modalElement class="modal">
-  <div class="modal-box relative">
-    <button
-      (click)="close()"
-      class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-    >
-      ✕
-    </button>
+  <dialog #modalElement class="modal">
+    <div class="modal-box relative">
+      <button
+        (click)="close()"
+        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+      >
+        ✕
+      </button>
 
-    <div class="pt-4">
-      <ng-container
-        *ngComponentOutlet="modal.component; inputs: modal.inputs"
-      />
+      <div class="pt-4">
+        <ng-container
+          *ngComponentOutlet="modal.component; inputs: modal.inputs"
+        />
+      </div>
     </div>
-  </div>
 
-  <form method="dialog" class="modal-backdrop">
-    <button (click)="close()">close</button>
-  </form>
-</dialog>
+    <form method="dialog" class="modal-backdrop">
+      <button (click)="close()">close</button>
+    </form>
+  </dialog>
 }
