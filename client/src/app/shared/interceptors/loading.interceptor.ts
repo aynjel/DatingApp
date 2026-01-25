@@ -10,7 +10,6 @@ const cache = new Map<string, HttpEvent<any>>();
 // Patterns for cache invalidation - when these endpoints are modified, clear related caches
 const cacheInvalidationPatterns: Record<string, string[]> = {
   messages: ['/messages'], // POST/DELETE to messages invalidates all message caches
-  'message-thread': ['/messages/thread'], // POST to thread invalidates thread caches
   likes: ['/Likes'], // POST to likes invalidates all likes caches
 };
 

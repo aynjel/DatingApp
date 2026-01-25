@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { childAuthGuard } from './shared/guards/child-auth.guard';
+import { adminGuard } from './shared/guards/admin.guard';
+import { authGuard } from './shared/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -22,39 +23,45 @@ export const routes: Routes = [
     path: 'profile',
     loadChildren: () =>
       import('./modules/profile/profile.routes').then((m) => m.routes),
-    canActivate: [childAuthGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'members',
     loadChildren: () =>
       import('./modules/member-match/member-match.routes').then(
-        (m) => m.routes
+        (m) => m.routes,
       ),
-    canActivate: [childAuthGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'people',
     loadChildren: () =>
       import('./modules/people/people.routes').then((m) => m.routes),
-    canActivate: [childAuthGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'messages',
     loadChildren: () =>
       import('./modules/message/message.routes').then((m) => m.routes),
-    canActivate: [childAuthGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'settings',
     loadChildren: () =>
       import('./modules/settings/settings.routes').then((m) => m.routes),
-    canActivate: [childAuthGuard],
+    canActivate: [authGuard],
+  },
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./modules/admin/admin.routes').then((m) => m.routes),
+    canActivate: [adminGuard, authGuard],
   },
   {
     path: 'errors',
     loadComponent: () =>
       import('./shared/pages/test-errors/test-errors.component').then(
-        (m) => m.TestErrorsComponent
+        (m) => m.TestErrorsComponent,
       ),
     title: 'Test Errors',
   },
@@ -62,7 +69,7 @@ export const routes: Routes = [
     path: 'server-error',
     loadComponent: () =>
       import('./shared/pages/server-error/server-error.component').then(
-        (m) => m.ServerErrorComponent
+        (m) => m.ServerErrorComponent,
       ),
     title: 'Server Error',
   },
@@ -70,7 +77,7 @@ export const routes: Routes = [
     path: '**',
     loadComponent: () =>
       import('./shared/pages/not-found/not-found.component').then(
-        (m) => m.NotFoundComponent
+        (m) => m.NotFoundComponent,
       ),
     title: 'Page Not Found',
   },

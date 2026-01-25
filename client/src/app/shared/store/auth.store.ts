@@ -16,7 +16,7 @@ import { TokenResponse } from '../models/common-models';
 import { RegisterUserRequest } from '../models/dto/request/register-user.request';
 import { AuthUserResponse } from '../models/dto/response/auth-user.response';
 import { Member, Photo } from '../models/member.model';
-import { User } from '../models/user.model';
+import { JWTTokenModel, User } from '../models/user.model';
 import { MemberService } from '../services/member.service';
 import { ToastService } from '../services/toast.service';
 import { GlobalStore } from './global.store';
@@ -26,6 +26,7 @@ type AuthStoreType = {
   memberDetails: Member | undefined;
   isLoggedIn: boolean;
   token: TokenResponse | undefined;
+  roles: string[];
 };
 
 const initialState: AuthStoreType = {
@@ -33,6 +34,7 @@ const initialState: AuthStoreType = {
   memberDetails: undefined,
   isLoggedIn: false,
   token: undefined,
+  roles: [],
 };
 
 export const AuthStore = signalStore(
@@ -50,6 +52,16 @@ export const AuthStore = signalStore(
   withMethods((store) => {
     const setCurrentUser = (user: User | undefined) => {
       patchState(store, { currentUser: user });
+      setRolesFromToken(store.token()!.accessToken);
+    };
+
+    const setRolesFromToken = (accessToken: string) => {
+      const decoded = atob(accessToken!.split('.')[1]);
+      const tokenObj = JSON.parse(decoded) as JWTTokenModel;
+      const roles = Array.isArray(tokenObj.role)
+        ? tokenObj.role
+        : [tokenObj.role];
+      patchState(store, { roles });
     };
 
     const setMemberDetails = (memberDetails: Member | undefined) => {
@@ -124,14 +136,10 @@ export const AuthStore = signalStore(
       store.resetState();
       setIsLoggedIn(false);
       setToken(undefined);
+      setMemberDetails(undefined);
       setCurrentUser(undefined);
-      store.toastService.show('Logged out successfully.', 'success');
-
-      setTimeout(() => {
-        store.router.navigate(['/']).then(() => {
-          window.location.reload();
-        });
-      }, 1000);
+      window.location.reload();
+      // store.toastService.show('Logged out successfully.', 'success');
     };
 
     const getCurrentUser = store.globalStore.withApiState<void, User>(() =>

@@ -19,11 +19,13 @@ import {
   MessageCircleIcon,
   SearchIcon,
   SettingsIcon,
+  UserCog,
   UserPlusIcon,
   UsersIcon,
   UsersRoundIcon,
 } from 'lucide-angular';
 import { AvatarComponent } from 'ngx-avatar-2';
+import { HasRoleDirective } from '../../directives/has-role.directive';
 import { AuthStore } from '../../store/auth.store';
 import { ButtonComponent } from '../button/button.component';
 
@@ -36,6 +38,7 @@ import { ButtonComponent } from '../button/button.component';
     AvatarComponent,
     RouterLinkActive,
     ButtonComponent,
+    HasRoleDirective,
   ],
   templateUrl: './nav.component.html',
 })
@@ -45,6 +48,11 @@ export class NavComponent {
   @ViewChild('sidebar') sidebarElement?: ElementRef<HTMLElement>;
 
   isLoggedIn = computed(() => this.authStore.isLoggedIn());
+  isAdmin = computed(
+    () =>
+      this.authStore.roles().includes('Admin') ||
+      this.authStore.roles().includes('Moderator'),
+  );
   user = computed(() => this.authStore.currentUser());
 
   readonly menuIcon = MenuIcon;
@@ -58,6 +66,7 @@ export class NavComponent {
   readonly bellIcon = BellIcon;
   readonly loginIcon = LogInIcon;
   readonly registerIcon = UserPlusIcon;
+  readonly adminIcon = UserCog;
 
   readonly navigationLinks = [
     {
@@ -111,7 +120,7 @@ export class NavComponent {
     const target = event.target as HTMLElement;
     const sidebar = this.sidebarElement?.nativeElement;
     const menuButton = (event.target as HTMLElement).closest(
-      'button[aria-label="Toggle sidebar"]'
+      'button[aria-label="Toggle sidebar"]',
     );
 
     // Close sidebar if click is outside the sidebar and not on the menu toggle button

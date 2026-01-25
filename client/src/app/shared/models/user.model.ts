@@ -14,3 +14,13 @@ export interface Toast {
   type: 'success' | 'error' | 'info' | 'warning';
   duration: number;
 }
+
+export interface JWTTokenModel {
+  nameid: string[];
+  role: string[] | string;
+  nbf: number;
+  exp: number;
+  iat: number;
+  iss: string;
+  aud: string;
+}
