@@ -23,7 +23,8 @@ public class AdminController(UserManager<User> userManager, RoleManager<Identity
             usersWithRoles.Add(new
             {
                 user.Id,
-                user.UserName,
+                user.DisplayName,
+                user.Email,
                 Roles = roles.ToList(),
             });
         }
