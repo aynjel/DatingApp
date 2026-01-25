@@ -52,11 +52,14 @@ export const AuthStore = signalStore(
   withMethods((store) => {
     const setCurrentUser = (user: User | undefined) => {
       patchState(store, { currentUser: user });
-      setRolesFromToken(store.token()!.accessToken);
     };
 
-    const setRolesFromToken = (accessToken: string) => {
-      const decoded = atob(accessToken!.split('.')[1]);
+    const setRolesFromToken = (accessToken: string | undefined) => {
+      if (!accessToken) {
+        patchState(store, { roles: [] });
+        return;
+      }
+      const decoded = atob(accessToken.split('.')[1]);
       const tokenObj = JSON.parse(decoded) as JWTTokenModel;
       const roles = Array.isArray(tokenObj.role)
         ? tokenObj.role
@@ -86,6 +89,7 @@ export const AuthStore = signalStore(
 
     const setToken = (token: TokenResponse | undefined) => {
       patchState(store, { token });
+      setRolesFromToken(store.token()?.accessToken);
     };
 
     const signIn = store.globalStore.withFormSubmission<
@@ -133,13 +137,13 @@ export const AuthStore = signalStore(
     );
 
     const logout = () => {
-      store.resetState();
       setIsLoggedIn(false);
+      setCurrentUser(undefined);
       setToken(undefined);
       setMemberDetails(undefined);
-      setCurrentUser(undefined);
-      window.location.reload();
-      // store.toastService.show('Logged out successfully.', 'success');
+      store.router.navigate(['/auth/login']).then(() => {
+        store.toastService.show('You have been logged out.', 'info');
+      });
     };
 
     const getCurrentUser = store.globalStore.withApiState<void, User>(() =>
