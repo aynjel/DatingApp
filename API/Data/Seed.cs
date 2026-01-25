@@ -1,15 +1,15 @@
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using API.Entities;
 using API.Model.DTO;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
 public class Seed
 {
-    public static async Task SeedUsers(DataContext context)
+    public static async Task SeedUsers(UserManager<User> context)
     {
         if (await context.Users.AnyAsync())
         {
@@ -30,16 +30,13 @@ public class Seed
 
         foreach (var member in members)
         {
-            using var hmac = new HMACSHA512();
             var user = new User
             {
                 Id = member.Id,
                 Email = member.Email,
+                UserName = member.Email,
                 DisplayName = member.DisplayName,
-                ImageUrl = member.ImageUrl ?? string.Empty,
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd")),
-                PasswordSalt = hmac.Key,
-                Member = new Member
+                Member = new Member()
                 {
                     Id = member.Id,
                     DateOfBirth = member.DateOfBirth,
@@ -57,15 +54,28 @@ public class Seed
             user.Member.Photos.Add(new Photo
             {
                 Id = Guid.NewGuid().ToString(),
-                Url = member.ImageUrl ?? string.Empty,
+                Url = member.ImageUrl,
                 PublicId = string.Empty,
                 MemberId = member.Id
             });
             
-            context.Users.Add(user);
+            var result = await context.CreateAsync(user, "P@ssword!");
+            if (!result.Succeeded)
+            {
+                Console.WriteLine($"Failed to create user {member.Email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+            
+            await context.AddToRoleAsync(user, "Member");
         }
 
-        await context.SaveChangesAsync();
-        Console.WriteLine($"? Successfully seeded {members.Count} users with members and photos.");
+        var admin = new User
+        {
+            UserName = "admin@test.com",
+            DisplayName = "Admin User",
+            Email = "admin@test.com"
+        };
+
+        await context.CreateAsync(admin, "P@ssword!");
+        await context.AddToRolesAsync(admin, ["Admin", "Moderator"]);
     }
 }

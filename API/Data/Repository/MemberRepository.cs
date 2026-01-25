@@ -8,10 +8,9 @@ namespace API.Data.Repository;
 
 public class MemberRepository(DataContext context) : IMemberRepository
 {
-    public async Task AddAsync(Member member)
+    public void Add(Member member)
     {
         context.Members.Add(member);
-        await context.SaveChangesAsync();
     }
 
     public async Task<Member> GetMemberByIdAsync(string id)

@@ -1,13 +1,14 @@
 ﻿using API.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace API.Data;
 
-public class DataContext(DbContextOptions options) : DbContext(options)
+public class DataContext(DbContextOptions options) : IdentityDbContext<User>(options)
 {
-    public DbSet<User> Users { get; set; }
     public DbSet<Member> Members { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<Message> Messages { get; set; }
@@ -16,6 +17,32 @@ public class DataContext(DbContextOptions options) : DbContext(options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Seed roles with static IDs to avoid dynamic values warning
+        modelBuilder.Entity<IdentityRole>()
+            .HasData(
+                new IdentityRole
+                {
+                    Id = "1",
+                    Name = "Member",
+                    NormalizedName = "MEMBER",
+                    ConcurrencyStamp = "1"
+                },
+                new IdentityRole
+                {
+                    Id = "2",
+                    Name = "Moderator",
+                    NormalizedName = "MODERATOR",
+                    ConcurrencyStamp = "2"
+                },
+                new IdentityRole
+                {
+                    Id = "3",
+                    Name = "Admin",
+                    NormalizedName = "ADMIN",
+                    ConcurrencyStamp = "3"
+                }
+            );
 
         modelBuilder.Entity<MemberLike>()
             .HasKey(ml => new { ml.SourceMemberId, ml.TargetMemberId });

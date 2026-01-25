@@ -15,6 +15,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Scalar.AspNetCore;
+using API.Entities;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +64,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.FromMinutes(5)
         };
     });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"))
+    .AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
 
 builder.Services.AddAuthorization();
 
@@ -138,13 +144,24 @@ builder.Services.AddScoped<ILikesRepository, LikesRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
-builder.Services.AddScoped<IGenerateJWTService, GenerateJWTService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<ILikesService, LikesService>();
 builder.Services.AddScoped<LogUsersActivity>();
 
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+
+builder.Services.AddIdentityCore<User>(option =>
+{
+    option.Password.RequireDigit = false;
+    option.Password.RequireNonAlphanumeric = false;
+    option.Password.RequireUppercase = false;
+    option.Password.RequireLowercase = false;
+    option.User.RequireUniqueEmail = true;
+})
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<DataContext>();
 #endregion
 
 var app = builder.Build();
@@ -276,59 +293,26 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<DataContext>();
+        var userManager = services.GetRequiredService<UserManager<User>>();
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-        logger.LogInformation("========================================");
-        logger.LogInformation("Starting Application Initialization");
-        logger.LogInformation("========================================");
-        logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
-        logger.LogInformation("Database: {Database}",
-            connectionString?.Contains("localhost") == true ? "Local SQL Server" : "Production SQL Server");
-
-        // Run migrations
         if (app.Environment.IsDevelopment())
         {
-            logger.LogInformation("Running database migrations...");
             await context.Database.MigrateAsync();
-            logger.LogInformation("Database migrations completed successfully");
 
-            // Seed data in development
-            logger.LogInformation("Seeding database...");
-            await Seed.SeedUsers(context);
-            logger.LogInformation("Database seeding completed successfully");
+            await Seed.SeedUsers(userManager);
+            logger.LogInformation("Database migrated and seeded successfully (Development environment)");
         }
         else
         {
-            // Production: Only migrate if explicitly configured
             var runMigrations = builder.Configuration.GetValue<bool>("RunMigrationsOnStartup", false);
-            if (runMigrations)
-            {
-                logger.LogInformation("Running production database migrations...");
-                await context.Database.MigrateAsync();
-                logger.LogInformation("Production migrations completed successfully");
-            }
-            else
-            {
-                logger.LogInformation("Skipping migrations (RunMigrationsOnStartup=false)");
-            }
+            if (runMigrations) await context.Database.MigrateAsync();
+            logger.LogInformation("Database migrated successfully (Production environment)");
         }
-
-        logger.LogInformation("========================================");
-        logger.LogInformation("Application Initialization Complete");
-        logger.LogInformation("========================================");
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "An error occurred during application initialization");
-
-        if (!app.Environment.IsDevelopment())
-        {
-            // In production, prevent app from starting if critical initialization fails
-            logger.LogCritical("Critical initialization failure in production. Application will not start.");
-            throw;
-        }
-
-        logger.LogWarning("Application will continue despite initialization errors in development environment");
+        logger.LogWarning("Error occurred during migration: {ErrorMessage}", ex.Message);
     }
 }
 #endregion

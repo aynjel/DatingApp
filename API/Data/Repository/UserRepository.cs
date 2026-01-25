@@ -1,15 +1,16 @@
 using API.Entities;
 using API.Interfaces.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace API.Data.Repository;
 
-public class UserRepository(DataContext context) : IUserRepository
+public class UserRepository(UserManager<User> userManager) : IUserRepository
 {
     public async Task<User> GetByIdAsync(string id)
     {
-        return await context.Users
+        return await userManager.Users
             .Include(u => u.Member)
                 .ThenInclude(m => m.Photos)
             .FirstOrDefaultAsync(u => u.Id == id);
@@ -17,7 +18,7 @@ public class UserRepository(DataContext context) : IUserRepository
 
     public async Task<User> GetAsync(Expression<Func<User, bool>> expression)
     {
-        return await context.Users
+        return await userManager.Users
             .Include(u => u.Member)
                 .ThenInclude(m => m.Photos)
             .AsNoTracking()
@@ -26,12 +27,12 @@ public class UserRepository(DataContext context) : IUserRepository
 
     public async Task<bool> IsEmailExistsAsync(string email)
     {
-        return await context.Users.AnyAsync(u => u.Email == email);
+        return await userManager.Users.AnyAsync(u => u.Email == email);
     }
 
     public async Task<IReadOnlyList<User>> GetAllAsync(Expression<Func<User, bool>> expression = null)
     {
-        IQueryable<User> query = context.Users
+        IQueryable<User> query = userManager.Users
             .Include(u => u.Member)
                 .ThenInclude(m => m.Photos)
             .AsNoTracking();
@@ -44,18 +45,23 @@ public class UserRepository(DataContext context) : IUserRepository
         return await query.ToListAsync();
     }
 
-    public void Add(User user)
+    public async Task<IdentityResult> AddAsync(User user, string password)
     {
-        context.Users.Add(user);
+        var result = await userManager.CreateAsync(user, password);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(user, "Member");
+        }
+        return result;
     }
 
-    public void Update(User user)
+    public async Task<IdentityResult> UpdateAsync(User user)
     {
-        context.Users.Update(user);
+        return await userManager.UpdateAsync(user);
     }
 
-    public Task<bool> SaveAllAsync()
+    public async Task<bool> CheckPasswordAsync(User user, string password)
     {
-        return Task.FromResult(context.SaveChanges() > 0);
+        return await userManager.CheckPasswordAsync(user, password);
     }
 }
